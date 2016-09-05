@@ -1,0 +1,139 @@
+<openerp>
+    <data>
+        <!-- BEGIN view call details tree -->
+        <record model="ir.ui.view" id="view_telephony_isp_call_detail_tree">
+            <field name="name">telephony_isp.call_detail.tree</field>
+            <field name="model">telephony_isp.call_detail</field>
+            <field name="arch" type="xml">
+              <tree string="Call Detail Record" colors="red:status=='error'">
+                  <field name="partner"/>
+                  <field name="contract_code"/>
+                  <field name="time"/>
+                  <field name="origin"/>
+                  <field name="destiny"/>
+                  <field name="rate_id"/>
+                  <field name="duration"/>
+                  <field name="cost"/>
+                  <field name="final_price" sum="Total Amount"/>
+                  <field name="status" invisible="1"/>
+              </tree>
+          </field>
+        </record>
+        <!-- END view call details tree -->
+
+        <!-- BEGIN view call details search -->
+        <record id="view_telephony_isp_call_detail_search_view" model="ir.ui.view">
+            <field name="name">call detail search view</field>
+            <field name="model">telephony_isp.call_detail</field>
+            <field eval="10" name="priority"/>
+            <field name="arch" type="xml">
+                <search string="Call detail">
+                    <field name="partner"/>
+                    <field name="contract_code"/>
+                    <field name="time"/>
+                    <field name="origin"/>
+                    <field name="destiny"/>
+                </search>
+            </field>
+        </record>
+        <!-- END view call details search -->
+
+        <!-- BEGIN view supplier tree -->
+        <record model="ir.ui.view" id="view_telephony_isp_supplier_tree">
+            <field name="name">telephony_isp.supplier.tree</field>
+            <field name="model">telephony_isp.supplier</field>
+            <field name="arch" type="xml">
+              <tree string="Suppliers">
+                  <field name="name"/>
+                  <field name="partner_id"/>
+                  <field name="ratio"/>
+                  <field name="date_start"/>
+                  <field name="date_end"/>
+                  <field name="rate_ids"/>
+              </tree>
+          </field>
+        </record>
+        <!-- END view supplier tree -->
+
+        <!-- BEGIN view supplier form -->
+        <record model="ir.ui.view" id="view_telephony_isp_supplier_form">
+            <field name="name">telephony_isp.supplier.form</field>
+            <field name="model">telephony_isp.supplier</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="Telephony supplier">
+                  <group>
+                      <field name="name"/>
+                      <field name="partner_id"/>
+                      <field name="ratio"/>
+                      <field name="date_start"/>
+                      <field name="date_end"/>
+                  </group>
+                  <group>
+                      <field name="rate_ids">
+                          <tree default_order='prefix'>
+                              <field name="prefix"/>
+                              <field name="name"/>
+                              <field name="price"/>
+                          </tree>
+                      </field>
+                  </group>
+              </form>
+          </field>
+        </record>
+        <!-- END view supplier tree -->
+
+        <!-- BEGIN import CDR wizard -->
+        <record model="ir.ui.view" id="wizard_import_cdr_form_view">
+            <field name="name">telephony_isp.import.cdr.form</field>
+            <field name="model">telephony_isp.import.cdr</field>
+            <field name="arch" type="xml">
+                <form string="Import CDR file">
+                    <group>
+                        <field name="supplier_id"/>
+                        <field name="cdr_type"/>
+                        <field name="cdr_data"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="launch_import_cdr_wizard"
+                    name="Import CDR file"
+                    src_model="telephony_isp.call_detail"
+                    res_model="telephony_isp.import.cdr"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"/>
+        <!-- END import CDR wizard -->
+
+
+        <!-- BEGIN actions -->
+        <record model="ir.actions.act_window" id="action_list_call_details">
+            <field name="name">Call Detail Records</field>
+            <field name="res_model">telephony_isp.call_detail</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_list_suppliers">
+            <field name="name">Suppliers</field>
+            <field name="res_model">telephony_isp.supplier</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!-- END actions -->
+
+        <!-- BEGIN menus -->
+        <menuitem id="telephony_main_menu" name="ISP"/>
+
+        <menuitem id="telephony_data_menu" name="Data" parent="telephony_main_menu"/>
+        <menuitem id="telephony_cdrs_menu" parent="telephony_data_menu" name="CDRs" sequence="10"
+                  action="action_list_call_details"/>
+        <menuitem id="telephony_import_cdr_menu" parent="telephony_data_menu" name="Import CDR file" sequence="20"
+                  action="launch_import_cdr_wizard"/>
+
+        <menuitem id="telephony_settings_menu" name="Settings" parent="telephony_main_menu"/>
+        <menuitem id="telephony_supplier_menu" parent="telephony_settings_menu" name="Suppliers" sequence="30"
+                  action="action_list_suppliers"/>
+        <!-- END menus -->
+    </data>
+</openerp>

@@ -1,0 +1,30 @@
+<openerp>
+    <data>
+      <!-- BEGIN import Rate wizard -->
+      <record model="ir.ui.view" id="wizard_import_rate_form_view">
+          <field name="name">telephony_isp.import.rate.form</field>
+          <field name="model">telephony_isp.import.rate</field>
+          <field name="arch" type="xml">
+              <form string="Import Rate file">
+                  <group>
+                      <field name="supplier_id"/>
+                      <field name="rate_data"/>
+                  </group>
+              </form>
+          </field>
+      </record>
+
+      <act_window id="launch_import_rate_wizard"
+                  name="Import Rate file"
+                  src_model="telephony_isp.rate"
+                  res_model="telephony_isp.import.rate"
+                  view_mode="form"
+                  target="new"/>
+      <!-- END import Rate wizard -->
+
+      <!-- begin MENUS -->
+      <menuitem id="telephony_import_rate_menu" parent="telephony_settings_menu" name="Import Rate file" sequence="40"
+                action="launch_import_rate_wizard"/>
+      <!-- end MENUS -->
+    </data>
+</openerp>

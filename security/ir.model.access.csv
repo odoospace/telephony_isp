@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_telephony_isp_cdr,telephony_isp.cdr,model_telephony_isp,,1,0,0,0
+access_telephony_isp_ratio,telephony_isp.ratio,model_telephony_isp,,1,0,0,0
+access_telephony_isp_rate,telephony_isp.rate,model_telephony_isp,,1,0,0,0
