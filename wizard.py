@@ -1,9 +1,10 @@
 from openerp import models, fields, api
-from datetime import datetime
-from pprint import pprint
+from datetime import datetime, timedelta
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
 import StringIO
 import base64
 import csv
+import sys
 
 m = {
     'aire': {
@@ -21,8 +22,9 @@ class WizardImportCDR(models.TransientModel):
     _name = 'telephony_isp.import.cdr'
     _description = 'CDR file impport'
 
-    @api.onchange('cdr_data')
-    def cdr_data_onchange(self):
+    #@api.onchange('cdr_data')
+    @api.multi
+    def import_cdr(self):
         # read rates in memory
         if not self.cdr_data or not self.supplier_id:
             return {} #TODO: add message
@@ -53,6 +55,7 @@ class WizardImportCDR(models.TransientModel):
                 destiny = row[m[self.cdr_type]['destiny']]
                 duration = float(row[m[self.cdr_type]['duration']])
                 data = {
+                    'supplier_id': self.supplier_id.id,
                     'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%y %H:%M:%S'),
                     'origin': origin, # TODO: check ->
                     'destiny': destiny,
@@ -134,3 +137,71 @@ class WizardImportRate(models.TransientModel):
 
     supplier_id = fields.Many2one('telephony_isp.supplier', required=True)
     rate_data = fields.Binary('File')
+
+class WizardCreateInvoices(models.TransientModel):
+    _name = 'telephony_isp.create.invoice'
+    _description = 'Create invoice from call detail'
+
+    @api.multi
+    def create_invoice(self):
+        # search records
+        call_details = self.env['telephony_isp.call_detail'].search([
+            ('status', '=', 'draft'),
+            ('time', '>=',  self.date_from),
+            ('time', '<', (datetime.strptime(self.date_to, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
+        ])
+
+
+        # group by contract
+        contracts = {}
+        for i in call_details:
+            if not contracts.has_key(i.contract_id.id):
+                contracts[i.contract_id.id] = {
+                    'contract': i.contract_id,
+                    'origins': {
+                        i['origin']: {
+                            'calls': [i],
+                            'total':i .final_price
+                        }
+                    }
+                }
+            elif contracts[i.contract_id.id]['origins'].has_key(i['origin']):
+                contracts[i.contract_id.id]['origins'][i['origin']]['calls'].append(i)
+                contracts[i.contract_id.id]['origins'][i['origin']]['total'] += i.final_price
+            else:
+                contracts[i.contract_id.id]['origins'][i['origin']] = {
+                    'calls': [i],
+                    'total':i .final_price
+                }
+
+        #pprint.pprint(contracts)
+
+        # create invoices with lines
+        for i in contracts.values():
+            lines = []
+            for j in i['origins']:
+                product = i['origins'][j]['calls'][0]['supplier_id'].product_id
+                lines.append((0,0, {
+                    'product_id': product.id,
+                    'name': 'Consumo de %s' % j,
+                    'account_id': product.property_account_income.id,
+                    'account_analytic_id': i['contract'].id,
+                    'invoice_line_tax_id': [(6,0, [k.id for k in product.taxes_id])],
+                    'price_unit': i['origins'][j]['total']
+                }))
+
+            data =  {
+                'date_invoice': self.date_invoice,
+                'partner_id': i['contract'].partner_id.id,
+                'journal_id': self.journal_id.id,
+                'account_id': i['contract'].partner_id.property_account_receivable.id,
+                'payment_mode_id': i['contract'].payment_mode.id,
+                'invoice_line': lines
+            }
+            invoice = self.env['account.invoice'].create(data)
+            invoice.button_reset_taxes()
+
+    journal_id = fields.Many2one('account.journal', 'Journal', required=True)
+    date_invoice = fields.Date('Date invoice', required=True)
+    date_from = fields.Date('From', required=True)
+    date_to = fields.Date('To', required=True)

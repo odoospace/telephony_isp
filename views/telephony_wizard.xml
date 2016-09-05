@@ -10,6 +10,12 @@
                       <field name="supplier_id"/>
                       <field name="rate_data"/>
                   </group>
+                  <footer>
+                      <button name="import_cdr" type="object"
+                              string="Create" class="oe_highlight"/>
+                      or
+                      <button special="cancel" string="Cancel"/>
+                  </footer>
               </form>
           </field>
       </record>
@@ -22,9 +28,40 @@
                   target="new"/>
       <!-- END import Rate wizard -->
 
+      <record model="ir.ui.view" id="wizard_create_invoices_form_view">
+          <field name="name">telephony_isp.create.invoice.form</field>
+          <field name="model">telephony_isp.create.invoice</field>
+          <field name="arch" type="xml">
+              <form string="Create invoices">
+                  <group>
+                      <field name="journal_id"/>
+                      <field name="date_invoice"/>
+                      <field name="date_from"/>
+                      <field name="date_to"/>
+                  </group>
+                  <footer>
+                      <button name="create_invoice" type="object"
+                              string="Create" class="oe_highlight"/>
+                      or
+                      <button special="cancel" string="Cancel"/>
+                  </footer>
+              </form>
+          </field>
+      </record>
+
+      <act_window id="launch_create_invoices_wizard"
+                  name="Create Invoices"
+                  src_model="account.invoice"
+                  res_model="telephony_isp.create.invoice"
+                  view_mode="form"
+                  target="new"
+                  key2="client_action_multi"/>
+
       <!-- begin MENUS -->
       <menuitem id="telephony_import_rate_menu" parent="telephony_settings_menu" name="Import Rate file" sequence="40"
                 action="launch_import_rate_wizard"/>
+      <menuitem id="telephony_create_invoinces_menu" parent="telephony_data_menu" name="Create Invoices" sequence="25"
+                action="launch_create_invoices_wizard"/>
       <!-- end MENUS -->
     </data>
 </openerp>
