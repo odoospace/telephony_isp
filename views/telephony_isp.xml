@@ -73,40 +73,57 @@
                   <group>
                       <field name="rate_ids">
                           <tree default_order='prefix'>
+                              <field name="special"/>
                               <field name="prefix"/>
                               <field name="name"/>
                               <field name="price"/>
+                              <field name="rate"/>
                           </tree>
                       </field>
                   </group>
               </form>
           </field>
         </record>
-        <!-- END view supplier tree -->
+        <!-- END view supplier form -->
 
-        <!-- BEGIN import CDR wizard -->
-        <record model="ir.ui.view" id="wizard_import_cdr_form_view">
-            <field name="name">telephony_isp.import.cdr.form</field>
-            <field name="model">telephony_isp.import.cdr</field>
+        <!-- BEGIN view rate tree -->
+        <record model="ir.ui.view" id="view_telephony_isp_rate_tree">
+            <field name="name">telephony_isp.rate.tree</field>
+            <field name="model">telephony_isp.rate</field>
             <field name="arch" type="xml">
-                <form string="Import CDR file">
-                    <group>
-                        <field name="supplier_id"/>
-                        <field name="cdr_type"/>
-                        <field name="cdr_data"/>
-                    </group>
-                </form>
-            </field>
+              <tree string="Suppliers">
+                  <field name="supplier_id"/>
+                  <field name="prefix"/>
+                  <field name="special"/>
+                  <field name="segment"/>
+                  <field name="cost"/>
+                  <field name="price"/>
+                  <field name="rate"/>
+              </tree>
+          </field>
         </record>
+        <!-- END view rate tree -->
 
-        <act_window id="launch_import_cdr_wizard"
-                    name="Import CDR file"
-                    src_model="telephony_isp.call_detail"
-                    res_model="telephony_isp.import.cdr"
-                    view_mode="form"
-                    target="new"
-                    key2="client_action_multi"/>
-        <!-- END import CDR wizard -->
+        <!-- BEGIN view rate form -->
+        <record model="ir.ui.view" id="view_telephony_isp_rate_form">
+            <field name="name">telephony_isp.rate.form</field>
+            <field name="model">telephony_isp.rate</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="Rate">
+                  <group>
+                      <field name="supplier_id"/>
+                      <field name="special"/>
+                      <field name="prefix"/>
+                      <field name="segment"/>
+                      <field name="name"/>
+                      <field name="price" attrs="{'invisible':[('special', '=', True)]}"/>
+                      <field name="rate" attrs="{'invisible':[('special', '=', False)]}" />
+                  </group>
+              </form>
+          </field>
+        </record>
+        <!-- END view rate form -->
 
 
         <!-- BEGIN actions -->
@@ -119,6 +136,12 @@
         <record model="ir.actions.act_window" id="action_list_suppliers">
             <field name="name">Suppliers</field>
             <field name="res_model">telephony_isp.supplier</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_list_rates">
+            <field name="name">Rates</field>
+            <field name="res_model">telephony_isp.rate</field>
             <field name="view_mode">tree,form</field>
         </record>
         <!-- END actions -->
@@ -135,6 +158,8 @@
         <menuitem id="telephony_settings_menu" name="Settings" parent="telephony_main_menu"/>
         <menuitem id="telephony_supplier_menu" parent="telephony_settings_menu" name="Suppliers" sequence="30"
                   action="action_list_suppliers"/>
+        <menuitem id="telephony_rates_menu" parent="telephony_settings_menu" name="Rates" sequence="34"
+                  action="action_list_rates"/>
         <!-- END menus -->
     </data>
 </openerp>

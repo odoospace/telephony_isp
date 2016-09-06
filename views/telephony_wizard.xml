@@ -1,5 +1,29 @@
 <openerp>
     <data>
+      <!-- BEGIN import CDR wizard -->
+      <record model="ir.ui.view" id="wizard_import_cdr_form_view">
+          <field name="name">telephony_isp.import.cdr.form</field>
+          <field name="model">telephony_isp.import.cdr</field>
+          <field name="arch" type="xml">
+              <form string="Import CDR file">
+                  <group>
+                      <field name="supplier_id"/>
+                      <field name="cdr_type"/>
+                      <field name="cdr_data"/>
+                  </group>
+              </form>
+          </field>
+      </record>
+
+      <act_window id="launch_import_cdr_wizard"
+                  name="Import CDR file"
+                  src_model="telephony_isp.call_detail"
+                  res_model="telephony_isp.import.cdr"
+                  view_mode="form"
+                  target="new"
+                  key2="client_action_multi"/>
+      <!-- END import CDR wizard -->
+      
       <!-- BEGIN import Rate wizard -->
       <record model="ir.ui.view" id="wizard_import_rate_form_view">
           <field name="name">telephony_isp.import.rate.form</field>

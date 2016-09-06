@@ -52,6 +52,14 @@ class rate(models.Model):
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
     name = fields.Char() # network
+    segment = fields.Selection([
+        ('domestic_number', 'Domestic Number'),
+        ('domestic_mobile', 'Domestic Mobile'),
+        ('international', 'Intenational'),
+        ('Other', 'Other')],
+        default='raw')
     prefix = fields.Char()
-    cost = fields.Float(digits=(2, 6))
-    price = fields.Float(digits=(2, 6))
+    special = fields.Boolean('Special', help='This number is special and it\'ll use rate')
+    cost = fields.Float(digits=(2, 6), help='Reference cost')
+    price = fields.Float(digits=(2, 6), help='Price by minute') # price is fix
+    rate = fields.Float(digits=(2, 6), help='Percentaje for special numbers') # rate percentage
