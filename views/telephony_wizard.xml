@@ -11,6 +11,12 @@
                       <field name="cdr_type"/>
                       <field name="cdr_data"/>
                   </group>
+                  <footer>
+                      <button name="import_cdr" type="object"
+                              string="Create" class="oe_highlight"/>
+                      or
+                      <button special="cancel" string="Cancel"/>
+                  </footer>
               </form>
           </field>
       </record>
@@ -23,7 +29,7 @@
                   target="new"
                   key2="client_action_multi"/>
       <!-- END import CDR wizard -->
-      
+
       <!-- BEGIN import Rate wizard -->
       <record model="ir.ui.view" id="wizard_import_rate_form_view">
           <field name="name">telephony_isp.import.rate.form</field>
@@ -35,7 +41,7 @@
                       <field name="rate_data"/>
                   </group>
                   <footer>
-                      <button name="import_cdr" type="object"
+                      <button name="import_rate" type="object"
                               string="Create" class="oe_highlight"/>
                       or
                       <button special="cancel" string="Cancel"/>

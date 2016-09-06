@@ -104,8 +104,9 @@ class WizardImportRate(models.TransientModel):
     _name = 'telephony_isp.import.rate'
     _description = 'Rate file impport'
 
-    @api.onchange('rate_data')
-    def _onchange_rate_data(self):
+    #@api.onchange('rate_data')
+    @api.multi
+    def import_rate(self):
         if self.rate_data and self.supplier_id:
             f = StringIO.StringIO(base64.decodestring(self.rate_data))
             dialect = csv.Sniffer().sniff(f.read(1024))
