@@ -2,6 +2,32 @@
 
 from openerp import models, fields, api
 
+class account_invoice(models.Model):
+    _inherit = 'account.invoice'
+
+    is_telephony = fields.Boolean() # internal field in invoice
+
+
+class product_product(models.Model):
+    _inherit = 'product.product'
+
+    telephony_ok = fields.Boolean('Can be used in telephony', help='This product can be used for telephony')
+    telephony_ids = fields.One2many('product.telephony', 'product_id')
+
+
+class product_telephony(models.Model):
+    _name = 'product.telephony'
+
+    product_id = fields.Many2one('product.product')
+    segment = fields.Selection([
+        ('domestic_number', 'Domestic Number'),
+        ('domestic_mobile', 'Domestic Mobile'),
+        ('international', 'Intenational'),
+        ('Other', 'Other')]
+    )
+    minutes_free = fields.Integer('Minutes free')
+
+
 class call_detail(models.Model):
     _name = 'telephony_isp.call_detail'
 
@@ -9,10 +35,12 @@ class call_detail(models.Model):
     name = fields.Char() # carrier destination network
     cdr_id = fields.Char()
     supplier_id = fields.Many2one('telephony_isp.supplier') # supplier
-    contract_id = fields.Many2one('account.analytic.account') # contract
+    contract_line_id = fields.Many2one('account.analytic.invoice.line') # contract line
+    contract = fields.Many2one(related='contract_line_id.analytic_account_id') # contract
     invoice_id = fields.Many2one('account.invoice') # invoice
-    partner = fields.Many2one(related='contract_id.partner_id')
-    contract_code = fields.Char(related='contract_id.code')
+    partner = fields.Many2one(related='contract_line_id.analytic_account_id.partner_id', store=True)
+    contract_code = fields.Char(related='contract_line_id.analytic_account_id.code', store=True)
+    product = fields.Many2one(related='contract_line_id.product_id', store=True)
     time = fields.Datetime()
     origin = fields.Char()
     destiny = fields.Char()
@@ -25,7 +53,7 @@ class call_detail(models.Model):
         ('raw', 'Raw'),
         ('draft', 'Draft'),
         ('invoiced', 'Invoiced'),
-        ('free', 'Free'),
+        ('free', 'Free (invoiced)'),
         ('error', 'Error')],
         default='raw')
     to_invoice = fields.Boolean(default=True) # False -> free
@@ -56,8 +84,8 @@ class rate(models.Model):
         ('domestic_number', 'Domestic Number'),
         ('domestic_mobile', 'Domestic Mobile'),
         ('international', 'Intenational'),
-        ('Other', 'Other')],
-        default='raw')
+        ('Other', 'Other')]
+    )
     prefix = fields.Char()
     special = fields.Boolean('Special', help='This number is special and it\'ll use rate')
     cost = fields.Float(digits=(2, 6), help='Reference cost')

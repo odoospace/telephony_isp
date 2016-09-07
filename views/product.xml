@@ -1,0 +1,32 @@
+<openerp>
+    <data>
+        <!-- BEGIN view product form -->
+        <record id="product_normal_form_view_telephony" model="ir.ui.view">
+            <field name="name">product.product.form.telephony</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view" />
+            <field name="domain">[('telephony_ok','=',True)]</field>
+            <field name="arch" type="xml">
+                <div name="options" position="inside">
+                    <div>
+                        <field name="telephony_ok"/>
+                        <label for="telephony_ok"/>
+                    </div>
+                </div>
+                <xpath expr="//page[@string='Accounting']" position="after">
+                    <page string="Telephony" attrs="{'invisible':[('telephony_ok','=',False)]}">
+                        <group string="Telephony Data">
+                            <field name="telephony_ids" widget="one2many_list" nolabel="1">
+                                <tree string="Telephony data" editable="bottom">
+                                    <field name="segment"/>
+                                    <field name="minutes_free"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <!-- END view product form -->
+    </data>
+</openerp>

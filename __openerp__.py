@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account', 'analytic'],
+    'depends': ['base', 'account', 'account_analytic_analysis', 'product'],
 
     # always loaded
     'data': [
@@ -28,6 +28,7 @@
         'templates.xml',
         'views/telephony_isp.xml',
         'views/telephony_wizard.xml',
+        'views/product.xml',
     ],
     # only loaded in demonstration mode
     #'demo': [

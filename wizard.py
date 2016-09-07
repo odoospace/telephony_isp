@@ -65,13 +65,13 @@ class WizardImportCDR(models.TransientModel):
 
                 # don't repeat searches with contracts
                 if contracts.has_key(data['origin']) and contracts[data['origin']]:
-                    data['contract_id'] = contracts[data['origin']]
+                    data['contract_line_id'] = contracts[data['origin']]
                     data['status'] = 'draft'
                 elif not contracts.has_key(data['origin']):
-                    contract = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
-                    if len(contract) == 1 :
-                        contracts[data['origin']] = contract[0].analytic_account_id.id
-                        data['contract_id'] = contract[0].analytic_account_id.id
+                    contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
+                    if len(contract_line) == 1 :
+                        contracts[data['origin']] = contract_line[0].id
+                        data['contract_line_id'] = contract_line[0].id
                         data['status'] = 'draft'
                     else:
                         contracts[data['origin']] = None
@@ -81,7 +81,7 @@ class WizardImportCDR(models.TransientModel):
 
                 rate = get_rate(destiny)
                 if rate:
-                    data['final_price'] = rate.price / 60. * duration
+                    data['final_price'] = rate.price / 60. * duration # seconds -> minute
                     data['rate_id'] = rate.id
                     if data['final_price'] == 0:
                         data['status'] = 'free'
@@ -150,15 +150,14 @@ class WizardCreateInvoices(models.TransientModel):
             ('status', '=', 'draft'),
             ('time', '>=',  self.date_from),
             ('time', '<', (datetime.strptime(self.date_to, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
-        ])
-
+        ], order='time')
 
         # group by contract
         contracts = {}
         for i in call_details:
             if not contracts.has_key(i.contract_id.id):
                 contracts[i.contract_id.id] = {
-                    'contract': i.contract_id,
+                    'contract': i.contract,
                     'origins': {
                         i['origin']: {
                             'calls': [i],
@@ -166,11 +165,11 @@ class WizardCreateInvoices(models.TransientModel):
                         }
                     }
                 }
-            elif contracts[i.contract_id.id]['origins'].has_key(i['origin']):
-                contracts[i.contract_id.id]['origins'][i['origin']]['calls'].append(i)
-                contracts[i.contract_id.id]['origins'][i['origin']]['total'] += i.final_price
+            elif contracts[i.contract.id]['origins'].has_key(i['origin']):
+                contracts[i.contract.id]['origins'][i['origin']]['calls'].append(i)
+                contracts[i.contract.id]['origins'][i['origin']]['total'] += i.final_price
             else:
-                contracts[i.contract_id.id]['origins'][i['origin']] = {
+                contracts[i.contract.id]['origins'][i['origin']] = {
                     'calls': [i],
                     'total':i .final_price
                 }
@@ -192,6 +191,7 @@ class WizardCreateInvoices(models.TransientModel):
                 }))
 
             data =  {
+                'is_telephony': True,
                 'date_invoice': self.date_invoice,
                 'partner_id': i['contract'].partner_id.id,
                 'journal_id': self.journal_id.id,

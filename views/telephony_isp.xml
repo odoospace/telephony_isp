@@ -8,6 +8,7 @@
               <tree string="Call Detail Record" colors="red:status=='error'">
                   <field name="partner"/>
                   <field name="contract_code"/>
+                  <field name="product"/>
                   <field name="time"/>
                   <field name="origin"/>
                   <field name="destiny"/>
@@ -33,10 +34,18 @@
                     <field name="time"/>
                     <field name="origin"/>
                     <field name="destiny"/>
+                    <filter string="To Invoice" domain="[('status','=','draft')]" help="Call to be invoiced"/>
+                    <filter string="With errors" domain="[('status','=','error')]" help="Call with an error"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Origin" domain="[]" context="{'group_by':'origin'}"/>
+                        <filter string="Partner" domain="[]" context="{'group_by':'partner'}"/>
+                        <filter string="Contract" domain="[]" context="{'group_by':'contract_code'}"/>
+                    </group>
                 </search>
             </field>
         </record>
         <!-- END view call details search -->
+
 
         <!-- BEGIN view supplier tree -->
         <record model="ir.ui.view" id="view_telephony_isp_supplier_tree">
