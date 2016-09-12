@@ -152,6 +152,8 @@ class WizardCreateInvoices(models.TransientModel):
         minutes = {}
         #print '>>>', product_telephony, product_telephony.telephony_ids
         for j in product_telephony.telephony_ids:
+            if not minutes.has_key(origin):
+                minutes[origin] = {}
             minutes[origin][j.segment] = float(j.minutes_free)
 
         return minutes # could be {}
