@@ -87,7 +87,7 @@
                               <field name="prefix"/>
                               <field name="name"/>
                               <field name="price"/>
-                              <field name="rate"/>
+                              <field name="ratio"/>
                           </tree>
                       </field>
                   </group>
@@ -108,7 +108,7 @@
                   <field name="segment"/>
                   <field name="cost"/>
                   <field name="price"/>
-                  <field name="rate"/>
+                  <field name="ratio"/>
               </tree>
           </field>
         </record>
@@ -128,7 +128,7 @@
                       <field name="segment"/>
                       <field name="name"/>
                       <field name="price" attrs="{'invisible':[('special', '=', True)]}"/>
-                      <field name="rate" attrs="{'invisible':[('special', '=', False)]}" />
+                      <field name="ratio" attrs="{'invisible':[('special', '=', False)]}" />
                   </group>
               </form>
           </field>

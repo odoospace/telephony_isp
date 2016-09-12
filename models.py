@@ -59,6 +59,7 @@ class call_detail(models.Model):
     note = fields.Text()
     status = fields.Selection([
         ('raw', 'Raw'),
+        ('default', 'Default'),
         ('draft', 'Draft'),
         ('invoiced', 'Invoiced'),
         ('free', 'Free (invoiced)'),
@@ -98,7 +99,7 @@ class rate(models.Model):
     special = fields.Boolean('Special', help='This number is special and it\'ll use rate')
     cost = fields.Float(digits=(2, 6), help='Reference cost')
     price = fields.Float(digits=(2, 6), help='Price by minute') # price is fix
-    rate = fields.Float(digits=(2, 6), help='Percentaje for special numbers') # rate percentage
+    ratio = fields.Float(digits=(2, 6), help='Percentaje for special numbers') # rate percentage
 
 
 class period(models.Model):

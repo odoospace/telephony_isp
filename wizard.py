@@ -81,13 +81,16 @@ class WizardImportCDR(models.TransientModel):
 
                 rate = get_rate(destiny)
                 if rate:
-                    data['amount'] = rate.price / 60. * duration # seconds -> minute
-                    data['rate_id'] = rate.id
-                    if data['amount'] == 0:
-                        data['status'] = 'free'
+                    if rate.special:
+                        data['amount'] = data['cost'] + data['cost'] * rate.ratio / 100.
+                    else:
+                        data['amount'] = rate.price / 60. * duration # seconds -> minute
+                        data['rate_id'] = rate.id
+                        if data['amount'] == 0:
+                            data['status'] = 'free'
                 else:
-                    data['amount'] = 0
-                    data['status'] = 'error'
+                    data['amount'] = data['cost'] + data['cost'] * self.supplier_id.ratio / 100.
+                    data['status'] = 'default'
 
                 # don't repeat searchs with rates
 
