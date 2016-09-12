@@ -66,8 +66,8 @@
                   <group>
                       <field name="journal_id"/>
                       <field name="date_invoice"/>
-                      <field name="date_from"/>
-                      <field name="date_to"/>
+                      <field name="date_start"/>
+                      <field name="date_end"/>
                   </group>
                   <footer>
                       <button name="create_invoice" type="object"

@@ -81,12 +81,12 @@ class WizardImportCDR(models.TransientModel):
 
                 rate = get_rate(destiny)
                 if rate:
-                    data['final_price'] = rate.price / 60. * duration # seconds -> minute
+                    data['amount'] = rate.price / 60. * duration # seconds -> minute
                     data['rate_id'] = rate.id
-                    if data['final_price'] == 0:
+                    if data['amount'] == 0:
                         data['status'] = 'free'
                 else:
-                    data['final_price'] = 0
+                    data['amount'] = 0
                     data['status'] = 'error'
 
                 # don't repeat searchs with rates
@@ -143,41 +143,87 @@ class WizardCreateInvoices(models.TransientModel):
     _name = 'telephony_isp.create.invoice'
     _description = 'Create invoice from call detail'
 
+    def get_minutes_free(self, origin, product_id):
+        """get telephony data from products"""
+        product_telephony = self.env['product.product'].search([('id', '=', product_id)])
+        minutes = {}
+        #print '>>>', product_telephony, product_telephony.telephony_ids
+        for j in product_telephony.telephony_ids:
+            minutes[origin][j.segment] = float(j.minutes_free)
+
+        return minutes # could be {}
+
     @api.multi
     def create_invoice(self):
         # search records
         call_details = self.env['telephony_isp.call_detail'].search([
-            ('status', '=', 'draft'),
-            ('time', '>=',  self.date_from),
-            ('time', '<', (datetime.strptime(self.date_to, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
+            ('status', 'in', ['draft', 'invoiced', 'free']),
+            ('time', '>=',  self.date_start),
+            ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
         ], order='time')
 
         # group by contract
         contracts = {}
         for i in call_details:
-            if not contracts.has_key(i.contract_id.id):
-                contracts[i.contract_id.id] = {
+            # contracts
+            if not contracts.has_key(i.contract.id):
+                # first origin
+                contracts[i.contract.id] = {
                     'contract': i.contract,
                     'origins': {
-                        i['origin']: {
+                        i.origin: {
+                            'product': i.product,
                             'calls': [i],
-                            'total':i .final_price
+                            'minutes': self.get_minutes_free(i.origin, i.product.id)
                         }
                     }
                 }
-            elif contracts[i.contract.id]['origins'].has_key(i['origin']):
-                contracts[i.contract.id]['origins'][i['origin']]['calls'].append(i)
-                contracts[i.contract.id]['origins'][i['origin']]['total'] += i.final_price
+
+                # check for free calls
+                if i.rate_id.segment and contracts[i.contract.id]['origins'][i.origin]['minutes'].has_key(i.rate_id.segment):
+                    contracts[i.contract.id]['origins'][i.origin]['minutes'][i.segment] -= i.duration / 60.
+                    d = contracts[i.contract.id]['origins'][i.origin]['minutes'][i.segment]
+                    if d > 0:
+                        amount = 0
+                    elif d > i.duration:
+                        amount = i.amount / i.duration * abs(d)
+                    else:
+                        amount = i.amount
+                else:
+                    amount = i.amount
+                contracts[i.contract.id]['origins'][i.origin]['total'] = amount
+
+            elif contracts[i.contract.id]['origins'].has_key(i.origin):
+                contracts[i.contract.id]['origins'][i.origin]['calls'].append(i)
+                contracts[i.contract.id]['origins'][i.origin]['total'] += i.amount
             else:
-                contracts[i.contract.id]['origins'][i['origin']] = {
+                # TODO: KISS (refactor this!)
+                # new origin
+                contracts[i.contract.id]['origins'][i.origin] = {
                     'calls': [i],
-                    'total':i .final_price
+                    'minutes': self.get_minutes_free(i.origin, i.product.id)
                 }
 
-        #pprint.pprint(contracts)
+                # check for free calls
+                if i.rate_id.segment and contracts[i.contract.id]['origins'][i.origin]['minutes'].has_key(i.rate_id.segment):
+                    contracts[i.contract.id]['origins'][i.origin]['minutes'][i.segment] -= i.duration / 60.
+                    d = contracts[i.contract.id]['origins'][i.origin]['minutes'][i.segment]
+                    if d > 0:
+                        amount = 0
+                    elif d > i.duration:
+                        amount = i.amount / i.duration * abs(d)
+                    else:
+                        amount = i.amount
+                else:
+                    amount = i.amount
+                contracts[i.contract.id]['origins'][i.origin]['total'] = amount
 
         # create invoices with lines
+        print len(call_details)
+        invoices = []
+        amount = 0
         for i in contracts.values():
+            # invoice lines
             lines = []
             for j in i['origins']:
                 product = i['origins'][j]['calls'][0]['supplier_id'].product_id
@@ -189,20 +235,42 @@ class WizardCreateInvoices(models.TransientModel):
                     'invoice_line_tax_id': [(6,0, [k.id for k in product.taxes_id])],
                     'price_unit': i['origins'][j]['total']
                 }))
+                amount += i['origins'][j]['total']
 
-            data =  {
-                'is_telephony': True,
-                'date_invoice': self.date_invoice,
-                'partner_id': i['contract'].partner_id.id,
-                'journal_id': self.journal_id.id,
-                'account_id': i['contract'].partner_id.property_account_receivable.id,
-                'payment_mode_id': i['contract'].payment_mode.id,
-                'invoice_line': lines
-            }
-            invoice = self.env['account.invoice'].create(data)
-            invoice.button_reset_taxes()
+                # invoice
+                data =  {
+                    'is_telephony': True,
+                    'date_invoice': self.date_invoice,
+                    'partner_id': i['contract'].partner_id.id,
+                    'journal_id': self.journal_id.id,
+                    'account_id': i['contract'].partner_id.property_account_receivable.id,
+                    'payment_mode_id': i['contract'].payment_mode.id,
+                    'invoice_line': lines
+                }
+
+                invoice = self.env['account.invoice'].create(data)
+
+                # link calls with its invoice
+                for k in i['origins'][j]['calls']:
+                    k.write({'invoice_id': invoice.id})
+
+                # recalc taxes
+                invoice.button_reset_taxes()
+
+                # append invoice to period
+                invoices.append(invoice)
+
+        data = {
+            'date_start': self.date_start,
+            'date_end': self.date_end,
+            'invoice_ids': [(6,0, [k.id for k in invoices])],
+            'call_details_ids': [(6,0, [k.id for k in call_details])],
+            'amount': amount
+        }
+        print data
+        self.env['telephony_isp.period'].create(data)
 
     journal_id = fields.Many2one('account.journal', 'Journal', required=True)
     date_invoice = fields.Date('Date invoice', required=True)
-    date_from = fields.Date('From', required=True)
-    date_to = fields.Date('To', required=True)
+    date_start= fields.Date('From', required=True)
+    date_end = fields.Date('To', required=True)

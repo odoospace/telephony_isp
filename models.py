@@ -6,6 +6,8 @@ class account_invoice(models.Model):
     _inherit = 'account.invoice'
 
     is_telephony = fields.Boolean() # internal field in invoice
+    telephony_ids = fields.One2many('telephony_isp.call_detail', 'invoice_id') # use related field
+    telephony_period_id = fields.Many2one('telephony_isp.period')
 
 
 class product_product(models.Model):
@@ -31,13 +33,19 @@ class product_telephony(models.Model):
 class call_detail(models.Model):
     _name = 'telephony_isp.call_detail'
 
+    @api.multi
+    def set_status(self, status):
+        self.write({'status': status})
+
     # TODO: add related field to contract_id with customer
     name = fields.Char() # carrier destination network
     cdr_id = fields.Char()
     supplier_id = fields.Many2one('telephony_isp.supplier') # supplier
+    period_id = fields.Many2one('telephony_isp.period') # period
     contract_line_id = fields.Many2one('account.analytic.invoice.line') # contract line
     contract = fields.Many2one(related='contract_line_id.analytic_account_id') # contract
-    invoice_id = fields.Many2one('account.invoice') # invoice
+    #invoice_line_id = fields.Many2one('account.invoice.line') # invoice line
+    invoice_id = fields.Many2one('account.invoice')
     partner = fields.Many2one(related='contract_line_id.analytic_account_id.partner_id', store=True)
     contract_code = fields.Char(related='contract_line_id.analytic_account_id.code', store=True)
     product = fields.Many2one(related='contract_line_id.product_id', store=True)
@@ -47,7 +55,7 @@ class call_detail(models.Model):
     rate_id = fields.Many2one('telephony_isp.rate', 'Rate') # rate
     duration = fields.Integer() # in seconds
     cost = fields.Float(digits=(2, 6))
-    final_price = fields.Float(digits=(2, 6))
+    amount = fields.Float(digits=(2, 6))
     note = fields.Text()
     status = fields.Selection([
         ('raw', 'Raw'),
@@ -79,7 +87,7 @@ class rate(models.Model):
     _name = 'telephony_isp.rate'
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
-    name = fields.Char() # network
+    name = fields.Char() # TODO: remove this one?
     segment = fields.Selection([
         ('domestic_number', 'Domestic Number'),
         ('domestic_mobile', 'Domestic Mobile'),
@@ -91,3 +99,16 @@ class rate(models.Model):
     cost = fields.Float(digits=(2, 6), help='Reference cost')
     price = fields.Float(digits=(2, 6), help='Price by minute') # price is fix
     rate = fields.Float(digits=(2, 6), help='Percentaje for special numbers') # rate percentage
+
+
+class period(models.Model):
+    """Price to apply to call cost"""
+    _name = 'telephony_isp.period'
+
+    #supplier_id = fields.Many2one('telephony_isp.supplier', 'Supplier')
+    invoice_ids = fields.One2many('account.invoice', 'telephony_period_id', 'Invoices')
+    call_details_ids = fields.One2many('telephony_isp.call_detail', 'period_id', 'Call detail')
+    name = fields.Char() # TODO: remove this one?
+    date_start = fields.Date()
+    date_end = fields.Date()
+    amount = fields.Float() # total

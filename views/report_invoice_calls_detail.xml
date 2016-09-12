@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+<template id="report_invoice_calls_detail" inherit_id="account.report_invoice_document">
+    <xpath expr="//div[@class='row']" position="after">
+      <p style="page-break-before:always;"> </p>
+
+      <table class="table table-condensed"  style="position:relative;top:85px;right:-45px;font-size:13px;width:685px">
+         <thead>
+             <tr>
+                 <th style="font-weight:normal">Date - Hour</th>
+                 <th style="font-weight:normal">Origin</th>
+                 <th style="font-weight:normal">Destiny</th>
+                 <th style="font-weight:normal" class="text-right">Duration</th>
+                 <th style="font-weight:normal" class="text-right">Amount</th>
+             </tr>
+         </thead>
+         <tbody class="invoice_tbody">
+             <tr t-foreach="o.telephony_ids" t-as="c">
+                 <td>
+                     <span t-field="c.time"/>
+                 </td>
+                 <td>
+                     <span t-field="c.origin"/>
+                 </td>
+                 <td><span t-field="c.destiny"/></td>
+                 <td class="text-right">
+                     <span t-field="c.duration" />
+                 </td>
+                 <td class="text-right">
+                     <span t-field="c.amount"/>
+                 </td>
+             </tr>
+         </tbody>
+      </table>
+    </xpath>
+</template>
+</data>
+</openerp>

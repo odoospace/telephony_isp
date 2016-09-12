@@ -1,0 +1,31 @@
+<openerp>
+    <data>
+        <!-- BEGIN view product form -->
+        <record id="account_invoice_form_telephony" model="ir.ui.view">
+            <field name="name">account.invoice.form.telephony</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Payments']" position="after">
+                    <page string="Call details" attrs="{'invisible':[('is_telephony','=',False)]}">
+                        <field name="is_telephony" attrs="{'invisible': 1}"/>
+                        <field name="telephony_ids" widget="one2many_list" nolabel="1">
+                            <tree string="Call details" default_order='time' editable="bottom">
+                              <field name="contract_code"/>
+                              <field name="product"/>
+                              <field name="time"/>
+                              <field name="origin"/>
+                              <field name="destiny"/>
+                              <field name="rate_id"/>
+                              <field name="duration"/>
+                              <field name="cost"/>
+                              <field name="amount" sum="Total Amount"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <!-- END view product form -->
+    </data>
+</openerp>

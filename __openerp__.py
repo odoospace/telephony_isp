@@ -29,6 +29,8 @@
         'views/telephony_isp.xml',
         'views/telephony_wizard.xml',
         'views/product.xml',
+        'views/invoice.xml',
+        'views/report_invoice_calls_detail.xml'
     ],
     # only loaded in demonstration mode
     #'demo': [
