@@ -186,8 +186,6 @@
                   action="action_list_call_details"/>
         <menuitem id="telephony_periods_menu" parent="telephony_data_menu" name="Periods" sequence="11"
                   action="action_list_periods"/>
-        <menuitem id="telephony_import_cdr_menu" parent="telephony_data_menu" name="Import CDR file" sequence="20"
-                  action="launch_import_cdr_wizard"/>
 
         <menuitem id="telephony_settings_menu" name="Settings" parent="telephony_main_menu"/>
         <menuitem id="telephony_supplier_menu" parent="telephony_settings_menu" name="Suppliers" sequence="30"

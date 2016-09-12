@@ -88,6 +88,8 @@
                   key2="client_action_multi"/>
 
       <!-- begin MENUS -->
+      <menuitem id="telephony_import_cdr_menu" parent="telephony_data_menu" name="Import CDR file" sequence="20"
+                action="launch_import_cdr_wizard"/>
       <menuitem id="telephony_import_rate_menu" parent="telephony_settings_menu" name="Import Rate file" sequence="40"
                 action="launch_import_rate_wizard"/>
       <menuitem id="telephony_create_invoinces_menu" parent="telephony_data_menu" name="Create Invoices" sequence="25"
