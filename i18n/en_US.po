@@ -1,0 +1,658 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* telephony_isp
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-09-14 08:32+0000\n"
+"PO-Revision-Date: 2016-09-14 08:32+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: telephony_isp
+#: selection:telephony_isp.import.cdr,cdr_type:0
+msgid "Aire Networks"
+msgstr "Aire Networks"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,amount:0
+#: field:telephony_isp.period,amount:0
+#: view:website:account.report_invoice_document
+msgid "Amount"
+msgstr "Amount"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,contract:0
+msgid "Analytic Account"
+msgstr "Analytic Account"
+
+#. module: telephony_isp
+#: model:ir.model,name:telephony_isp.model_telephony_isp_import_cdr
+msgid "CDR file impport"
+msgstr "CDR file impport"
+
+#. module: telephony_isp
+#: field:telephony_isp.import.cdr,cdr_type:0
+msgid "CDR type"
+msgstr "CDR type"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_tree
+msgid "Call Detail Record"
+msgstr "Call Detail Record"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.action_list_call_details
+msgid "Call Detail Records"
+msgstr "Call Detail Records"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+#: field:telephony_isp.period,call_details_ids:0
+msgid "Call detail"
+msgstr "Call detail"
+
+#. module: telephony_isp
+#: view:account.invoice:telephony_isp.account_invoice_form_telephony
+#: model:ir.ui.menu,name:telephony_isp.telephony_cdrs_menu
+msgid "Call details"
+msgstr "Call details"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+msgid "Call to be invoiced"
+msgstr "Call to be invoiced"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+msgid "Call with an error"
+msgstr "Call with an error"
+
+#. module: telephony_isp
+#: field:product.product,telephony_ok:0
+msgid "Can be used in telephony"
+msgstr "Can be used in telephony"
+
+#. module: telephony_isp
+#: view:telephony_isp.create.invoice:telephony_isp.wizard_create_invoices_form_view
+#: view:telephony_isp.import.cdr:telephony_isp.wizard_import_cdr_form_view
+#: view:telephony_isp.import.rate:telephony_isp.wizard_import_rate_form_view
+msgid "Cancel"
+msgstr "Cancel"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,cdr_id:0
+msgid "Cdr id"
+msgstr "Cdr id"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+msgid "Contract"
+msgstr "Contract"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,contract_line_id:0
+msgid "Contract line id"
+msgstr "Contract line id"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,cost:0
+#: field:telephony_isp.rate,cost:0
+msgid "Cost"
+msgstr "Cost"
+
+#. module: telephony_isp
+#: view:telephony_isp.create.invoice:telephony_isp.wizard_create_invoices_form_view
+#: view:telephony_isp.import.rate:telephony_isp.wizard_import_rate_form_view
+msgid "Create"
+msgstr "Create"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.launch_create_invoices_wizard
+#: model:ir.ui.menu,name:telephony_isp.telephony_create_invoinces_menu
+msgid "Create Invoices"
+msgstr "Create Invoices"
+
+#. module: telephony_isp
+#: model:ir.model,name:telephony_isp.model_telephony_isp_create_invoice
+msgid "Create invoice from call detail"
+msgstr "Create invoice from call detail"
+
+#. module: telephony_isp
+#: view:telephony_isp.create.invoice:telephony_isp.wizard_create_invoices_form_view
+msgid "Create invoices"
+msgstr "Create invoices"
+
+#. module: telephony_isp
+#: field:product.telephony,create_uid:0
+#: field:telephony_isp.call_detail,create_uid:0
+#: field:telephony_isp.create.invoice,create_uid:0
+#: field:telephony_isp.import.cdr,create_uid:0
+#: field:telephony_isp.import.rate,create_uid:0
+#: field:telephony_isp.period,create_uid:0
+#: field:telephony_isp.rate,create_uid:0
+#: field:telephony_isp.supplier,create_uid:0
+msgid "Created by"
+msgstr "Created by"
+
+#. module: telephony_isp
+#: field:product.telephony,create_date:0
+#: field:telephony_isp.call_detail,create_date:0
+#: field:telephony_isp.create.invoice,create_date:0
+#: field:telephony_isp.import.cdr,create_date:0
+#: field:telephony_isp.import.rate,create_date:0
+#: field:telephony_isp.period,create_date:0
+#: field:telephony_isp.rate,create_date:0
+#: field:telephony_isp.supplier,create_date:0
+msgid "Created on"
+msgstr "Created on"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,partner:0
+msgid "Customer"
+msgstr "Customer"
+
+#. module: telephony_isp
+#: model:ir.ui.menu,name:telephony_isp.telephony_data_menu
+msgid "Data"
+msgstr "Data"
+
+#. module: telephony_isp
+#: view:website:account.report_invoice_document
+msgid "Date - Hour"
+msgstr "Date - Hour"
+
+#. module: telephony_isp
+#: field:telephony_isp.period,date_end:0
+#: field:telephony_isp.supplier,date_end:0
+msgid "Date end"
+msgstr "Date end"
+
+#. module: telephony_isp
+#: field:telephony_isp.create.invoice,date_invoice:0
+msgid "Date invoice"
+msgstr "Date invoice"
+
+#. module: telephony_isp
+#: field:telephony_isp.period,date_start:0
+#: field:telephony_isp.supplier,date_start:0
+msgid "Date start"
+msgstr "Date start"
+
+#. module: telephony_isp
+#: selection:telephony_isp.call_detail,status:0
+msgid "Default"
+msgstr "Default"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+#: field:telephony_isp.call_detail,destiny:0
+#: view:website:account.report_invoice_document
+msgid "Destiny"
+msgstr "Destiny"
+
+#. module: telephony_isp
+#: field:product.telephony,display_name:0
+#: field:telephony_isp.call_detail,display_name:0
+#: field:telephony_isp.create.invoice,display_name:0
+#: field:telephony_isp.import.cdr,display_name:0
+#: field:telephony_isp.import.rate,display_name:0
+#: field:telephony_isp.period,display_name:0
+#: field:telephony_isp.rate,display_name:0
+#: field:telephony_isp.supplier,display_name:0
+msgid "Display Name"
+msgstr "Display Name"
+
+#. module: telephony_isp
+#: selection:product.telephony,segment:0
+#: selection:telephony_isp.rate,segment:0
+msgid "Domestic Mobile"
+msgstr "Domestic Mobile"
+
+#. module: telephony_isp
+#: selection:product.telephony,segment:0
+#: selection:telephony_isp.rate,segment:0
+msgid "Domestic Number"
+msgstr "Domestic Number"
+
+#. module: telephony_isp
+#: selection:telephony_isp.call_detail,status:0
+msgid "Draft"
+msgstr "Draft"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,duration:0
+#: view:website:account.report_invoice_document
+msgid "Duration"
+msgstr "Duration"
+
+#. module: telephony_isp
+#: selection:telephony_isp.call_detail,status:0
+msgid "Error"
+msgstr "Error"
+
+#. module: telephony_isp
+#: field:telephony_isp.import.cdr,cdr_data:0
+#: field:telephony_isp.import.rate,rate_data:0
+msgid "File"
+msgstr "File"
+
+#. module: telephony_isp
+#: selection:telephony_isp.call_detail,status:0
+msgid "Free (invoiced)"
+msgstr "Free (invoiced)"
+
+#. module: telephony_isp
+#: field:telephony_isp.create.invoice,date_start:0
+msgid "From"
+msgstr "From"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+msgid "Group By"
+msgstr "Group By"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,hidden:0
+msgid "Hidden"
+msgstr "Hidden"
+
+#. module: telephony_isp
+#: field:product.telephony,id:0
+#: field:telephony_isp.call_detail,id:0
+#: field:telephony_isp.create.invoice,id:0
+#: field:telephony_isp.import.cdr,id:0
+#: field:telephony_isp.import.rate,id:0
+#: field:telephony_isp.period,id:0
+#: field:telephony_isp.rate,id:0
+#: field:telephony_isp.supplier,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: telephony_isp
+#: model:ir.ui.menu,name:telephony_isp.telephony_main_menu
+msgid "ISP"
+msgstr "ISP"
+
+#. module: telephony_isp
+#: view:telephony_isp.import.cdr:telephony_isp.wizard_import_cdr_form_view
+msgid "Import"
+msgstr "Import"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.launch_import_cdr_wizard
+#: model:ir.ui.menu,name:telephony_isp.telephony_import_cdr_menu
+#: view:telephony_isp.import.cdr:telephony_isp.wizard_import_cdr_form_view
+msgid "Import CDR file"
+msgstr "Import CDR file"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.launch_import_rate_wizard
+#: model:ir.ui.menu,name:telephony_isp.telephony_import_rate_menu
+#: view:telephony_isp.import.rate:telephony_isp.wizard_import_rate_form_view
+msgid "Import Rate file"
+msgstr "Import Rate file"
+
+#. module: telephony_isp
+#: selection:product.telephony,segment:0
+#: selection:telephony_isp.rate,segment:0
+msgid "Intenational"
+msgstr "Intenational"
+
+#. module: telephony_isp
+#: model:ir.model,name:telephony_isp.model_account_invoice
+msgid "Invoice"
+msgstr "Invoice"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,invoice_id:0
+msgid "Invoice id"
+msgstr "Invoice id"
+
+#. module: telephony_isp
+#: selection:telephony_isp.call_detail,status:0
+msgid "Invoiced"
+msgstr "Invoiced"
+
+#. module: telephony_isp
+#: field:telephony_isp.period,invoice_ids:0
+msgid "Invoices"
+msgstr "Invoices"
+
+#. module: telephony_isp
+#: field:account.invoice,is_telephony:0
+msgid "Is telephony"
+msgstr "Is telephony"
+
+#. module: telephony_isp
+#: field:telephony_isp.create.invoice,journal_id:0
+msgid "Journal"
+msgstr "Journal"
+
+#. module: telephony_isp
+#: field:product.telephony,__last_update:0
+#: field:telephony_isp.call_detail,__last_update:0
+#: field:telephony_isp.create.invoice,__last_update:0
+#: field:telephony_isp.import.cdr,__last_update:0
+#: field:telephony_isp.import.rate,__last_update:0
+#: field:telephony_isp.period,__last_update:0
+#: field:telephony_isp.rate,__last_update:0
+#: field:telephony_isp.supplier,__last_update:0
+msgid "Last Modified on"
+msgstr "Last Modified on"
+
+#. module: telephony_isp
+#: field:product.telephony,write_uid:0
+#: field:telephony_isp.call_detail,write_uid:0
+#: field:telephony_isp.create.invoice,write_uid:0
+#: field:telephony_isp.import.cdr,write_uid:0
+#: field:telephony_isp.import.rate,write_uid:0
+#: field:telephony_isp.period,write_uid:0
+#: field:telephony_isp.rate,write_uid:0
+#: field:telephony_isp.supplier,write_uid:0
+msgid "Last Updated by"
+msgstr "Last Updated by"
+
+#. module: telephony_isp
+#: field:product.telephony,write_date:0
+#: field:telephony_isp.call_detail,write_date:0
+#: field:telephony_isp.create.invoice,write_date:0
+#: field:telephony_isp.import.cdr,write_date:0
+#: field:telephony_isp.import.rate,write_date:0
+#: field:telephony_isp.period,write_date:0
+#: field:telephony_isp.rate,write_date:0
+#: field:telephony_isp.supplier,write_date:0
+msgid "Last Updated on"
+msgstr "Last Updated on"
+
+#. module: telephony_isp
+#: field:product.telephony,minutes_free:0
+msgid "Minutes free"
+msgstr "Minutes free"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,name:0
+#: field:telephony_isp.period,name:0
+#: field:telephony_isp.rate,name:0
+#: field:telephony_isp.supplier,name:0
+msgid "Name"
+msgstr "Name"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,note:0
+msgid "Note"
+msgstr "Note"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+#: field:telephony_isp.call_detail,origin:0
+#: view:website:account.report_invoice_document
+msgid "Origin"
+msgstr "Origin"
+
+#. module: telephony_isp
+#: selection:product.telephony,segment:0
+#: selection:telephony_isp.rate,segment:0
+msgid "Other"
+msgstr "Other"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+msgid "Partner"
+msgstr "Partner"
+
+#. module: telephony_isp
+#: field:telephony_isp.supplier,partner_id:0
+msgid "Partner id"
+msgstr "Partner id"
+
+#. module: telephony_isp
+#: help:telephony_isp.rate,ratio:0
+msgid "Percentaje for special numbers"
+msgstr "Percentaje for special numbers"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,period_id:0
+msgid "Period id"
+msgstr "Period id"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.action_list_periods
+#: model:ir.ui.menu,name:telephony_isp.telephony_periods_menu
+msgid "Periods"
+msgstr "Periods"
+
+#. module: telephony_isp
+#: field:telephony_isp.rate,prefix:0
+msgid "Prefix"
+msgstr "Prefix"
+
+#. module: telephony_isp
+#: field:telephony_isp.rate,price:0
+msgid "Price"
+msgstr "Price"
+
+#. module: telephony_isp
+#: help:telephony_isp.rate,price:0
+msgid "Price by minute"
+msgstr "Price by minute"
+
+#. module: telephony_isp
+#: model:ir.model,name:telephony_isp.model_product_product
+#: field:telephony_isp.call_detail,product:0
+msgid "Product"
+msgstr "Product"
+
+#. module: telephony_isp
+#: field:product.product,alert_time:0
+msgid "Product Alert Time"
+msgstr "Product Alert Time"
+
+#. module: telephony_isp
+#: field:product.product,life_time:0
+msgid "Product Life Time"
+msgstr "Product Life Time"
+
+#. module: telephony_isp
+#: field:product.product,removal_time:0
+msgid "Product Removal Time"
+msgstr "Product Removal Time"
+
+#. module: telephony_isp
+#: field:product.product,use_time:0
+msgid "Product Use Time"
+msgstr "Product Use Time"
+
+#. module: telephony_isp
+#: field:product.telephony,product_id:0
+#: field:telephony_isp.supplier,product_id:0
+msgid "Product id"
+msgstr "Product id"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+#: field:telephony_isp.call_detail,rate_id:0
+#: view:telephony_isp.rate:telephony_isp.view_telephony_isp_rate_form
+msgid "Rate"
+msgstr "Rate"
+
+#. module: telephony_isp
+#: model:ir.model,name:telephony_isp.model_telephony_isp_import_rate
+msgid "Rate file impport"
+msgstr "Rate file impport"
+
+#. module: telephony_isp
+#: field:telephony_isp.supplier,rate_ids:0
+msgid "Rate ids"
+msgstr "Rate ids"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.action_list_rates
+#: model:ir.ui.menu,name:telephony_isp.telephony_rates_menu
+msgid "Rates"
+msgstr "Rates"
+
+#. module: telephony_isp
+#: field:telephony_isp.rate,ratio:0
+#: field:telephony_isp.supplier,ratio:0
+msgid "Ratio"
+msgstr "Ratio"
+
+#. module: telephony_isp
+#: selection:telephony_isp.call_detail,status:0
+msgid "Raw"
+msgstr "Raw"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,contract_code:0
+msgid "Reference"
+msgstr "Reference"
+
+#. module: telephony_isp
+#: help:telephony_isp.rate,cost:0
+msgid "Reference cost"
+msgstr "Reference cost"
+
+#. module: telephony_isp
+#: field:product.telephony,segment:0
+#: field:telephony_isp.rate,segment:0
+msgid "Segment"
+msgstr "Segment"
+
+#. module: telephony_isp
+#: model:ir.ui.menu,name:telephony_isp.telephony_settings_menu
+msgid "Settings"
+msgstr "Settings"
+
+#. module: telephony_isp
+#: field:telephony_isp.rate,special:0
+msgid "Special"
+msgstr "Special"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,status:0
+msgid "Status"
+msgstr "Status"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,supplier_id:0
+#: field:telephony_isp.import.cdr,supplier_id:0
+#: field:telephony_isp.import.rate,supplier_id:0
+#: field:telephony_isp.rate,supplier_id:0
+msgid "Supplier id"
+msgstr "Supplier id"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.action_list_suppliers
+#: model:ir.ui.menu,name:telephony_isp.telephony_supplier_menu
+#: view:telephony_isp.period:telephony_isp.view_telephony_isp_period_tree
+#: view:telephony_isp.rate:telephony_isp.view_telephony_isp_rate_tree
+#: view:telephony_isp.supplier:telephony_isp.view_telephony_isp_supplier_tree
+msgid "Suppliers"
+msgstr "Suppliers"
+
+#. module: telephony_isp
+#: view:product.product:telephony_isp.product_normal_form_view_telephony
+msgid "Telephony"
+msgstr "Telephony"
+
+#. module: telephony_isp
+#: view:product.product:telephony_isp.product_normal_form_view_telephony
+msgid "Telephony Data"
+msgstr "Telephony Data"
+
+#. module: telephony_isp
+#: view:product.product:telephony_isp.product_normal_form_view_telephony
+msgid "Telephony data"
+msgstr "Telephony data"
+
+#. module: telephony_isp
+#: field:account.invoice,telephony_ids:0
+#: field:product.product,telephony_ids:0
+msgid "Telephony ids"
+msgstr "Telephony ids"
+
+#. module: telephony_isp
+#: field:account.invoice,telephony_period_id:0
+msgid "Telephony period id"
+msgstr "Telephony period id"
+
+#. module: telephony_isp
+#: view:telephony_isp.supplier:telephony_isp.view_telephony_isp_supplier_form
+msgid "Telephony supplier"
+msgstr "Telephony supplier"
+
+#. module: telephony_isp
+#: help:telephony_isp.rate,special:0
+msgid "This number is special and it'll use rate"
+msgstr "This number is special and it'll use rate"
+
+#. module: telephony_isp
+#: help:product.product,telephony_ok:0
+msgid "This product can be used for telephony"
+msgstr "This product can be used for telephony"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,time:0
+msgid "Time"
+msgstr "Time"
+
+#. module: telephony_isp
+#: field:telephony_isp.create.invoice,date_end:0
+msgid "To"
+msgstr "To"
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+msgid "To Invoice"
+msgstr "To Invoice"
+
+#. module: telephony_isp
+#: field:telephony_isp.call_detail,to_invoice:0
+msgid "To invoice"
+msgstr "To invoice"
+
+#. module: telephony_isp
+#: view:account.invoice:telephony_isp.account_invoice_form_telephony
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_tree
+msgid "Total Amount"
+msgstr "Total Amount"
+
+#. module: telephony_isp
+#: help:product.product,alert_time:0
+msgid "When a new a Serial Number is issued, this is the number of days before an alert should be notified."
+msgstr "When a new a Serial Number is issued, this is the number of days before an alert should be notified."
+
+#. module: telephony_isp
+#: help:product.product,life_time:0
+msgid "When a new a Serial Number is issued, this is the number of days before the goods may become dangerous and must not be consumed."
+msgstr "When a new a Serial Number is issued, this is the number of days before the goods may become dangerous and must not be consumed."
+
+#. module: telephony_isp
+#: help:product.product,removal_time:0
+msgid "When a new a Serial Number is issued, this is the number of days before the goods should be removed from the stock."
+msgstr "When a new a Serial Number is issued, this is the number of days before the goods should be removed from the stock."
+
+#. module: telephony_isp
+#: help:product.product,use_time:0
+msgid "When a new a Serial Number is issued, this is the number of days before the goods starts deteriorating, without being dangerous yet."
+msgstr "When a new a Serial Number is issued, this is the number of days before the goods starts deteriorating, without being dangerous yet."
+
+#. module: telephony_isp
+#: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
+msgid "With errors"
+msgstr "With errors"
+
+#. module: telephony_isp
+#: view:telephony_isp.create.invoice:telephony_isp.wizard_create_invoices_form_view
+#: view:telephony_isp.import.cdr:telephony_isp.wizard_import_cdr_form_view
+#: view:telephony_isp.import.rate:telephony_isp.wizard_import_rate_form_view
+msgid "or"
+msgstr "or"
+
