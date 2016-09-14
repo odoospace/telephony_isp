@@ -41,6 +41,8 @@
                         <filter string="Origin" domain="[]" context="{'group_by':'origin'}"/>
                         <filter string="Partner" domain="[]" context="{'group_by':'partner'}"/>
                         <filter string="Contract" domain="[]" context="{'group_by':'contract_code'}"/>
+                        <filter string="Destiny" domain="[]" context="{'group_by':'destiny'}"/>
+                        <filter string="Rate" domain="[]" context="{'group_by':'rate_id'}"/>
                     </group>
                 </search>
             </field>
