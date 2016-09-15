@@ -16,7 +16,7 @@
                   <field name="duration"/>
                   <field name="cost"/>
                   <field name="amount" sum="Total Amount"/>
-                  <field name="status" invisible="1"/>
+                  <field name="status"/>
                   <field name="invoice_id"/>
               </tree>
           </field>
@@ -77,7 +77,6 @@
                   <group>
                       <field name="name"/>
                       <field name="partner_id"/>
-                      <field name="product_id"/>
                       <field name="ratio"/>
                       <field name="date_start"/>
                       <field name="date_end"/>

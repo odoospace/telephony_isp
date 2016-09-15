@@ -63,6 +63,7 @@ class call_detail(models.Model):
         ('draft', 'Draft'),
         ('invoiced', 'Invoiced'),
         ('free', 'Free (invoiced)'),
+        ('special', 'Special (invoiced)'),
         ('error', 'Error')],
         default='raw')
     to_invoice = fields.Boolean(default=True) # False -> free
@@ -76,7 +77,7 @@ class supplier(models.Model):
 
     name = fields.Char() # copy from partner ?
     partner_id = fields.Many2one('res.partner') # operator
-    product_id = fields.Many2one('product.product') # operator
+    #product_id = fields.Many2one('product.product') # operator
     ratio = fields.Float() # price = cost + cost * ratio
     date_start = fields.Date()
     date_end = fields.Date()

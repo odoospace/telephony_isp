@@ -20,6 +20,7 @@
                               <field name="duration"/>
                               <field name="cost"/>
                               <field name="amount" sum="Total Amount"/>
+                              <field name="status"/>
                             </tree>
                         </field>
                     </page>
