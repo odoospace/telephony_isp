@@ -186,7 +186,7 @@ class WizardCreateInvoices(models.TransientModel):
     def create_invoice(self):
         # search records
         call_details = self.env['telephony_isp.call_detail'].search([
-            ('status', 'in', ['draft', 'invoiced', 'free']),
+            ('status', 'in', ['draft']),
             ('time', '>=',  self.date_start),
             ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
         ], order='time')
