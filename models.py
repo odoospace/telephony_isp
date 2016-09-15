@@ -111,6 +111,6 @@ class period(models.Model):
     invoice_ids = fields.One2many('account.invoice', 'telephony_period_id', 'Invoices')
     call_details_ids = fields.One2many('telephony_isp.call_detail', 'period_id', 'Call detail')
     name = fields.Char() # TODO: remove this one?
-    date_start = fields.Date()
-    date_end = fields.Date()
+    date_start = fields.Date('Start')
+    date_end = fields.Date('End')
     amount = fields.Float() # total

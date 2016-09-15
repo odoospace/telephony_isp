@@ -5,7 +5,11 @@
     <xpath expr="//div[@class='row']" position="after">
       <p style="page-break-before:always;"> </p>
 
-      <table class="table table-condensed"  style="position:relative;top:85px;right:-45px;font-size:13px;width:685px">
+      <div class="row" style="position:relative;top:30px;right:-60px;font-size:13px">
+        <p><strong>Period:</strong> <span t-field="o.telephony_period_id.date_start"/> - <span t-field="o.telephony_period_id.date_end"/></p>
+      </div>
+
+      <table class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
          <thead>
              <tr>
                  <th style="font-weight:normal">Date - Hour</th>

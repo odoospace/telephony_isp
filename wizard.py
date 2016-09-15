@@ -191,6 +191,14 @@ class WizardCreateInvoices(models.TransientModel):
             ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
         ], order='time')
 
+        # create period
+        data = {
+            'date_start': self.date_start,
+            'date_end': self.date_end,
+        }
+
+        period = self.env['telephony_isp.period'].create(data)
+
         # group by contract
         self.contracts = {}
         for i in call_details:
@@ -253,6 +261,7 @@ class WizardCreateInvoices(models.TransientModel):
                     'date_invoice': self.date_invoice,
                     'partner_id': i['contract'].partner_id.id,
                     'journal_id': self.journal_id.id,
+                    'period_id': period.id,
                     'payment_mode_id': i['contract'].payment_mode.id,
                     'account_id': i['contract'].partner_id.property_account_receivable.id,
                     'invoice_line': lines
@@ -280,15 +289,14 @@ class WizardCreateInvoices(models.TransientModel):
                 # append invoice to period
                 invoices.append(invoice)
 
+        # update period data
         data = {
-            'date_start': self.date_start,
-            'date_end': self.date_end,
             'invoice_ids': [(6,0, [k.id for k in invoices])],
             'call_details_ids': [(6,0, [k.id for k in call_details])],
             'amount': amount
         }
 
-        self.env['telephony_isp.period'].create(data)
+        period.write(data)
 
     journal_id = fields.Many2one('account.journal', 'Journal', required=True)
     date_invoice = fields.Date('Date invoice', required=True)
