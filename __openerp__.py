@@ -3,11 +3,17 @@
     'name': "Telephony for ISPs",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        Module to manage ISP telephony tasks and invoicing""",
 
     'description': """
-        Long description of module's purpose
+        Module to Manage ISP telephony tasks and invoicing
+
+        - Import CDR files
+        - Import Rate files
+        - Manage Rates by supplier
+        - Manage telephony products with flat rate to specific destinations
+        - Invoice CDR lines
+        - Print call details in invoice with wkhtmltopdf
     """,
 
     'author': "Impulzia",
