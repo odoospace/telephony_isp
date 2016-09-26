@@ -80,6 +80,7 @@ class WizardImportCDR(models.TransientModel):
                     data['status'] = 'error'
 
                 rate = get_rate(destiny)
+                # apply rates or default
                 if rate:
                     if rate.special:
                         data['amount'] = data['cost'] + data['cost'] * rate.ratio / 100.
@@ -185,12 +186,19 @@ class WizardCreateInvoices(models.TransientModel):
     @api.multi
     def create_invoice(self):
         # search records
-        call_details = self.env['telephony_isp.call_detail'].search([
-            ('status', 'in', ['draft']),
-            ('time', '>=',  self.date_start),
-            ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
-        ], order='time')
-
+        # TODO: get a better way to recalc invoices
+        if self.recalc:
+            call_details = self.env['telephony_isp.call_detail'].search([
+                ('status', 'in', ['draft']),
+                ('time', '>=',  self.date_start),
+                ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
+            ], order='time')
+        else:
+            call_details = self.env['telephony_isp.call_detail'].search([
+                ('status', '!=', 'error'),
+                ('time', '>=',  self.date_start),
+                ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
+            ], order='time')
         # create period
         data = {
             'date_start': self.date_start,
@@ -202,6 +210,10 @@ class WizardCreateInvoices(models.TransientModel):
         # group by contract
         self.contracts = {}
         for i in call_details:
+            # TODO: filter before...
+            if self.partner_id and not i.partner.id == self.partner_id.id:
+                continue
+
             # contracts
             if not self.contracts.has_key(i.contract.id):
                 # first origin
@@ -299,6 +311,8 @@ class WizardCreateInvoices(models.TransientModel):
         period.write(data)
 
     journal_id = fields.Many2one('account.journal', 'Journal', required=True)
+    partner_id = fields.Many2one('res.partner')
     date_invoice = fields.Date('Date invoice', required=True)
     date_start= fields.Date('From', required=True)
     date_end = fields.Date('To', required=True)
+    recalc = fields.Boolean(hel='Override previus calcs in calls') # override invoiced status

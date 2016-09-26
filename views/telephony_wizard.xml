@@ -65,9 +65,11 @@
               <form string="Create invoices">
                   <group>
                       <field name="journal_id"/>
+                      <field name="partner_id"/>
                       <field name="date_invoice"/>
                       <field name="date_start"/>
                       <field name="date_end"/>
+                      <field name="recalc"/>
                   </group>
                   <footer>
                       <button name="create_invoice" type="object"
