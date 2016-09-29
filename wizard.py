@@ -1,6 +1,7 @@
 from openerp import models, fields, api
 from datetime import datetime, timedelta
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
+from openerp.exceptions import ValidationError
 import StringIO
 import base64
 import csv
@@ -187,15 +188,23 @@ class WizardCreateInvoices(models.TransientModel):
     def create_invoice(self):
         # search records
         # TODO: get a better way to recalc invoices
-        if self.recalc:
+        if self.partner_id and self.recalc:
             call_details = self.env['telephony_isp.call_detail'].search([
-                ('status', 'in', ['draft']),
+                ('partner.id', '=', self.partner_id.id),
+                ('status', '!=', 'error'),
+                ('time', '>=',  self.date_start),
+                ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
+            ], order='time')
+        elif self.partner_id:
+            call_details = self.env['telephony_isp.call_detail'].search([
+                ('partner.id', '=', self.partner_id.id),
+                ('status', '=', 'draft'),
                 ('time', '>=',  self.date_start),
                 ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
             ], order='time')
         else:
             call_details = self.env['telephony_isp.call_detail'].search([
-                ('status', '!=', 'error'),
+                ('status', '=', 'draft'),
                 ('time', '>=',  self.date_start),
                 ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
             ], order='time')
@@ -210,10 +219,6 @@ class WizardCreateInvoices(models.TransientModel):
         # group by contract
         self.contracts = {}
         for i in call_details:
-            # TODO: filter before...
-            if self.partner_id and not i.partner.id == self.partner_id.id:
-                continue
-
             # contracts
             if not self.contracts.has_key(i.contract.id):
                 # first origin
@@ -279,7 +284,11 @@ class WizardCreateInvoices(models.TransientModel):
                     'invoice_line': lines
                 }
 
-                invoice = self.env['account.invoice'].create(data)
+                if data['partner_id']:
+                    invoice = self.env['account.invoice'].create(data)
+                else:
+                    raise ValidationError('Error processing contract for %s' % ', '.join(i['origins'].keys()))
+
                 amount += i['origins'][j]['total']
 
                 # link calls with its invoice and set new status
