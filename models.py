@@ -119,7 +119,7 @@ class pool_number(models.Model):
     status = fields.Selection([
         ('not_assigned', 'Not asigned'),
         ('assigned', 'Asigned'),
-        ('no_active', 'No active')], default='not_asigned'
+        ('no_active', 'No active')], default='not_assigned'
     )
     #contract_ids = fields.One2many('account.analytic.account')
     last_contract_id = fields.Many2one('account.analytic.account')# current active contract for this number
