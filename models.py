@@ -124,6 +124,13 @@ class pool_number(models.Model):
     #contract_ids = fields.One2many('account.analytic.account')
     last_contract_id = fields.Many2one('account.analytic.account')# current active contract for this number
 
+    @api.multi
+    @api.depends('name', 'pool_id')
+    def name_get(self):
+        result = []
+        for i in self:
+            result.append((i.id, "%s - %s" % (i.name, i.pool_id.name)))
+        return result
 
 class call_detail(models.Model):
     _name = 'telephony_isp.call_detail'
