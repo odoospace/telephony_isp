@@ -10,6 +10,68 @@ class account_invoice(models.Model):
     telephony_period_id = fields.Many2one('telephony_isp.period')
 
 
+class account_analytic_account_number(models.Model):
+    _name = 'account.analytic.account.number'
+
+    @api.model
+    def _get_lines(self):
+        ids = []
+        res = [('analytic_account_id', '=', self.contract_id)]
+        print '>>>', res
+        return res
+
+    number_id = fields.Many2one('telephony_isp.pool.number', required=True, domain="[('status', '=', 'not_assigned')]")
+    contract_id = fields.Many2one('account.analytic.account')
+    contract_line_id = fields.Many2one('account.analytic.invoice.line',
+#        domain=_get_lines)
+        domain="[('analytic_account_id', '=', contract_id)]")
+    pool = fields.Many2one(related='number_id.pool_ida')
+    login = fields.Char()
+    password = fields.Char()
+    product_id = fields.Many2one('product.product')
+    mac = fields.Char()
+
+    @api.model
+    def create(self, vals):
+        """change status of number in the pool to assigned"""
+        data = {
+            'status': 'assigned',
+            'last_contract_id': vals['contract_id']
+        }
+
+        res = super(account_analytic_account_number, self).create(vals)
+        number =  self.env['telephony_isp.pool.number'].browse([vals['number_id']])[0]
+        number.write(data)
+        return res
+
+    @api.multi
+    def unlink(self):
+        """check if this contract is the last link for this number"""
+        for i in self:
+            if i.contract_id == i.number_id.last_contract_id:
+                data = {
+                    'status': 'not_assigned',
+                    'last_contract_id': None
+                }
+                i.number_id.write(data)
+
+        res = super(account_analytic_account_number, self).unlink()
+        return res
+
+
+class account_analytic_account(models.Model):
+    _inherit = 'account.analytic.account'
+
+    use_telephony = fields.Boolean() # internal field in invoice
+    telephony_number_ids = fields.One2many('account.analytic.account.number', 'contract_id')
+
+"""
+class account_analytic_invoice_line(models.Model):
+    _inherit = 'account.analytic.invoice.line'
+
+    number_id = fields.Many2one('account.analytic.account.number')
+"""
+
 class product_product(models.Model):
     _inherit = 'product.product'
 
@@ -28,6 +90,39 @@ class product_telephony(models.Model):
         ('Other', 'Other')]
     )
     minutes_free = fields.Integer('Minutes free')
+
+
+class pool(models.Model):
+    _name = 'telephony_isp.pool'
+
+    number_ids = fields.One2many('telephony_isp.pool.number', 'pool_id')
+    supplier_id = fields.Many2one('telephony_isp.supplier', required=True)
+    name = fields.Char(required=True)
+    pool_type = fields.Selection([
+        ('fixed', 'Fixed'),
+        ('mobile', 'Mobile'),
+        ('mixed', 'Mixed'),
+        ('other', 'Other')
+    ])
+
+
+class pool_number(models.Model):
+    _name = 'telephony_isp.pool.number'
+
+    pool_id = fields.Many2one('telephony_isp.pool', required=True)
+    name = fields.Char(required=True)
+    number_type = fields.Selection([
+        ('fixed', 'Fixed'),
+        ('mobile', 'Mobile'),
+        ('other', 'Other')], default='fixed'
+    ) # TODO: remove this field
+    status = fields.Selection([
+        ('not_assigned', 'Not asigned'),
+        ('assigned', 'Asigned'),
+        ('no_active', 'No active')], default='not_asigned'
+    )
+    #contract_ids = fields.One2many('account.analytic.account')
+    last_contract_id = fields.Many2one('account.analytic.account')# current active contract for this number
 
 
 class call_detail(models.Model):
@@ -98,6 +193,7 @@ class rate(models.Model):
     )
     prefix = fields.Char()
     special = fields.Boolean('Special', help='This number is special and it\'ll use rate')
+    connection = fields.Float(digits=(2, 6), help='Connection cost')
     cost = fields.Float(digits=(2, 6), help='Reference cost')
     price = fields.Float(digits=(2, 6), help='Price by minute') # price is fix
     ratio = fields.Float(digits=(2, 6), help='Percentaje for special numbers') # rate percentage

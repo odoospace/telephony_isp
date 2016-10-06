@@ -26,7 +26,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account', 'account_analytic_analysis', 'product'],
+    'depends': ['base', 'account', 'analytic', 'account_analytic_analysis', 'product'],
 
     # always loaded
     'data': [
@@ -36,6 +36,7 @@
         'views/telephony_wizard.xml',
         'views/product.xml',
         'views/invoice.xml',
+        'views/contract.xml',
         'views/report_invoice_calls_detail.xml'
     ],
     # only loaded in demonstration mode

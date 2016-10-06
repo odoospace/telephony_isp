@@ -87,6 +87,7 @@
                               <field name="special"/>
                               <field name="prefix"/>
                               <field name="name"/>
+                              <field name="connection"/>
                               <field name="price"/>
                               <field name="ratio"/>
                           </tree>
@@ -107,6 +108,7 @@
                   <field name="prefix"/>
                   <field name="special"/>
                   <field name="segment"/>
+                  <field name="connection"/>
                   <field name="cost"/>
                   <field name="price"/>
                   <field name="ratio"/>
@@ -128,6 +130,7 @@
                       <field name="prefix"/>
                       <field name="segment"/>
                       <field name="name"/>
+                      <field name="connection"/>
                       <field name="price" attrs="{'invisible':[('special', '=', True)]}"/>
                       <field name="ratio" attrs="{'invisible':[('special', '=', False)]}" />
                   </group>
@@ -151,6 +154,70 @@
           </field>
         </record>
         <!-- END view period tree -->
+
+        <!-- BEGIN view pool tree -->
+        <record model="ir.ui.view" id="view_telephony_isp_pool_tree">
+            <field name="name">telephony_isp.pool.tree</field>
+            <field name="model">telephony_isp.pool</field>
+            <field name="arch" type="xml">
+              <tree string="Pools">
+                  <field name="name"/>
+                  <field name="pool_type"/>
+              </tree>
+          </field>
+        </record>
+        <!-- END view period tree -->
+
+        <!-- BEGIN view pool form -->
+        <record model="ir.ui.view" id="view_telephony_isp_pool_form">
+            <field name="name">telephony_isp.pool.form</field>
+            <field name="model">telephony_isp.pool</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="Pool">
+                  <group>
+                      <field name="name"/>
+                      <field name="supplier_id"/>
+                      <field name="pool_type"/>
+                  </group>
+              </form>
+          </field>
+        </record>
+        <!-- END view pool form -->
+
+        <!-- BEGIN view pool number tree -->
+        <record model="ir.ui.view" id="view_telephony_isp_pool_number_tree">
+            <field name="name">telephony_isp.pool.number.tree</field>
+            <field name="model">telephony_isp.pool.number</field>
+            <field name="arch" type="xml">
+              <tree string="Numbers">
+                  <field name="pool_id"/>
+                  <field name="name"/>
+                  <field name="number_type"/>
+                  <field name="status"/>
+                  <field name="last_contract_id"/>
+              </tree>
+          </field>
+        </record>
+        <!-- END view period tree -->
+
+        <!-- BEGIN view pool number form -->
+        <record model="ir.ui.view" id="view_telephony_isp_pool_number_form">
+            <field name="name">telephony_isp.pool.number.form</field>
+            <field name="model">telephony_isp.pool.number</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="Pool">
+                  <group>
+                      <field name="pool_id"/>
+                      <field name="name"/>
+                      <field name="number_type"/>
+                      <field name="status"/>
+                  </group>
+              </form>
+          </field>
+        </record>
+        <!-- END view pool number form -->
 
 
         <!-- BEGIN actions -->
@@ -177,6 +244,18 @@
             <field name="res_model">telephony_isp.period</field>
             <field name="view_mode">tree</field>
         </record>
+
+        <record model="ir.actions.act_window" id="action_list_pools">
+            <field name="name">Pool</field>
+            <field name="res_model">telephony_isp.pool</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_list_numbers">
+            <field name="name">Numbers</field>
+            <field name="res_model">telephony_isp.pool.number</field>
+            <field name="view_mode">tree,form</field>
+        </record>
         <!-- END actions -->
 
         <!-- BEGIN menus -->
@@ -191,8 +270,12 @@
         <menuitem id="telephony_settings_menu" name="Settings" parent="telephony_main_menu"/>
         <menuitem id="telephony_supplier_menu" parent="telephony_settings_menu" name="Suppliers" sequence="30"
                   action="action_list_suppliers"/>
-        <menuitem id="telephony_rates_menu" parent="telephony_settings_menu" name="Rates" sequence="34"
+        <menuitem id="telephony_rates_menu" parent="telephony_settings_menu" name="Rates" sequence="40"
                   action="action_list_rates"/>
+        <menuitem id="telephony_pools_menu" parent="telephony_settings_menu" name="Pools" sequence="50"
+                  action="action_list_pools"/>
+        <menuitem id="telephony_numbers_menu" parent="telephony_settings_menu" name="Numbers" sequence="60"
+                  action="action_list_numbers"/>
         <!-- END menus -->
     </data>
 </openerp>
