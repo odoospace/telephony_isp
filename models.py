@@ -141,7 +141,8 @@ class call_detail(models.Model):
 
     @api.multi
     def fix_errors(self):
-        data_with_errors = self.search([('status', '=', 'error')])
+        data_with_errors = self.search([('contract_line_id', '=', False)]) #([('status', '=', 'error')])
+        print 'errors:', len(data_with_errors)
         for i in data_with_errors:
             contract_line = self.env['account.analytic.invoice.line'].search([('name', '=', i.origin)])
             if len(contract_line) == 1:
@@ -154,7 +155,7 @@ class call_detail(models.Model):
         return {
             'type': 'ir.actions.client',
             'tag': 'reload'
-        }
+            }
 
 
 
