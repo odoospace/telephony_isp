@@ -139,6 +139,25 @@ class call_detail(models.Model):
     def set_status(self, status):
         self.write({'status': status})
 
+    @api.multi
+    def fix_errors(self):
+        data_with_errors = self.search([('status', '=', 'error')])
+        for i in data_with_errors:
+            contract_line = self.env['account.analytic.invoice.line'].search([('name', '=', i.origin)])
+            if len(contract_line) == 1:
+                data = {
+                    'contract_line_id': contract_line[0].id,
+                    'status': 'draft'
+                }
+                i.write(data)
+                print 'Fixed!', i.origin, i
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload'
+        }
+
+
+
     # TODO: add related field to contract_id with customer
     name = fields.Char() # carrier destination network
     cdr_id = fields.Char()

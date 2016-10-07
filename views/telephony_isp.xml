@@ -258,6 +258,15 @@
         </record>
         <!-- END actions -->
 
+        <record id="action_fix_errors" model="ir.actions.server">
+            <field name="name">Fix errors</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_telephony_isp_call_detail" />
+            <field name="state">code</field>
+            <field name="code">self.fix_errors(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
+
         <!-- BEGIN menus -->
         <menuitem id="telephony_main_menu" name="ISP"/>
 
@@ -266,6 +275,8 @@
                   action="action_list_call_details"/>
         <menuitem id="telephony_periods_menu" parent="telephony_data_menu" name="Periods" sequence="11"
                   action="action_list_periods"/>
+        <menuitem id="telephony_fix_errors_menu" parent="telephony_data_menu" name="Fix errors" sequence="12"
+                  action="action_fix_errors"/>
 
         <menuitem id="telephony_settings_menu" name="Settings" parent="telephony_main_menu"/>
         <menuitem id="telephony_supplier_menu" parent="telephony_settings_menu" name="Suppliers" sequence="30"
