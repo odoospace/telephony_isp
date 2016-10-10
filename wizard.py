@@ -57,7 +57,7 @@ class WizardImportCDR(models.TransientModel):
                 duration = float(row[m[self.cdr_type]['duration']])
                 data = {
                     'supplier_id': self.supplier_id.id,
-                    'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%y %H:%M:%S'),
+                    'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%Y %H:%M:%S'),
                     'origin': origin, # TODO: check ->
                     'destiny': destiny,
                     'duration': duration,
