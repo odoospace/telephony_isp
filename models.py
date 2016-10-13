@@ -86,10 +86,14 @@ class product_telephony(models.Model):
     segment = fields.Selection([
         ('domestic_number', 'Domestic Number'),
         ('domestic_mobile', 'Domestic Mobile'),
+        ('domestic', 'Domestic'),
         ('international', 'Intenational'),
-        ('Other', 'Other')]
+        ('international_mobile', 'Intenational Mobile'),
+        ('sms', 'SMS'),
+        ('megabytes', 'Megabytes'),
+        ('other', 'Other')]
     )
-    minutes_free = fields.Integer('Minutes free')
+    minutes_free = fields.Integer('Units free')
 
 
 class pool(models.Model):
