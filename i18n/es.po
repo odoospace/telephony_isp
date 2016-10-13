@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-14 08:11+0000\n"
-"PO-Revision-Date: 2016-09-14 08:11+0000\n"
+"POT-Creation-Date: 2016-10-13 14:17+0000\n"
+"PO-Revision-Date: 2016-10-13 14:17+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,9 +28,15 @@ msgid "Amount"
 msgstr "Importe"
 
 #. module: telephony_isp
+#: model:ir.model,name:telephony_isp.model_account_analytic_account
 #: field:telephony_isp.call_detail,contract:0
 msgid "Analytic Account"
 msgstr "Cuenta analítica"
+
+#. module: telephony_isp
+#: selection:telephony_isp.pool.number,status:0
+msgid "Asigned"
+msgstr "Asignado"
 
 #. module: telephony_isp
 #: model:ir.model,name:telephony_isp.model_telephony_isp_import_cdr
@@ -89,7 +95,17 @@ msgstr "Cancelar"
 #. module: telephony_isp
 #: field:telephony_isp.call_detail,cdr_id:0
 msgid "Cdr id"
-msgstr "id Cdr"
+msgstr "ID CDR"
+
+#. module: telephony_isp
+#: field:telephony_isp.rate,connection:0
+msgid "Connection"
+msgstr "Conexión"
+
+#. module: telephony_isp
+#: help:telephony_isp.rate,connection:0
+msgid "Connection cost"
+msgstr "Establecimiento de llamada"
 
 #. module: telephony_isp
 #: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
@@ -97,6 +113,12 @@ msgid "Contract"
 msgstr "Contrato"
 
 #. module: telephony_isp
+#: field:account.analytic.account.number,contract_id:0
+msgid "Contract id"
+msgstr "ID contrato"
+
+#. module: telephony_isp
+#: field:account.analytic.account.number,contract_line_id:0
 #: field:telephony_isp.call_detail,contract_line_id:0
 msgid "Contract line id"
 msgstr "ID de linea de contrato"
@@ -130,24 +152,30 @@ msgid "Create invoices"
 msgstr "Crear facturas"
 
 #. module: telephony_isp
+#: field:account.analytic.account.number,create_uid:0
 #: field:product.telephony,create_uid:0
 #: field:telephony_isp.call_detail,create_uid:0
 #: field:telephony_isp.create.invoice,create_uid:0
 #: field:telephony_isp.import.cdr,create_uid:0
 #: field:telephony_isp.import.rate,create_uid:0
 #: field:telephony_isp.period,create_uid:0
+#: field:telephony_isp.pool,create_uid:0
+#: field:telephony_isp.pool.number,create_uid:0
 #: field:telephony_isp.rate,create_uid:0
 #: field:telephony_isp.supplier,create_uid:0
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: telephony_isp
+#: field:account.analytic.account.number,create_date:0
 #: field:product.telephony,create_date:0
 #: field:telephony_isp.call_detail,create_date:0
 #: field:telephony_isp.create.invoice,create_date:0
 #: field:telephony_isp.import.cdr,create_date:0
 #: field:telephony_isp.import.rate,create_date:0
 #: field:telephony_isp.period,create_date:0
+#: field:telephony_isp.pool,create_date:0
+#: field:telephony_isp.pool.number,create_date:0
 #: field:telephony_isp.rate,create_date:0
 #: field:telephony_isp.supplier,create_date:0
 msgid "Created on"
@@ -169,7 +197,6 @@ msgid "Date - Hour"
 msgstr "Fecha - Hora"
 
 #. module: telephony_isp
-#: field:telephony_isp.period,date_end:0
 #: field:telephony_isp.supplier,date_end:0
 msgid "Date end"
 msgstr "Fecha fin"
@@ -180,7 +207,6 @@ msgid "Date invoice"
 msgstr "Fecha factura"
 
 #. module: telephony_isp
-#: field:telephony_isp.period,date_start:0
 #: field:telephony_isp.supplier,date_start:0
 msgid "Date start"
 msgstr "Fecha inicio"
@@ -198,16 +224,24 @@ msgid "Destiny"
 msgstr "Destino"
 
 #. module: telephony_isp
+#: field:account.analytic.account.number,display_name:0
 #: field:product.telephony,display_name:0
 #: field:telephony_isp.call_detail,display_name:0
 #: field:telephony_isp.create.invoice,display_name:0
 #: field:telephony_isp.import.cdr,display_name:0
 #: field:telephony_isp.import.rate,display_name:0
 #: field:telephony_isp.period,display_name:0
+#: field:telephony_isp.pool,display_name:0
+#: field:telephony_isp.pool.number,display_name:0
 #: field:telephony_isp.rate,display_name:0
 #: field:telephony_isp.supplier,display_name:0
 msgid "Display Name"
 msgstr "Nombre a mostrar"
+
+#. module: telephony_isp
+#: selection:product.telephony,segment:0
+msgid "Domestic"
+msgstr "Nacional(Todos)"
 
 #. module: telephony_isp
 #: selection:product.telephony,segment:0
@@ -219,7 +253,7 @@ msgstr "Móviles nacionales"
 #: selection:product.telephony,segment:0
 #: selection:telephony_isp.rate,segment:0
 msgid "Domestic Number"
-msgstr "Número nacional"
+msgstr "Número nacional(fijos)"
 
 #. module: telephony_isp
 #: selection:telephony_isp.call_detail,status:0
@@ -233,6 +267,11 @@ msgid "Duration"
 msgstr "Duración"
 
 #. module: telephony_isp
+#: field:telephony_isp.period,date_end:0
+msgid "End"
+msgstr "Fin"
+
+#. module: telephony_isp
 #: selection:telephony_isp.call_detail,status:0
 msgid "Error"
 msgstr "Error"
@@ -242,6 +281,18 @@ msgstr "Error"
 #: field:telephony_isp.import.rate,rate_data:0
 msgid "File"
 msgstr "Fichero"
+
+#. module: telephony_isp
+#: model:ir.actions.server,name:telephony_isp.action_fix_errors
+#: model:ir.ui.menu,name:telephony_isp.telephony_fix_errors_menu
+msgid "Fix errors"
+msgstr "Solucionar errores"
+
+#. module: telephony_isp
+#: selection:telephony_isp.pool,pool_type:0
+#: selection:telephony_isp.pool.number,number_type:0
+msgid "Fixed"
+msgstr "Solucionado"
 
 #. module: telephony_isp
 #: selection:telephony_isp.call_detail,status:0
@@ -264,12 +315,15 @@ msgid "Hidden"
 msgstr "Oculto"
 
 #. module: telephony_isp
+#: field:account.analytic.account.number,id:0
 #: field:product.telephony,id:0
 #: field:telephony_isp.call_detail,id:0
 #: field:telephony_isp.create.invoice,id:0
 #: field:telephony_isp.import.cdr,id:0
 #: field:telephony_isp.import.rate,id:0
 #: field:telephony_isp.period,id:0
+#: field:telephony_isp.pool,id:0
+#: field:telephony_isp.pool.number,id:0
 #: field:telephony_isp.rate,id:0
 #: field:telephony_isp.supplier,id:0
 msgid "ID"
@@ -306,6 +360,11 @@ msgid "Intenational"
 msgstr "Internacional"
 
 #. module: telephony_isp
+#: selection:product.telephony,segment:0
+msgid "Intenational Mobile"
+msgstr "Intenational Movil"
+
+#. module: telephony_isp
 #: model:ir.model,name:telephony_isp.model_account_invoice
 msgid "Invoice"
 msgstr "Factura"
@@ -313,7 +372,7 @@ msgstr "Factura"
 #. module: telephony_isp
 #: field:telephony_isp.call_detail,invoice_id:0
 msgid "Invoice id"
-msgstr "id factura"
+msgstr "ID factura"
 
 #. module: telephony_isp
 #: selection:telephony_isp.call_detail,status:0
@@ -336,58 +395,142 @@ msgid "Journal"
 msgstr "Diario"
 
 #. module: telephony_isp
+#: field:account.analytic.account.number,__last_update:0
 #: field:product.telephony,__last_update:0
 #: field:telephony_isp.call_detail,__last_update:0
 #: field:telephony_isp.create.invoice,__last_update:0
 #: field:telephony_isp.import.cdr,__last_update:0
 #: field:telephony_isp.import.rate,__last_update:0
 #: field:telephony_isp.period,__last_update:0
+#: field:telephony_isp.pool,__last_update:0
+#: field:telephony_isp.pool.number,__last_update:0
 #: field:telephony_isp.rate,__last_update:0
 #: field:telephony_isp.supplier,__last_update:0
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: telephony_isp
+#: field:account.analytic.account.number,write_uid:0
 #: field:product.telephony,write_uid:0
 #: field:telephony_isp.call_detail,write_uid:0
 #: field:telephony_isp.create.invoice,write_uid:0
 #: field:telephony_isp.import.cdr,write_uid:0
 #: field:telephony_isp.import.rate,write_uid:0
 #: field:telephony_isp.period,write_uid:0
+#: field:telephony_isp.pool,write_uid:0
+#: field:telephony_isp.pool.number,write_uid:0
 #: field:telephony_isp.rate,write_uid:0
 #: field:telephony_isp.supplier,write_uid:0
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: telephony_isp
+#: field:account.analytic.account.number,write_date:0
 #: field:product.telephony,write_date:0
 #: field:telephony_isp.call_detail,write_date:0
 #: field:telephony_isp.create.invoice,write_date:0
 #: field:telephony_isp.import.cdr,write_date:0
 #: field:telephony_isp.import.rate,write_date:0
 #: field:telephony_isp.period,write_date:0
+#: field:telephony_isp.pool,write_date:0
+#: field:telephony_isp.pool.number,write_date:0
 #: field:telephony_isp.rate,write_date:0
 #: field:telephony_isp.supplier,write_date:0
 msgid "Last Updated on"
 msgstr "Última actualización en"
 
 #. module: telephony_isp
-#: field:product.telephony,minutes_free:0
-msgid "Minutes free"
-msgstr "Minutos gratis"
+#: field:telephony_isp.pool.number,last_contract_id:0
+msgid "Last contract id"
+msgstr "Ultimo ID contrato"
+
+#. module: telephony_isp
+#: field:account.analytic.account.number,login:0
+msgid "Login"
+msgstr "Login"
+
+#. module: telephony_isp
+#: field:account.analytic.account.number,mac:0
+msgid "Mac"
+msgstr "Mac"
+
+#. module: telephony_isp
+#: selection:product.telephony,segment:0
+msgid "Megabytes"
+msgstr "Megabytes"
+
+#. module: telephony_isp
+#: field:product.product,purchase_line_warn_msg:0
+msgid "Message for Purchase Order Line"
+msgstr "Message for Purchase Order Line"
+
+#. module: telephony_isp
+#: field:product.product,sale_line_warn_msg:0
+msgid "Message for Sales Order Line"
+msgstr "Message for Sales Order Line"
+
+#. module: telephony_isp
+#: selection:telephony_isp.pool,pool_type:0
+msgid "Mixed"
+msgstr "Mixto"
+
+#. module: telephony_isp
+#: selection:telephony_isp.pool,pool_type:0
+#: selection:telephony_isp.pool.number,number_type:0
+msgid "Mobile"
+msgstr "Movil"
 
 #. module: telephony_isp
 #: field:telephony_isp.call_detail,name:0
 #: field:telephony_isp.period,name:0
+#: field:telephony_isp.pool,name:0
+#: field:telephony_isp.pool.number,name:0
 #: field:telephony_isp.rate,name:0
 #: field:telephony_isp.supplier,name:0
 msgid "Name"
 msgstr "Nombre"
 
 #. module: telephony_isp
+#: selection:telephony_isp.pool.number,status:0
+msgid "No active"
+msgstr "No activo"
+
+#. module: telephony_isp
+#: selection:telephony_isp.pool.number,status:0
+msgid "Not asigned"
+msgstr "No asignado"
+
+#. module: telephony_isp
 #: field:telephony_isp.call_detail,note:0
 msgid "Note"
 msgstr "Nota"
+
+#. module: telephony_isp
+#: field:account.analytic.account.number,number_id:0
+msgid "Number id"
+msgstr "ID Numero"
+
+#. module: telephony_isp
+#: field:telephony_isp.pool,number_ids:0
+msgid "Number ids"
+msgstr "IDS Numero"
+
+#. module: telephony_isp
+#: field:telephony_isp.pool.number,number_type:0
+msgid "Number type"
+msgstr "Tipo de numero"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.action_list_numbers
+#: model:ir.ui.menu,name:telephony_isp.telephony_numbers_menu
+#: view:telephony_isp.pool.number:telephony_isp.view_telephony_isp_pool_number_tree
+msgid "Numbers"
+msgstr "Numero"
+
+#. module: telephony_isp
+#: view:account.analytic.account:telephony_isp.account_contract_form_telephony
+msgid "Numbers info"
+msgstr "Info Numero"
 
 #. module: telephony_isp
 #: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
@@ -398,6 +541,8 @@ msgstr "Origen"
 
 #. module: telephony_isp
 #: selection:product.telephony,segment:0
+#: selection:telephony_isp.pool,pool_type:0
+#: selection:telephony_isp.pool.number,number_type:0
 #: selection:telephony_isp.rate,segment:0
 msgid "Other"
 msgstr "Otros"
@@ -408,9 +553,15 @@ msgid "Partner"
 msgstr "Cliente"
 
 #. module: telephony_isp
+#: field:telephony_isp.create.invoice,partner_id:0
 #: field:telephony_isp.supplier,partner_id:0
 msgid "Partner id"
 msgstr "id cliente"
+
+#. module: telephony_isp
+#: field:account.analytic.account.number,password:0
+msgid "Password"
+msgstr "Password"
 
 #. module: telephony_isp
 #: help:telephony_isp.rate,ratio:0
@@ -420,13 +571,41 @@ msgstr "Porcentaje para números especiales"
 #. module: telephony_isp
 #: field:telephony_isp.call_detail,period_id:0
 msgid "Period id"
-msgstr "id periodo"
+msgstr "ID periodo"
+
+#. module: telephony_isp
+#: view:website:account.report_invoice_document
+msgid "Period:"
+msgstr "Período:"
 
 #. module: telephony_isp
 #: model:ir.actions.act_window,name:telephony_isp.action_list_periods
 #: model:ir.ui.menu,name:telephony_isp.telephony_periods_menu
 msgid "Periods"
 msgstr "Periodos"
+
+#. module: telephony_isp
+#: model:ir.actions.act_window,name:telephony_isp.action_list_pools
+#: view:telephony_isp.pool:telephony_isp.view_telephony_isp_pool_form
+#: view:telephony_isp.pool.number:telephony_isp.view_telephony_isp_pool_number_form
+msgid "Pool"
+msgstr "Pool"
+
+#. module: telephony_isp
+#: field:telephony_isp.pool.number,pool_id:0
+msgid "Pool id"
+msgstr "Pool id"
+
+#. module: telephony_isp
+#: field:telephony_isp.pool,pool_type:0
+msgid "Pool type"
+msgstr "Tipo de Pool"
+
+#. module: telephony_isp
+#: model:ir.ui.menu,name:telephony_isp.telephony_pools_menu
+#: view:telephony_isp.pool:telephony_isp.view_telephony_isp_pool_tree
+msgid "Pools"
+msgstr "Pools"
 
 #. module: telephony_isp
 #: field:telephony_isp.rate,prefix:0
@@ -450,30 +629,15 @@ msgid "Product"
 msgstr "Producto"
 
 #. module: telephony_isp
-#: field:product.product,alert_time:0
-msgid "Product Alert Time"
-msgstr "Tiempo de alerta del producto"
-
-#. module: telephony_isp
-#: field:product.product,life_time:0
-msgid "Product Life Time"
-msgstr "Tiempo de vida del producto"
-
-#. module: telephony_isp
-#: field:product.product,removal_time:0
-msgid "Product Removal Time"
-msgstr "Tiempo de eliminación del producto"
-
-#. module: telephony_isp
-#: field:product.product,use_time:0
-msgid "Product Use Time"
-msgstr "Tiempo de uso del producto"
-
-#. module: telephony_isp
+#: field:account.analytic.account.number,product_id:0
 #: field:product.telephony,product_id:0
-#: field:telephony_isp.supplier,product_id:0
 msgid "Product id"
-msgstr "id producto"
+msgstr "ID producto"
+
+#. module: telephony_isp
+#: field:product.product,purchase_line_warn:0
+msgid "Purchase Order Line"
+msgstr "Purchase Order Line"
 
 #. module: telephony_isp
 #: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
@@ -490,7 +654,7 @@ msgstr "Importar fichero de tarifas"
 #. module: telephony_isp
 #: field:telephony_isp.supplier,rate_ids:0
 msgid "Rate ids"
-msgstr "ids tarifas"
+msgstr "IDS tarifas"
 
 #. module: telephony_isp
 #: model:ir.actions.act_window,name:telephony_isp.action_list_rates
@@ -510,6 +674,11 @@ msgid "Raw"
 msgstr "Raw"
 
 #. module: telephony_isp
+#: field:telephony_isp.create.invoice,recalc:0
+msgid "Recalc"
+msgstr "Recalcular"
+
+#. module: telephony_isp
 #: field:telephony_isp.call_detail,contract_code:0
 msgid "Reference"
 msgstr "Referencia"
@@ -520,6 +689,16 @@ msgid "Reference cost"
 msgstr "Coste referencia"
 
 #. module: telephony_isp
+#: selection:product.telephony,segment:0
+msgid "SMS"
+msgstr "SMS"
+
+#. module: telephony_isp
+#: field:product.product,sale_line_warn:0
+msgid "Sales Order Line"
+msgstr "Sales Order Line"
+
+#. module: telephony_isp
 #: field:product.telephony,segment:0
 #: field:telephony_isp.rate,segment:0
 msgid "Segment"
@@ -528,7 +707,13 @@ msgstr "Segmento"
 #. module: telephony_isp
 #: model:ir.ui.menu,name:telephony_isp.telephony_settings_menu
 msgid "Settings"
-msgstr "Configuración"
+msgstr "Configuracion"
+
+#. module: telephony_isp
+#: help:product.product,purchase_line_warn:0
+#: help:product.product,sale_line_warn:0
+msgid "Si selecciona la opción \"Aviso\" se notificará a los usuarios con el mensaje, si selecciona \"Mensaje de bloqueo\" se lanzará una excepción con el mensaje y se bloqueará el flujo. El mensaje debe escribirse en el siguiente campo."
+msgstr "Si selecciona la opción \"Aviso\" se notificará a los usuarios con el mensaje, si selecciona \"Mensaje de bloqueo\" se lanzará una excepción con el mensaje y se bloqueará el flujo. El mensaje debe escribirse en el siguiente campo."
 
 #. module: telephony_isp
 #: field:telephony_isp.rate,special:0
@@ -536,7 +721,18 @@ msgid "Special"
 msgstr "Especial"
 
 #. module: telephony_isp
+#: selection:telephony_isp.call_detail,status:0
+msgid "Special (invoiced)"
+msgstr "Especial (facturado)"
+
+#. module: telephony_isp
+#: field:telephony_isp.period,date_start:0
+msgid "Start"
+msgstr "Inicio"
+
+#. module: telephony_isp
 #: field:telephony_isp.call_detail,status:0
+#: field:telephony_isp.pool.number,status:0
 msgid "Status"
 msgstr "Estatus"
 
@@ -544,9 +740,10 @@ msgstr "Estatus"
 #: field:telephony_isp.call_detail,supplier_id:0
 #: field:telephony_isp.import.cdr,supplier_id:0
 #: field:telephony_isp.import.rate,supplier_id:0
+#: field:telephony_isp.pool,supplier_id:0
 #: field:telephony_isp.rate,supplier_id:0
 msgid "Supplier id"
-msgstr "id proveedor"
+msgstr "ID proveedor"
 
 #. module: telephony_isp
 #: model:ir.actions.act_window,name:telephony_isp.action_list_suppliers
@@ -568,6 +765,11 @@ msgid "Telephony Data"
 msgstr "Datos telefonia"
 
 #. module: telephony_isp
+#: view:account.analytic.account:telephony_isp.account_contract_form_telephony
+msgid "Telephony Info"
+msgstr "Info Telefonia"
+
+#. module: telephony_isp
 #: view:product.product:telephony_isp.product_normal_form_view_telephony
 msgid "Telephony data"
 msgstr "Datos telefonia"
@@ -576,12 +778,17 @@ msgstr "Datos telefonia"
 #: field:account.invoice,telephony_ids:0
 #: field:product.product,telephony_ids:0
 msgid "Telephony ids"
-msgstr "ids telefonia"
+msgstr "IDS telefonia"
+
+#. module: telephony_isp
+#: field:account.analytic.account,telephony_number_ids:0
+msgid "Telephony number ids"
+msgstr "IDS numero Telefonia"
 
 #. module: telephony_isp
 #: field:account.invoice,telephony_period_id:0
 msgid "Telephony period id"
-msgstr "id periodo telefonia"
+msgstr "ID periodo telefonia"
 
 #. module: telephony_isp
 #: view:telephony_isp.supplier:telephony_isp.view_telephony_isp_supplier_form
@@ -625,24 +832,14 @@ msgid "Total Amount"
 msgstr "Importe total"
 
 #. module: telephony_isp
-#: help:product.product,alert_time:0
-msgid "When a new a Serial Number is issued, this is the number of days before an alert should be notified."
-msgstr "Cuando un nuevo Número de serie es registrado, este es el número de días antes de que deba ser notificado"
+#: field:product.telephony,minutes_free:0
+msgid "Units free"
+msgstr "Unidades gratis"
 
 #. module: telephony_isp
-#: help:product.product,life_time:0
-msgid "When a new a Serial Number is issued, this is the number of days before the goods may become dangerous and must not be consumed."
-msgstr "Cuando un nuevo Número de serie es registrado, este es el numero de días antes de que los bienes puedan ser peligrosos y no deban ser consumidos"
-
-#. module: telephony_isp
-#: help:product.product,removal_time:0
-msgid "When a new a Serial Number is issued, this is the number of days before the goods should be removed from the stock."
-msgstr "Cuando un nuevo Número de serie es registrado, este es el número de días antes de que los bienes deban ser eliminados del stock"
-
-#. module: telephony_isp
-#: help:product.product,use_time:0
-msgid "When a new a Serial Number is issued, this is the number of days before the goods starts deteriorating, without being dangerous yet."
-msgstr "Cuando un nuevo Número de serie es registrado, este es el número de días antes de que los bienes empiezan a deteriorarse, sin ser peligrosos aun."
+#: field:account.analytic.account,use_telephony:0
+msgid "Use telephony"
+msgstr "Usar telefonia"
 
 #. module: telephony_isp
 #: view:telephony_isp.call_detail:telephony_isp.view_telephony_isp_call_detail_search_view
