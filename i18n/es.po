@@ -292,7 +292,7 @@ msgstr "Solucionar errores"
 #: selection:telephony_isp.pool,pool_type:0
 #: selection:telephony_isp.pool.number,number_type:0
 msgid "Fixed"
-msgstr "Solucionado"
+msgstr "Fijo"
 
 #. module: telephony_isp
 #: selection:telephony_isp.call_detail,status:0
