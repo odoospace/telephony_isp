@@ -278,7 +278,6 @@ class WizardCreateInvoices(models.TransientModel):
                     'date_invoice': self.date_invoice,
                     'partner_id': i['contract'].partner_id.id,
                     'journal_id': self.journal_id.id,
-                    'period_id': period.id,
                     'payment_mode_id': i['contract'].payment_mode.id,
                     'account_id': i['contract'].partner_id.property_account_receivable.id,
                     'invoice_line': lines
