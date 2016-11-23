@@ -284,8 +284,16 @@ class WizardCreateInvoices(models.TransientModel):
                     'invoice_line': lines
                 }
 
+                # recover or create invoice to add lines
                 if data['partner_id']:
-                    invoice = self.env['account.invoice'].create(data)
+                    # first of all, search for draft invoices for this partner
+                    invoice_obj = selv.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id'])])
+                    if len(invoice_obj) == 1:
+                        invoice = invoice_obj[0]
+                    elif len(invoice_obj) == 0:
+                        invoice = self.env['account.invoice'].create(data)
+                    else:
+                        raise ValidationError('Error processing contract for %s. Many draft invoices.' % ', '.join(i['origins'].keys()))
                 else:
                     raise ValidationError('Error processing contract for %s' % ', '.join(i['origins'].keys()))
 
