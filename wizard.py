@@ -69,10 +69,12 @@ class WizardImportCDR(models.TransientModel):
                     data['contract_line_id'] = contracts[data['origin']]
                     data['status'] = 'draft'
                 elif not contracts.has_key(data['origin']):
-                    contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
-                    if len(contract_line) == 1 :
-                        contracts[data['origin']] = contract_line[0].id
-                        data['contract_line_id'] = contract_line[0].id
+                    # search numbers related to pool_number
+                    #contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
+                    contract_number = selv.env['account_analytic_account_number'].search([['name', '=', data['origin']]])
+                    if len(contract_number) == 1 :
+                        contracts[data['origin']] = contract_number[0].contract_line_id.id
+                        data['contract_line_id'] = contract_number[0].contract_line_id.id
                         data['status'] = 'draft'
                     else:
                         contracts[data['origin']] = None
