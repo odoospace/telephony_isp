@@ -105,6 +105,7 @@
             <field name="arch" type="xml">
               <tree string="Suppliers">
                   <field name="supplier_id"/>
+                  <field name="name"/>
                   <field name="prefix"/>
                   <field name="special"/>
                   <field name="segment"/>
