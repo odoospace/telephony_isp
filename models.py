@@ -21,7 +21,7 @@ class account_analytic_account_number(models.Model):
         return res
 
     number_id = fields.Many2one('telephony_isp.pool.number', required=True, domain="[('status', '=', 'not_assigned')]")
-    name = fields.Char(related='number_id.name', store=True)
+    # name = fields.Char(related='number_id.name', store=True)
     contract_id = fields.Many2one('account.analytic.account')
     contract_line_id = fields.Many2one('account.analytic.invoice.line',
 #        domain=_get_lines)
