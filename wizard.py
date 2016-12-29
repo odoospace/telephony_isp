@@ -387,6 +387,7 @@ class WizardCreateInvoices(models.TransientModel):
                         invoice.write({
                             'is_telephony': True,
                             'telephony_period_id': period.id,
+                            'invoice_line': lines
                             })
                     elif len(invoice_obj) == 0:
                         invoice = self.env['account.invoice'].create(data)
