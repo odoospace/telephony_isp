@@ -22,8 +22,8 @@ m = {
         'date': 0,
         'origin': 2,
         'destiny': 4,
-        'network': 9,
-        'duration': 5,
+        'network': 14,
+        'duration': 6,
         'cost': None
     },
 }
@@ -134,11 +134,11 @@ class WizardImportCDR(models.TransientModel):
                     # print c, row
                     # c +=1
                     origin = row[m[self.cdr_type]['origin']]
-                    destiny = row[m[self.cdr_type]['destiny']]
+                    destiny = str(row[m[self.cdr_type]['destiny']])
                     duration = float(row[m[self.cdr_type]['duration']])
                     data = {
                         'supplier_id': self.supplier_id.id,
-                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%Y %H:%M'),
+                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%Y-%m-%d %H:%M:%S'),
                         'origin': origin, # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
@@ -166,7 +166,11 @@ class WizardImportCDR(models.TransientModel):
                         data['status'] = 'error'
                         print 'ERRRORRRRRRR'
 
-                    rate = get_rate_without_cc(destiny)
+
+                    if destiny.startswith('00'):
+                        rate = get_rate_without_cc(destiny[2:])
+                    else:
+                        rate = get_rate_without_cc(destiny)
                     # apply rates or default
                     if rate:
                         if rate.special:
@@ -376,10 +380,14 @@ class WizardCreateInvoices(models.TransientModel):
 
                 # recover or create invoice to add lines
                 if data['partner_id']:
-                    # first of all, search for draft invoices for this partner
-                    invoice_obj = self.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id'])])
+                    # first of all, search for draft invoices for this partner and contract
+                    invoice_obj = self.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id']),('origin', '=', data['origin'])])
                     if len(invoice_obj) == 1:
                         invoice = invoice_obj[0]
+                        invoice.write({
+                            'is_telephony': True,
+                            'telephony_period_id': period.id,
+                            })
                     elif len(invoice_obj) == 0:
                         invoice = self.env['account.invoice'].create(data)
                     else:
