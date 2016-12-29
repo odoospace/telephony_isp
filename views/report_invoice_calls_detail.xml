@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
-<template id="report_invoice_calls_detail" inherit_id="account.report_invoice_document">
-    <xpath expr="//div[@class='row']" position="after">
+<template id="report_invoice_calls_detail" inherit_id="partner_installer.report_brand_document">
+    <xpath expr="//p[@t-if='o.partner_id.vat']" position="after">
       <p t-if="o.is_telephony" style="page-break-before:always;"> </p>
 
       <div t-if="o.is_telephony" class="row" style="position:relative;top:30px;right:-60px;font-size:13px">
