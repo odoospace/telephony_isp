@@ -197,6 +197,7 @@
                   <field name="number_type"/>
                   <field name="status"/>
                   <field name="last_contract_id"/>
+                  <field name="migrated"/>
               </tree>
           </field>
         </record>
@@ -214,6 +215,7 @@
                       <field name="name"/>
                       <field name="number_type"/>
                       <field name="status"/>
+                      <field name="migrated"/>
                   </group>
               </form>
           </field>

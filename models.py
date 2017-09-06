@@ -128,6 +128,8 @@ class pool_number(models.Model):
     )
     #contract_ids = fields.One2many('account.analytic.account')
     last_contract_id = fields.Many2one('account.analytic.account')# current active contract for this number
+    migrated = fields.Boolean()
+
 
     @api.multi
     @api.depends('name', 'pool_id')

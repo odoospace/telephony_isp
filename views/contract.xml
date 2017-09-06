@@ -20,6 +20,7 @@
                               <field name="password"/>
                               <field name="product_id"/>
                               <field name="mac"/>
+                              <field name="migrated"/>
                             </tree>
                         </field>
                     </page>
