@@ -387,14 +387,14 @@ class WizardCreateInvoices(models.TransientModel):
                 if data['partner_id']:
                     # first of all, search for draft invoices for this partner and contract
                     invoice_obj = self.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id']),('origin', '=', data['origin'])])
-                    if len(invoice_obj) == 1:
+                    if len(invoice_obj) == 1 and self.existing_invoice:
                         invoice = invoice_obj[0]
                         invoice.write({
                             'is_telephony': True,
                             'telephony_period_id': period.id,
                             'invoice_line': lines
                             })
-                    elif len(invoice_obj) == 0:
+                    elif len(invoice_obj) == 0 or not self.existing_invoice:
                         invoice = self.env['account.invoice'].create(data)
                     else:
                         raise ValidationError('Error processing contract for %s. Many draft invoices.' % ', '.join(i['origins'].keys()))
@@ -436,4 +436,6 @@ class WizardCreateInvoices(models.TransientModel):
     date_invoice = fields.Date('Date invoice', required=True)
     date_start= fields.Date('From', required=True)
     date_end = fields.Date('To', required=True)
-    recalc = fields.Boolean(hel='Override previus calcs in calls') # override invoiced status
+    recalc = fields.Boolean(help='Override previus calcs in calls') # override invoiced status
+    existing_invoice = fields.Boolean('Add to existing invoices') 
+
