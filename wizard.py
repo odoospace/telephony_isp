@@ -82,7 +82,7 @@ class WizardImportCDR(models.TransientModel):
                     duration = float(row[m[self.cdr_type]['duration']])
                     data = {
                         'supplier_id': self.supplier_id.id,
-                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%y %H:%M:%S'),
+                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%Y-%m-%d %H:%M:%S'),
                         'origin': origin, # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
@@ -96,10 +96,15 @@ class WizardImportCDR(models.TransientModel):
                     elif not contracts.has_key(data['origin']):
                         # search numbers related to pool_number
                         #contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
-                        contract_number = self.env['account.analytic.account.number'].search([['name', '=', data['origin']]])
-                        if len(contract_number) == 1 :
-                            contracts[data['origin']] = contract_number[0].contract_line_id.analytic_account_id.id
-                            data['contract_line_id'] = contract_number[0].contract_line_id.analytic_account_id.id
+                        # contract_number = self.env['account.analytic.account.number'].search([['name', '=', data['origin']]])
+                        # if len(contract_number) == 1 :
+                        #     contracts[data['origin']] = contract_number[0].contract_line_id.analytic_account_id.id
+                        #     data['contract_line_id'] = contract_number[0].contract_line_id.analytic_account_id.id
+                        #     data['status'] = 'draft'
+                        contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
+                        if len(contract_line) == 1 :
+                            contracts[data['origin']] = contract_line[0].id
+                            data['contract_line_id'] = contract_line[0].id
                             data['status'] = 'draft'
                         else:
                             contracts[data['origin']] = None
