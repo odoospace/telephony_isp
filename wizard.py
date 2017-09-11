@@ -17,6 +17,15 @@ m = {
         'duration': 5,
         'cost': 6
     },
+    'telcia': {
+        'id': 0,
+        'date': 1,
+        'origin': 2,
+        'destiny': 3,
+        'network': 4,
+        'duration': 5,
+        'cost': 6
+    },
     'carrier-enabler': {
         'id': 3,
         'date': 0,
@@ -72,6 +81,66 @@ class WizardImportCDR(models.TransientModel):
         contracts = {}
         if self.cdr_data:
             if self.cdr_type == 'aire':
+                f = StringIO.StringIO(base64.decodestring(self.cdr_data))
+                reader = csv.reader(f, delimiter=';')
+                next(reader, None)  # skip header
+                #c = 0
+                for row in reader:
+                    origin = row[m[self.cdr_type]['origin']].replace('->', '')
+                    destiny = row[m[self.cdr_type]['destiny']]
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    data = {
+                        'supplier_id': self.supplier_id.id,
+                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%y %H:%M:%S'),
+                        'origin': origin, # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                        'cost': float(row[m[self.cdr_type]['cost']]),
+                    }
+
+                    # don't repeat searches with contracts
+                    if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                        data['contract_line_id'] = contracts[data['origin']]
+                        data['status'] = 'draft'
+                    elif not contracts.has_key(data['origin']):
+                        # search numbers related to pool_number
+                        #contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
+                        # contract_number = self.env['account.analytic.account.number'].search([['name', '=', data['origin']]])
+                        # if len(contract_number) == 1 :
+                        #     contracts[data['origin']] = contract_number[0].contract_line_id.analytic_account_id.id
+                        #     data['contract_line_id'] = contract_number[0].contract_line_id.analytic_account_id.id
+                        #     data['status'] = 'draft'
+                        contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
+                        if len(contract_line) == 1 :
+                            contracts[data['origin']] = contract_line[0].id
+                            data['contract_line_id'] = contract_line[0].id
+                            data['status'] = 'draft'
+                        else:
+                            contracts[data['origin']] = None
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+
+                    rate = get_rate(destiny)
+                    # apply rates or default
+                    if rate:
+                        if rate.special:
+                            data['amount'] = data['cost'] + data['cost'] * rate.ratio / 100.
+                        else:
+                            data['amount'] = rate.price / 60. * duration # seconds -> minute
+                            data['rate_id'] = rate.id
+                            if data['amount'] == 0:
+                                data['status'] = 'free'
+                    else:
+                        data['amount'] = data['cost'] + data['cost'] * self.supplier_id.ratio / 100.
+                        data['status'] = 'default'
+
+                    # don't repeat searchs with rates
+
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
+
+            elif self.cdr_type == 'telcia':
                 f = StringIO.StringIO(base64.decodestring(self.cdr_data))
                 reader = csv.reader(f, delimiter=';')
                 next(reader, None)  # skip header
@@ -200,7 +269,7 @@ class WizardImportCDR(models.TransientModel):
         return {'type': 'ir.actions.act_window_close'}
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
-    cdr_type = fields.Selection([('aire', 'Aire Networks'),('carrier-enabler', 'Carrier Enabler')], string='CDR type', default='aire', required=True)
+    cdr_type = fields.Selection([('aire', 'Aire Networks'),('telcia', 'Telcia'),('carrier-enabler', 'Carrier Enabler')], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
 
 class WizardImportRate(models.TransientModel):
