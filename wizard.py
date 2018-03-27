@@ -399,7 +399,8 @@ class WizardCreateInvoices(models.TransientModel):
                     elif len(invoice_obj) == 0:
                         invoice = self.env['account.invoice'].create(data)
                     else:
-                        raise ValidationError('Error processing contract for %s. Many draft invoices.' % ', '.join(i['origins'].keys()))
+                        # raise ValidationError('Error processing contract for %s. Many draft invoices.' % ', '.join(i['origins'].keys()))
+                        raise ValidationError('Error processing contract for %s. Many draft invoices. or NO invoice' % j)
                 else:
                     raise ValidationError('Error processing contract for %s' % ', '.join(i['origins'].keys()))
 
