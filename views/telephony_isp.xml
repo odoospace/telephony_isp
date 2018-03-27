@@ -6,6 +6,7 @@
             <field name="model">telephony_isp.call_detail</field>
             <field name="arch" type="xml">
               <tree string="Call Detail Record" colors="red:status=='error'">
+                  <field name="company_id"/>
                   <field name="partner"/>
                   <field name="contract_code"/>
                   <field name="product"/>
@@ -146,6 +147,7 @@
             <field name="model">telephony_isp.period</field>
             <field name="arch" type="xml">
               <tree string="Suppliers">
+                  <field name="company_id"/>
                   <field name="date_start"/>
                   <field name="date_end"/>
                   <field name="invoice_ids"/>

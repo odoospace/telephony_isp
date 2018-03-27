@@ -142,6 +142,7 @@ class WizardImportCDR(models.TransientModel):
                         'origin': origin, # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
+                        'company_id': self.company_id.id,
                     }
 
                     # don't repeat searches with contracts
@@ -197,6 +198,7 @@ class WizardImportCDR(models.TransientModel):
     supplier_id = fields.Many2one('telephony_isp.supplier')
     cdr_type = fields.Selection([('aire', 'Aire Networks'),('carrier-enabler', 'Carrier Enabler')], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
+    company_id = fields.Many2one('company_id', required=True)
 
 class WizardImportRate(models.TransientModel):
     _name = 'telephony_isp.import.rate'
@@ -283,6 +285,7 @@ class WizardCreateInvoices(models.TransientModel):
         # TODO: get a better way to recalc invoices
         if self.partner_id and self.recalc:
             call_details = self.env['telephony_isp.call_detail'].search([
+                ('company_id', '=', self.company_id.id),
                 ('partner.id', '=', self.partner_id.id),
                 ('status', '!=', 'error'),
                 ('time', '>=',  self.date_start),
@@ -290,6 +293,7 @@ class WizardCreateInvoices(models.TransientModel):
             ], order='time')
         elif self.partner_id:
             call_details = self.env['telephony_isp.call_detail'].search([
+                ('company_id', '=', self.company_id.id),
                 ('partner.id', '=', self.partner_id.id),
                 ('status', '=', 'draft'),
                 ('time', '>=',  self.date_start),
@@ -297,6 +301,7 @@ class WizardCreateInvoices(models.TransientModel):
             ], order='time')
         else:
             call_details = self.env['telephony_isp.call_detail'].search([
+                ('company_id', '=', self.company_id.id),
                 ('status', '=', 'draft'),
                 ('time', '>=',  self.date_start),
                 ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
@@ -305,6 +310,7 @@ class WizardCreateInvoices(models.TransientModel):
         data = {
             'date_start': self.date_start,
             'date_end': self.date_end,
+            'company_id': self.company_id,
         }
 
         period = self.env['telephony_isp.period'].create(data)
@@ -374,6 +380,7 @@ class WizardCreateInvoices(models.TransientModel):
                     'telephony_period_id': period.id,
                     'account_id': i['contract'].partner_id.property_account_receivable.id,
                     'invoice_line': lines
+                    'company_id': self.company_id.id
                 }
                 if hasattr(i['contract'], 'payment_mode'):
                     data['payment_mode'] = i['contract'].payment_mode.id,
@@ -381,7 +388,7 @@ class WizardCreateInvoices(models.TransientModel):
                 # recover or create invoice to add lines
                 if data['partner_id']:
                     # first of all, search for draft invoices for this partner and contract
-                    invoice_obj = self.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id']),('origin', '=', data['origin'])])
+                    invoice_obj = self.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id']),('origin', '=', data['origin']),('company_id', '=', data['company_id'])])
                     if len(invoice_obj) == 1:
                         invoice = invoice_obj[0]
                         invoice.write({
@@ -432,3 +439,4 @@ class WizardCreateInvoices(models.TransientModel):
     date_start= fields.Date('From', required=True)
     date_end = fields.Date('To', required=True)
     recalc = fields.Boolean(hel='Override previus calcs in calls') # override invoiced status
+    company_id = fields.Many2one('res.company', required=True)

@@ -32,6 +32,7 @@ class account_analytic_account_number(models.Model):
     product_id = fields.Many2one('product.product')
     mac = fields.Char()
 
+
     @api.model
     def create(self, vals):
         """change status of number in the pool to assigned"""
@@ -196,7 +197,7 @@ class call_detail(models.Model):
         default='raw')
     to_invoice = fields.Boolean(default=True) # False -> free
     hidden = fields.Boolean(default=False) # hide this entry to some users - experimental
-
+    company_id = fields.Many2one('res.company')
 
 # TODO: use price lists instead ?
 class supplier(models.Model):
@@ -243,3 +244,4 @@ class period(models.Model):
     date_start = fields.Date('Start')
     date_end = fields.Date('End')
     amount = fields.Float() # total
+    company_id = fields.Many2one('res.company')
