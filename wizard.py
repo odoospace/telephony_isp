@@ -379,7 +379,7 @@ class WizardCreateInvoices(models.TransientModel):
                     'journal_id': self.journal_id.id,
                     'telephony_period_id': period.id,
                     'account_id': i['contract'].partner_id.property_account_receivable.id,
-                    'invoice_line': lines
+                    'invoice_line': lines,
                     'company_id': self.company_id.id
                 }
                 if hasattr(i['contract'], 'payment_mode'):
