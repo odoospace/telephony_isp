@@ -198,7 +198,7 @@ class WizardImportCDR(models.TransientModel):
     supplier_id = fields.Many2one('telephony_isp.supplier')
     cdr_type = fields.Selection([('aire', 'Aire Networks'),('carrier-enabler', 'Carrier Enabler')], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
-    company_id = fields.Many2one('company_id', required=True)
+    company_id = fields.Many2one('res.company', required=True)
 
 class WizardImportRate(models.TransientModel):
     _name = 'telephony_isp.import.rate'
