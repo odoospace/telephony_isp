@@ -223,26 +223,22 @@ class WizardImportCDR(models.TransientModel):
                     }
 
                     # don't repeat searches with contracts
-                    if contracts.has_key(data['origin']):
-                        data['contract_line_id'] = contracts[data['origin']]['contract_id']
-                        data['origin'] = contracts[data['origin']]['number']
+                   if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                        data['contract_line_id'] = contracts[data['origin']]
                         data['status'] = 'draft'
                     elif not contracts.has_key(data['origin']):
                         # search numbers related to pool_number
-                        contract_number = self.env['account.analytic.account.number'].search([['login', '=', data['origin']]])
+                        #contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
+                        contract_number = self.env['account.analytic.account.number'].search([['name', '=', data['origin']]])
                         if len(contract_number) == 1 :
-                            contracts[data['origin']] = {
-                            'contract_id': contract_number[0].contract_line_id.id,
-                            'number': contract_number[0].number_id.name
-                            }
-                            data['contract_line_id'] = contract_number[0].contract_line_id.id
+                            contracts[data['origin']] = contract_number[0].contract_line_id.analytic_account_id.id
+                            data['contract_line_id'] = contract_number[0].contract_line_id.analytic_account_id.id
                             data['status'] = 'draft'
-                            data['origin'] = contract_number[0].number_id.name
                         else:
+                            contracts[data['origin']] = None
                             data['status'] = 'error'
                     else:
                         data['status'] = 'error'
-                        print 'ERRRORRRRRRR'
 
                     # print data
                     call_detail = self.env['telephony_isp.call_detail']

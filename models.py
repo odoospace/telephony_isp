@@ -159,6 +159,15 @@ class call_detail(models.Model):
                     data['status'] = 'draft'
                 i.write(data)
                 print 'Fixed!', i.origin, i
+            contract_line = self.env['account.analytic.account.number'].search([('name', '=', i.origin)])
+            if len(contract_line) == 1:
+                data = {
+                    'contract_line_id': contract_line[0].contract_line_id.id,
+                }
+                if i.status == 'error':
+                    data['status'] = 'draft'
+                i.write(data)
+                print 'Fixed!', i.origin, i
         return {
             'type': 'ir.actions.client',
             'tag': 'reload'
