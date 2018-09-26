@@ -26,6 +26,15 @@ m = {
         'duration': 6,
         'cost': None
     },
+     'miscellaneous': {
+        'id': 2,
+        'date': 0,
+        'origin': 1,
+        'destiny': 3,
+        'network': None,
+        'duration': 4,
+        'cost': 5
+    },
 }
 
 class WizardImportCDR(models.TransientModel):
@@ -192,11 +201,57 @@ class WizardImportCDR(models.TransientModel):
                     # print data
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
+            elif self.cdr_type == 'miscellaneous':
+                #no rates, direct cost
+                f = StringIO.StringIO(base64.decodestring(self.cdr_data))
+                reader = csv.reader(f, delimiter=',')
+                next(reader, None)  # skip header
+                for row in reader:
+                    origin = row[m[self.cdr_type]['origin']]
+                    destiny = str(row[m[self.cdr_type]['destiny']])
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    cost = float(row[m[self.cdr_type]['cost']])
+                    data = {
+                        'supplier_id': self.supplier_id.id,
+                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%Y-%m-%d %H:%M:%S'),
+                        'origin': origin, # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                        'company_id': self.company_id.id,
+                        'cost': cost,
+                        'amount': cost
+                    }
+
+                    # don't repeat searches with contracts
+                    if contracts.has_key(data['origin']):
+                        data['contract_line_id'] = contracts[data['origin']]['contract_id']
+                        data['origin'] = contracts[data['origin']]['number']
+                        data['status'] = 'draft'
+                    elif not contracts.has_key(data['origin']):
+                        # search numbers related to pool_number
+                        contract_number = self.env['account.analytic.account.number'].search([['login', '=', data['origin']]])
+                        if len(contract_number) == 1 :
+                            contracts[data['origin']] = {
+                            'contract_id': contract_number[0].contract_line_id.id,
+                            'number': contract_number[0].number_id.name
+                            }
+                            data['contract_line_id'] = contract_number[0].contract_line_id.id
+                            data['status'] = 'draft'
+                            data['origin'] = contract_number[0].number_id.name
+                        else:
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+                        print 'ERRRORRRRRRR'
+
+                    # print data
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
 
         return {'type': 'ir.actions.act_window_close'}
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
-    cdr_type = fields.Selection([('aire', 'Aire Networks'),('carrier-enabler', 'Carrier Enabler')], string='CDR type', default='aire', required=True)
+    cdr_type = fields.Selection([('aire', 'Aire Networks'),('carrier-enabler', 'Carrier Enabler'),('miscellaneous', 'Miscellaneous')], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)
 
@@ -258,21 +313,54 @@ class WizardCreateInvoices(models.TransientModel):
         # check for free calls
         call_origin = self.contracts[call.contract.id]['origins'][call.origin]
 
-        if call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
-            self.contracts[call.contract.id]['origins'][call.origin]['minutes'][call.rate_id.segment] -= call.duration / 60.
-            d = call_origin['minutes'][call.rate_id.segment]
-            if d > 0:
-                amount = 0
-                status = 'free'
-            elif d > call.duration:
-                amount = call.amount / call.duration * abs(d)
-                stauts = 'special'
+        #add logic to domestic(landline and mobileline) calls
+        if call.rate_id.segment and self.contracts[call.contract.id]['origins'][call.origin]['minutes'].has_key('domestic'):
+            if call.rate_id.segment in ['domestic_number', 'domestic_mobile']:
+                self.contracts[call.contract.id]['origins'][call.origin]['minutes']['domestic'] -= call.duration / 60.
+                d = call_origin['minutes']['domestic']
+                if d > 0:
+                    amount = 0
+                    status = 'free'
+                elif d > call.duration:
+                    amount = call.amount / call.duration * abs(d)
+                    stauts = 'special'
+                else:
+                    amount = call.amount
+                    status = 'invoiced'
+
+            elif call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
+                self.contracts[call.contract.id]['origins'][call.origin]['minutes'][call.rate_id.segment] -= call.duration / 60.
+                d = call_origin['minutes'][call.rate_id.segment]
+                if d > 0:
+                    amount = 0
+                    status = 'free'
+                elif d > call.duration:
+                    amount = call.amount / call.duration * abs(d)
+                    stauts = 'special'
+                else:
+                    amount = call.amount
+                    status = 'invoiced'
+
+            else:
+                amount = call.amount
+                status = 'invoiced' 
+
+        else:
+            if call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
+                self.contracts[call.contract.id]['origins'][call.origin]['minutes'][call.rate_id.segment] -= call.duration / 60.
+                d = call_origin['minutes'][call.rate_id.segment]
+                if d > 0:
+                    amount = 0
+                    status = 'free'
+                elif d > call.duration:
+                    amount = call.amount / call.duration * abs(d)
+                    stauts = 'special'
+                else:
+                    amount = call.amount
+                    status = 'invoiced'
             else:
                 amount = call.amount
                 status = 'invoiced'
-        else:
-            amount = call.amount
-            status = 'invoiced'
 
         call_origin['calls'].append(call)
         call_origin['status'].append(status)
@@ -310,7 +398,7 @@ class WizardCreateInvoices(models.TransientModel):
         data = {
             'date_start': self.date_start,
             'date_end': self.date_end,
-            'company_id': self.company_id,
+            'company_id': self.company_id.id,
         }
 
         period = self.env['telephony_isp.period'].create(data)
