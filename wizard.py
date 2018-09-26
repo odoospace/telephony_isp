@@ -223,7 +223,7 @@ class WizardImportCDR(models.TransientModel):
                     }
 
                     # don't repeat searches with contracts
-                   if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                    if contracts.has_key(data['origin']) and contracts[data['origin']]:
                         data['contract_line_id'] = contracts[data['origin']]
                         data['status'] = 'draft'
                     elif not contracts.has_key(data['origin']):
