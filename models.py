@@ -159,7 +159,7 @@ class call_detail(models.Model):
                     data['status'] = 'draft'
                 i.write(data)
                 print 'Fixed!', i.origin, i
-            number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
+            number = self.env['telephony_isp.pool.number'].search([['name', '=', i.origin]])
             if number:
                 contract_line = self.env['account.analytic.account.number'].search([['number_id', '=', number[0].id]])
                 if len(contract_line) == 1:

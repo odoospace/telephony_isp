@@ -311,53 +311,57 @@ class WizardCreateInvoices(models.TransientModel):
         call_origin = self.contracts[call.contract.id]['origins'][call.origin]
 
         #add logic to domestic(landline and mobileline) calls
-        if call.rate_id.segment and self.contracts[call.contract.id]['origins'][call.origin]['minutes'].has_key('domestic'):
-            if call.rate_id.segment in ['domestic_number', 'domestic_mobile']:
-                self.contracts[call.contract.id]['origins'][call.origin]['minutes']['domestic'] -= call.duration / 60.
-                d = call_origin['minutes']['domestic']
-                if d > 0:
-                    amount = 0
-                    status = 'free'
-                elif d > call.duration:
-                    amount = call.amount / call.duration * abs(d)
-                    stauts = 'special'
-                else:
-                    amount = call.amount
-                    status = 'invoiced'
+        if call.rate_id:
+            if call.rate_id.segment and self.contracts[call.contract.id]['origins'][call.origin]['minutes'].has_key('domestic'):
+                if call.rate_id.segment in ['domestic_number', 'domestic_mobile']:
+                    self.contracts[call.contract.id]['origins'][call.origin]['minutes']['domestic'] -= call.duration / 60.
+                    d = call_origin['minutes']['domestic']
+                    if d > 0:
+                        amount = 0
+                        status = 'free'
+                    elif d > call.duration:
+                        amount = call.amount / call.duration * abs(d)
+                        stauts = 'special'
+                    else:
+                        amount = call.amount
+                        status = 'invoiced'
 
-            elif call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
-                self.contracts[call.contract.id]['origins'][call.origin]['minutes'][call.rate_id.segment] -= call.duration / 60.
-                d = call_origin['minutes'][call.rate_id.segment]
-                if d > 0:
-                    amount = 0
-                    status = 'free'
-                elif d > call.duration:
-                    amount = call.amount / call.duration * abs(d)
-                    stauts = 'special'
+                elif call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
+                    self.contracts[call.contract.id]['origins'][call.origin]['minutes'][call.rate_id.segment] -= call.duration / 60.
+                    d = call_origin['minutes'][call.rate_id.segment]
+                    if d > 0:
+                        amount = 0
+                        status = 'free'
+                    elif d > call.duration:
+                        amount = call.amount / call.duration * abs(d)
+                        stauts = 'special'
+                    else:
+                        amount = call.amount
+                        status = 'invoiced'
+
                 else:
                     amount = call.amount
-                    status = 'invoiced'
+                    status = 'invoiced' 
 
             else:
-                amount = call.amount
-                status = 'invoiced' 
-
+                if call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
+                    self.contracts[call.contract.id]['origins'][call.origin]['minutes'][call.rate_id.segment] -= call.duration / 60.
+                    d = call_origin['minutes'][call.rate_id.segment]
+                    if d > 0:
+                        amount = 0
+                        status = 'free'
+                    elif d > call.duration:
+                        amount = call.amount / call.duration * abs(d)
+                        stauts = 'special'
+                    else:
+                        amount = call.amount
+                        status = 'invoiced'
+                else:
+                    amount = call.amount
+                    status = 'invoiced'
         else:
-            if call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
-                self.contracts[call.contract.id]['origins'][call.origin]['minutes'][call.rate_id.segment] -= call.duration / 60.
-                d = call_origin['minutes'][call.rate_id.segment]
-                if d > 0:
-                    amount = 0
-                    status = 'free'
-                elif d > call.duration:
-                    amount = call.amount / call.duration * abs(d)
-                    stauts = 'special'
-                else:
-                    amount = call.amount
-                    status = 'invoiced'
-            else:
-                amount = call.amount
-                status = 'invoiced'
+            amount = call.amount
+            status = 'invoiced'
 
         call_origin['calls'].append(call)
         call_origin['status'].append(status)
