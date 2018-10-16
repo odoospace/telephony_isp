@@ -26,12 +26,12 @@
     'version': '11.0.0.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account', 'analytic', 'account_analytic_analysis', 'product'],
+    'depends': ['base', 'account', 'analytic', 'contract', 'product'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'templates.xml',
+        'views/templates.xml',
         'views/telephony_isp.xml',
         'views/telephony_wizard.xml',
         'views/product.xml',

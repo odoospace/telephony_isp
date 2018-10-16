@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from odoo import models, fields, api
 
 class account_invoice(models.Model):
     _inherit = 'account.invoice'
@@ -17,7 +17,7 @@ class account_analytic_account_number(models.Model):
     def _get_lines(self):
         ids = []
         res = [('analytic_account_id', '=', self.contract_id)]
-        print '>>>', res
+        print ('>>>', res)
         return res
 
     number_id = fields.Many2one('telephony_isp.pool.number', required=True, domain="[('status', '=', 'not_assigned')]")
@@ -25,7 +25,8 @@ class account_analytic_account_number(models.Model):
     contract_id = fields.Many2one('account.analytic.account')
     contract_line_id = fields.Many2one('account.analytic.invoice.line',
 #        domain=_get_lines)
-        domain="[('analytic_account_id', '=', contract_id)]")
+        # domain="[('analytic_account_id', '=', contract_id)]"
+    )
     pool = fields.Many2one(related='number_id.pool_ida')
     login = fields.Char()
     password = fields.Char()
@@ -75,6 +76,12 @@ class account_analytic_invoice_line(models.Model):
 
 class product_product(models.Model):
     _inherit = 'product.product'
+
+    telephony_ok = fields.Boolean('Can be used in telephony', help='This product can be used for telephony')
+    telephony_ids = fields.One2many('product.telephony', 'product_id')
+
+class product_template(models.Model):
+    _inherit = 'product.template'
 
     telephony_ok = fields.Boolean('Can be used in telephony', help='This product can be used for telephony')
     telephony_ids = fields.One2many('product.telephony', 'product_id')
@@ -149,7 +156,7 @@ class call_detail(models.Model):
     @api.multi
     def fix_errors(self):
         data_with_errors = self.search([('contract_line_id', '=', False)]) #([('status', '=', 'error')])
-        print 'errors:', len(data_with_errors)
+        print ('errors:', len(data_with_errors))
         for i in data_with_errors:
             contract_line = self.env['account.analytic.invoice.line'].search([('name', '=', i.origin)])
             if len(contract_line) == 1:
@@ -159,7 +166,7 @@ class call_detail(models.Model):
                 if i.status == 'error':
                     data['status'] = 'draft'
                 i.write(data)
-                print 'Fixed!', i.origin, i
+                print ('Fixed!', i.origin, i)
         return {
             'type': 'ir.actions.client',
             'tag': 'reload'

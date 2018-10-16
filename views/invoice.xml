@@ -6,7 +6,7 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form" />
             <field name="arch" type="xml">
-                <xpath expr="//page[@string='Payments']" position="after">
+                <xpath expr="//page[@name='other_info']" position="after">
                     <page string="Call details" attrs="{'invisible':[('is_telephony','=',False)]}">
                         <field name="is_telephony" attrs="{'invisible': 1}"/>
                         <field name="telephony_ids" widget="one2many_list" nolabel="1">

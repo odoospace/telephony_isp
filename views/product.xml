@@ -3,8 +3,8 @@
         <!-- BEGIN view product form -->
         <record id="product_normal_form_view_telephony" model="ir.ui.view">
             <field name="name">product.product.form.telephony</field>
-            <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_normal_form_view" />
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view" />
             <field name="domain">[('telephony_ok','=',True)]</field>
             <field name="arch" type="xml">
                 <div name="options" position="inside">
@@ -13,7 +13,7 @@
                         <label for="telephony_ok"/>
                     </div>
                 </div>
-                <xpath expr="//page[@string='Accounting']" position="after">
+                <xpath expr="//page[@name='notes']" position="after">
                     <page string="Telephony" attrs="{'invisible':[('telephony_ok','=',False)]}">
                         <group string="Telephony Data">
                             <field name="telephony_ids" widget="one2many_list" nolabel="1">

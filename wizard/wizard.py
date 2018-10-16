@@ -1,8 +1,8 @@
-from openerp import models, fields, api
+from odoo import models, fields, api
 from datetime import datetime, timedelta
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
-from openerp.exceptions import ValidationError
-import StringIO
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
+from odoo.exceptions import ValidationError
+from io import StringIO
 import base64
 import csv
 import sys
@@ -59,7 +59,7 @@ class WizardImportCDR(models.TransientModel):
                     break
 
             if not last:
-                print 'ERROR:', number
+                print ('ERROR:', number)
             #    last = 0
             return last
 
@@ -73,7 +73,7 @@ class WizardImportCDR(models.TransientModel):
                         last = rates_spain[number[:i]]
                         break
                 if not last:
-                    print 'ERROR:', number
+                    print ('ERROR:', number)
                 return last
             else:
                 return get_rate(number)
@@ -238,7 +238,7 @@ class WizardImportCDR(models.TransientModel):
                             data['status'] = 'error'
                     else:
                         data['status'] = 'error'
-                        print 'ERRRORRRRRRR'
+                        print ('ERRRORRRRRRR')
 
 
                     if destiny.startswith('00'):
