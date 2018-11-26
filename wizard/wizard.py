@@ -285,7 +285,7 @@ class WizardImportRate(models.TransientModel):
             f = io.BytesIO(base64.decodestring(self.rate_data))
             reader = pycompat.csv_reader(f, delimiter=',')
             #reader = csv.reader(f, delimiter=',')
-            next(reader, None)  # skip header
+            # next(reader, None)  # skip header
             for row in reader:
                 rate = self.env['telephony_isp.rate']
                 if not rate.search((['prefix', '=', row[0]], ['supplier_id', '=', self.supplier_id.id])):
