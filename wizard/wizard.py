@@ -292,6 +292,7 @@ class WizardImportRate(models.TransientModel):
                     data = {
                         'prefix': row[0],
                         'name': row[1],
+                        'cost': float(row[2]),
                         'price': float(row[3]),
                         'supplier_id': self.supplier_id.id
                     }
