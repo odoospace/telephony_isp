@@ -283,9 +283,7 @@ class WizardImportRate(models.TransientModel):
     def import_rate(self):
         if self.rate_data and self.supplier_id:
             f = io.BytesIO(base64.decodestring(self.rate_data))
-            dialect = csv.Sniffer().sniff(f.read(1024))
-            f.seek(0)
-            reader = pycompat.csv_reader(f, dialect)
+            reader = pycompat.csv_reader(f, delimiter=',')
             #reader = csv.reader(f, delimiter=',')
             next(reader, None)  # skip header
             for row in reader:
