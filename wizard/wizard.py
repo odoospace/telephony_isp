@@ -302,12 +302,7 @@ class WizardImportRate(models.TransientModel):
             #    'type': 'ir.actions.client',
             #    'tag': 'reload',
             #}
-            return {
-                'type': 'ir.actions.act_window',
-                'res_model': 'telephony_isp.supplier',
-                'view_type': 'tree',
-                'view_mode': 'tree',
-            }
+            return 
 
     supplier_id = fields.Many2one('telephony_isp.supplier', required=True)
     rate_data = fields.Binary('File')
