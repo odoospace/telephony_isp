@@ -229,7 +229,7 @@ class WizardImportCDR(models.TransientModel):
                         # search numbers related to pool_number
                         number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
                         if number:
-                            contract_number = self.env['account.analytic.account.number'].search([['number_ud', '=', number[0].id]])
+                            contract_number = self.env['account.analytic.account.number'].search([['number_id', '=', number[0].id]])
                             if len(contract_number) == 1 :
                                 contracts[data['origin']] = {
                                     'contract_id': contract_number[0].contract_line_id.id,
