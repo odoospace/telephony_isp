@@ -227,16 +227,20 @@ class WizardImportCDR(models.TransientModel):
                         data['status'] = 'draft'
                     elif not data['origin'] in contracts:
                         # search numbers related to pool_number
-                        contract_number = self.env['account.analytic.account.number'].search([['login', '=', data['origin']]])
-                        if len(contract_number) == 1 :
-                            contracts[data['origin']] = {
-                            'contract_id': contract_number[0].contract_line_id.id,
-                            'number': contract_number[0].number_id.name
-                            }
-                            data['contract_line_id'] = contract_number[0].contract_line_id.id
-                            data['status'] = 'draft'
-                            data['origin'] = contract_number[0].number_id.name
+                        number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
+                        if number:
+                            contract_number = self.env['account.analytic.account.number'].search([['number_ud', '=', number[0].id]])
+                            if len(contract_number) == 1 :
+                                contracts[data['origin']] = {
+                                    'contract_id': contract_number[0].contract_line_id.id,
+                                    'number': data['origin']
+                                }
+                                data['contract_line_id'] = contract_number[0].contract_line_id.id
+                                data['status'] = 'draft'
+                            else:
+                                data['status'] = 'error'
                         else:
+                            contracts[data['origin']] = None
                             data['status'] = 'error'
                     else:
                         data['status'] = 'error'
