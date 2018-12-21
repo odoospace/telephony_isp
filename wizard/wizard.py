@@ -222,8 +222,7 @@ class WizardImportCDR(models.TransientModel):
 
                     # don't repeat searches with contracts
                     if data['origin'] in contracts:
-                        data['contract_line_id'] = contracts[data['origin']]['contract_id']
-                        data['origin'] = contracts[data['origin']]['number']
+                        data['contract_line_id'] = contracts[data['origin']]
                         data['status'] = 'draft'
                     elif not data['origin'] in contracts:
                         # search numbers related to pool_number
@@ -231,10 +230,7 @@ class WizardImportCDR(models.TransientModel):
                         if number:
                             contract_number = self.env['account.analytic.account.number'].search([['number_id', '=', number[0].id]])
                             if len(contract_number) == 1 :
-                                contracts[data['origin']] = {
-                                    'contract_id': contract_number[0].contract_line_id.id,
-                                    'number': data['origin']
-                                }
+                                contracts[data['origin']] = contract_number[0].contract_line_id.id
                                 data['contract_line_id'] = contract_number[0].contract_line_id.id
                                 data['status'] = 'draft'
                             else:
