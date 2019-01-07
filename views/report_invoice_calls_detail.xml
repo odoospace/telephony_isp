@@ -2,7 +2,7 @@
 <openerp>
 <data>
 <template id="report_invoice_calls_detail" inherit_id="account.report_invoice_document">
-    <xpath expr="//div[@class='row']" position="after">
+    <xpath expr="//p[@t-if='o.fiscal_position_id.note']" position="after">
       <p t-if="o.is_telephony" style="page-break-before:always;"> </p>
 
       <div t-if="o.is_telephony" class="row" style="position:relative;top:30px;right:-60px;font-size:13px">

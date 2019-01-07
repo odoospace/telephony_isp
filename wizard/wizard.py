@@ -421,6 +421,7 @@ class WizardCreateInvoices(models.TransientModel):
         amount = 0
         for i in self.contracts.values():
             # invoice lines
+            # print (i)
             lines = []
             for j in i['origins']:
                 #default_product = i['origins'][j]['calls'][0]['supplier_id'].product_id
@@ -428,9 +429,9 @@ class WizardCreateInvoices(models.TransientModel):
                 lines.append((0,0, {
                     'product_id': product.id,
                     'name': 'Consumo de %s' % j,
-                    'account_id': product.property_account_income.id,
+                    'account_id': product.property_account_income_id.id or product.categ_id.property_account_income_categ_id.id,
                     'account_analytic_id': i['contract'].id,
-                    'invoice_line_tax_id': [(6,0, [k.id for k in product.taxes_id])],
+                    'invoice_line_tax_ids': [(6,0, [k.id for k in product.taxes_id])],
                     'price_unit': i['origins'][j]['total']
                 }))
 
@@ -442,8 +443,8 @@ class WizardCreateInvoices(models.TransientModel):
                     'partner_id': i['contract'].partner_id.id,
                     'journal_id': self.journal_id.id,
                     'telephony_period_id': period.id,
-                    'account_id': i['contract'].partner_id.property_account_receivable.id,
-                    'invoice_line': lines
+                    'account_id': i['contract'].partner_id.property_account_receivable_id.id,
+                    'invoice_line_ids': lines
                 }
                 if hasattr(i['contract'], 'payment_mode'):
                     data['payment_mode'] = i['contract'].payment_mode.id,
@@ -457,7 +458,7 @@ class WizardCreateInvoices(models.TransientModel):
                         invoice.write({
                             'is_telephony': True,
                             'telephony_period_id': period.id,
-                            'invoice_line': lines
+                            'invoice_line_ids': lines
                             })
                     elif len(invoice_obj) == 0 or not self.existing_invoice:
                         invoice = self.env['account.invoice'].create(data)
@@ -480,9 +481,12 @@ class WizardCreateInvoices(models.TransientModel):
                     if 'free' in status:
                         data['amount'] = 0
                     call.write(data)
+                print(lines)
+                print(invoice)
+                print(invoice.invoice_line_ids)
 
                 # recalc taxes
-                invoice.button_reset_taxes()
+                # invoice.button_reset_taxes()
 
                 # append invoice to period
                 invoices.append(invoice)
@@ -493,7 +497,7 @@ class WizardCreateInvoices(models.TransientModel):
             'call_details_ids': [(6,0, [k.id for k in call_details])],
             'amount': amount
         }
-
+        # stop()
         period.write(data)
 
     journal_id = fields.Many2one('account.journal', 'Journal', required=True)
