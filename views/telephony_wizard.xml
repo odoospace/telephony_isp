@@ -21,10 +21,37 @@
           </field>
       </record>
 
+      <record model="ir.ui.view" id="wizard_import_cdr_ws_form_view">
+          <field name="name">telephony_isp.import.cdr.ws.form</field>
+          <field name="model">telephony_isp.import.cdr.ws</field>
+          <field name="arch" type="xml">
+              <form string="Import CDR file Without Supplier">
+                  <group>
+                      <field name="cdr_type"/>
+                      <field name="cdr_data"/>
+                  </group>
+                  <footer>
+                      <button name="import_cdr_ws" type="object"
+                              string="Import" class="oe_highlight"/>
+                      or
+                      <button special="cancel" string="Cancel"/>
+                  </footer>
+              </form>
+          </field>
+      </record>
+
       <act_window id="launch_import_cdr_wizard"
                   name="Import CDR file"
                   src_model="telephony_isp.call_detail"
                   res_model="telephony_isp.import.cdr"
+                  view_mode="form"
+                  target="new"
+                  key2="client_action_multi"/>
+
+      <act_window id="launch_import_cdr_ws_wizard"
+                  name="Import CDR file Without Supplier"
+                  src_model="telephony_isp.call_detail"
+                  res_model="telephony_isp.import.cdr.ws"
                   view_mode="form"
                   target="new"
                   key2="client_action_multi"/>
@@ -93,6 +120,8 @@
       <!-- begin MENUS -->
       <menuitem id="telephony_import_cdr_menu" parent="telephony_data_menu" name="Import CDR file" sequence="20"
                 action="launch_import_cdr_wizard"/>
+      <menuitem id="telephony_import_cdr_ws_menu" parent="telephony_data_menu" name="Import CDR file withou supplier" sequence="21"
+                action="launch_import_cdr_ws_wizard"/>
       <menuitem id="telephony_import_rate_menu" parent="telephony_settings_menu" name="Import Rate file" sequence="40"
                 action="launch_import_rate_wizard"/>
       <menuitem id="telephony_create_invoinces_menu" parent="telephony_data_menu" name="Create Invoices" sequence="25"

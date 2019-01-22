@@ -200,9 +200,9 @@ class WizardImportCDR(models.TransientModel):
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
             elif self.cdr_type == 'misc':
-                print (self.cdr_data)
+                # print (self.cdr_data)
                 f = io.BytesIO(base64.decodestring(self.cdr_data))
-                print (f)
+                # print (f)
                 reader = pycompat.csv_reader(f, delimiter='\x09')
                 next(reader, None)  # skip header
                 # c = 1
@@ -272,6 +272,134 @@ class WizardImportCDR(models.TransientModel):
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
     cdr_type = fields.Selection([('aire', 'Aire Networks'),('telcia', 'Telcia'),('misc', 'Misc')], string='CDR type', default='aire', required=True)
+    cdr_data = fields.Binary('File')
+
+class WizardImportCDRWithousSupplier(models.TransientModel):
+    _name = 'telephony_isp.import.cdr.ws'
+    _description = 'CDR file impport with supplier'
+
+    #@api.onchange('cdr_data')
+    @api.multi
+    def import_cdr_ws(self):
+        # read rates in memory
+        if not self.cdr_data:
+            return {} #TODO: add message
+
+        suppliers = self.env['telephony_isp.supplier'].search([])
+        rates_by_supplier = {}
+        rates_spain_by_supplier = {}
+        for i in suppliers:
+            rates_by_supplier[i.id] = dict((i.prefix, i) for i in self.env['telephony_isp.rate'].search([['supplier_id', '=', i.id]]))
+            rates_spain_by_supplier[i.id] = dict((i.prefix, i) for i in self.env['telephony_isp.rate'].search([['supplier_id', '=', i.id],['name', 'ilike', 'spain']])) 
+        # rates = dict((i.prefix, i) for i in self.env['telephony_isp.rate'].search([['supplier_id', '=', self.supplier_id.id]]))
+        # rates_spain = dict((i.prefix, i) for i in self.env['telephony_isp.rate'].search([['supplier_id', '=', self.supplier_id.id],['name', 'ilike', 'spain']]))
+        
+        def get_rate(number, supplier_id):
+            """get rate searching in prefixes"""
+            last = None
+            for i in xrange(len(number) + 1, 0, -1):
+                if number[:i] in rates_by_supplier[supplier_id]:
+                    last = rates_by_supplier[supplier_id][number[:i]]
+                    break
+
+            if not last:
+                print ('ERROR:', number)
+            #    last = 0
+            return last
+
+        def get_rate_without_cc(number, supplier_id):
+            """get rate searching in prefixes without Country Code"""
+            last = None
+            if len(number) == 9 and number[0] in ['9','8','6']:
+                #do stuff
+                for i in xrange(len(number) + 1, 0, -1):
+                    if number[:i] in rates_spain_by_supplier[supplier_id]:
+                        last = rates_spain_by_supplier[supplier_id][number[:i]]
+                        break
+                if not last:
+                    print ('ERROR:', number)
+                return last
+            else:
+                return get_rate(number, supplier_id)
+
+        contracts = {}
+        if self.cdr_data:
+            if self.cdr_type == 'misc':
+                # print (self.cdr_data)
+                f = io.BytesIO(base64.decodestring(self.cdr_data))
+                # print (f)
+                reader = pycompat.csv_reader(f, delimiter='\x09')
+                next(reader, None)  # skip header
+                # c = 1
+                for row in reader:
+                    # print c, row
+                    # c +=1
+                    origin = row[m[self.cdr_type]['origin']]
+                    destiny = str(row[m[self.cdr_type]['destiny']])
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    supplier = self.env['telephony_isp.pool.number'].search([('name', '=', origin)])
+                    supplier_id = False
+                    if supplier:
+                        supplier_id = supplier[0].pool_id.supplier_id.id
+                    data = {
+                        'supplier_id': supplier_id,
+                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%Y %H:%M:%S'),
+                        'origin': origin, # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                    }
+
+                    # don't repeat searches with contracts
+                    if data['origin'] in contracts:
+                        data['contract_line_id'] = contracts[data['origin']]
+                        data['status'] = 'draft'
+                    elif not data['origin'] in contracts:
+                        # search numbers related to pool_number
+                        number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
+                        if number:
+                            contract_number = self.env['account.analytic.account.number'].search([['number_id', '=', number[0].id]])
+                            if len(contract_number) == 1 :
+                                contracts[data['origin']] = contract_number[0].contract_line_id.id
+                                data['contract_line_id'] = contract_number[0].contract_line_id.id
+                                data['status'] = 'draft'
+                            else:
+                                data['status'] = 'error'
+                        else:
+                            contracts[data['origin']] = None
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+                        print ('ERRRORRRRRRR')
+
+
+                    if destiny.startswith('00'):
+                        rate = get_rate_without_cc(destiny[2:], supplier_id)
+                    else:
+                        rate = get_rate_without_cc(destiny, supplier_id)
+                    # apply rates or default
+                    if rate:
+                        if rate.special:
+                            #not implemented
+                            continue
+                            # data['amount'] = data['cost'] + data['cost'] * rate.ratio / 100.
+                        else:
+                            data['amount'] = rate.price * duration
+                            data['cost'] = data['amount']
+                            data['rate_id'] = rate.id
+                            if data['amount'] == 0:
+                                data['status'] = 'free'
+                    else:
+                        data['status'] = 'error'
+                        # data['amount'] = data['cost'] + data['cost'] * self.supplier_id.ratio / 100.
+                        # data['status'] = 'default'
+
+                    # print data
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
+
+        return {'type': 'ir.actions.act_window_close'}
+
+    cdr_type = fields.Selection([('misc', 'Misc')], string='CDR type', default='misc', required=True)
     cdr_data = fields.Binary('File')
 
 class WizardImportRate(models.TransientModel):
