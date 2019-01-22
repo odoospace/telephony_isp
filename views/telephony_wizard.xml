@@ -120,7 +120,7 @@
       <!-- begin MENUS -->
       <menuitem id="telephony_import_cdr_menu" parent="telephony_data_menu" name="Import CDR file" sequence="20"
                 action="launch_import_cdr_wizard"/>
-      <menuitem id="telephony_import_cdr_ws_menu" parent="telephony_data_menu" name="Import CDR file withou supplier" sequence="21"
+      <menuitem id="telephony_import_cdr_ws_menu" parent="telephony_data_menu" name="Import CDR file without supplier" sequence="21"
                 action="launch_import_cdr_ws_wizard"/>
       <menuitem id="telephony_import_rate_menu" parent="telephony_settings_menu" name="Import Rate file" sequence="40"
                 action="launch_import_rate_wizard"/>
