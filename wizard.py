@@ -35,6 +35,16 @@ m = {
         'duration': 4,
         'cost': 5
     },
+    'zargotel': {
+        'id': None,
+        'date': 0,
+        'time': 1
+        'origin': 2,
+        'destiny': 3,
+        'network': None,
+        'duration': 5,
+        'cost': 6
+    },
 }
 
 class WizardImportCDR(models.TransientModel):
@@ -232,8 +242,52 @@ class WizardImportCDR(models.TransientModel):
                         if number:
                             contract_number = self.env['account.analytic.account.number'].search([['number_id', '=', number[0].id]])
                             if len(contract_number) == 1 :
-                                contracts[data['origin']] = contract_number[0].contract_line_id.analytic_account_id.id
-                                data['contract_line_id'] = contract_number[0].contract_line_id.analytic_account_id.id
+                                contracts[data['origin']] = contract_number[0].contract_line_id.id
+                                data['contract_line_id'] = contract_number[0].contract_line_id.id
+                                data['status'] = 'draft'
+                        else:
+                            contracts[data['origin']] = None
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+
+                    # print data
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
+
+            elif self.cdr_type == 'zargotel':
+                #no rates, direct cost
+                f = StringIO.StringIO(base64.decodestring(self.cdr_data))
+                reader = csv.reader(f, delimiter=',')
+                next(reader, None)  # skip header
+                for row in reader:
+                    origin = row[m[self.cdr_type]['origin']]
+                    destiny = str(row[m[self.cdr_type]['destiny']])
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    cost = float(row[m[self.cdr_type]['cost']])
+                    data = {
+                        'supplier_id': self.supplier_id.id,
+                        'time': datetime.strptime('%s %s' % (row[m[self.cdr_type]['date']], row[m[self.cdr_type]['time']]), '%d-%m-%Y %H:%M:%S'),
+                        'origin': origin, # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                        'company_id': self.company_id.id,
+                        'cost': cost,
+                        'amount': cost
+                    }
+
+                    # don't repeat searches with contracts
+                    if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                        data['contract_line_id'] = contracts[data['origin']]
+                        data['status'] = 'draft'
+                    elif not contracts.has_key(data['origin']):
+                        # search numbers related to pool_number
+                        number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
+                        if number:
+                            contract_number = self.env['account.analytic.account.number'].search([['number_id', '=', number[0].id]])
+                            if len(contract_number) == 1 :
+                                contracts[data['origin']] = contract_number[0].contract_line_id.id
+                                data['contract_line_id'] = contract_number[0].contract_line_id.id
                                 data['status'] = 'draft'
                         else:
                             contracts[data['origin']] = None
@@ -248,7 +302,7 @@ class WizardImportCDR(models.TransientModel):
         return {'type': 'ir.actions.act_window_close'}
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
-    cdr_type = fields.Selection([('aire', 'Aire Networks'),('carrier-enabler', 'Carrier Enabler'),('miscellaneous', 'Miscellaneous')], string='CDR type', default='aire', required=True)
+    cdr_type = fields.Selection([('aire', 'Aire Networks'),('carrier-enabler', 'Carrier Enabler'),('miscellaneous', 'Miscellaneous'),('zargotel', 'Zargotel')], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)
 
