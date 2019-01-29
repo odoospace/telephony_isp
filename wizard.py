@@ -531,7 +531,7 @@ class WizardCreateInvoices(models.TransientModel):
                 # recover or create invoice to add lines
                 if data['partner_id']:
                     # first of all, search for draft invoices for this partner and contract
-                    invoice_obj = self.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id']),('origin', '=', data['origin']),('company_id', '=', data['company_id'])])
+                    invoice_obj = self.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id']),('origin', '=', data['origin']),('company_id', '=', self.company_id.id)])
                     if len(invoice_obj) == 1:
                         invoice = invoice_obj[0]
                         invoice.write({
