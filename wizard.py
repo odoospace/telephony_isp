@@ -38,7 +38,7 @@ m = {
     'zargotel': {
         'id': None,
         'date': 0,
-        'time': 1
+        'time': 1,
         'origin': 2,
         'destiny': 3,
         'network': None,
