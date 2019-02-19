@@ -82,6 +82,13 @@
                       <field name="date_end"/>
                   </group>
                   <group>
+                      <field name="cdr_type"/>
+                      <field name="ftp_hostname"/>
+                      <field name="ftp_path"/>
+                      <field name="ftp_user"/>
+                      <field name="ftp_password" password="True"/>
+                  </group>
+                  <group>
                       <field name="rate_ids">
                           <tree default_order='prefix'>
                               <field name="special"/>

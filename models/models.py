@@ -1,6 +1,25 @@
 # -*- coding: utf-8 -*-
 
+import tempfile
+import os
+from ..wizard import wizard
 from odoo import models, fields, api
+# check pysftp capability
+try:
+    import pysftp
+except:
+    pysftp = None
+
+try:
+    import ftplib
+except:
+    ftplib = None
+
+try:
+    import zipfile
+except:
+    zipfile = None
+
 
 class account_invoice(models.Model):
     _inherit = 'account.invoice'
@@ -15,7 +34,7 @@ class account_analytic_account_number(models.Model):
 
     @api.model
     def _get_lines(self):
-        ids = []
+        #ids = []
         res = [('analytic_account_id', '=', self.contract_id)]
         print ('>>>', res)
         return res
@@ -219,6 +238,16 @@ class supplier(models.Model):
     date_start = fields.Date()
     date_end = fields.Date()
     rate_ids = fields.One2many('telephony_isp.rate', 'supplier_id')
+    # ftp info to catch data
+    ftp_hostname = fields.Char()
+    ftp_path = fields.Char(default='/')
+    ftp_user = fields.Char()
+    ftp_password = fields.Char()
+    cdr_type = fields.Selection([
+        ('aire', 'Aire Networks'),
+        ('telcia', 'Telcia'),
+        ('misc', 'Misc')
+    ], string='CDR type', default='aire', required=True)
 
 
 class rate(models.Model):
@@ -252,3 +281,68 @@ class period(models.Model):
     date_start = fields.Date('Start')
     date_end = fields.Date('End')
     amount = fields.Float() # total
+
+
+class task(models.Model):
+    """CRON"""
+    _name = 'telephony_isp.task'
+
+    @api.model
+    def download_ftp(self):
+        print('FTP!!!')
+
+        suppliers = self.env['telephony_isp.supplier'].search([])
+        print ('>>>', suppliers)
+        for s in suppliers:
+            if s.ftp_hostname.startswith('ftp://'):
+                protocol = 'ftp'
+                hostname, port = s.ftp_hostname[6:].split(':')
+            elif s.ftp_hostname.startswith('sftp://'):
+                protocol = 'sftp'
+                hostname, port = s.ftp_hostname[7:].split(':')
+            else:
+                protocol = 'ftp'
+                hostname, port = s.ftp_hostname.split(':')
+            path = s.ftp_path
+            user = s.ftp_user
+            password = s.ftp_password
+
+
+            print(protocol, hostname, port, user, password, path)
+            if protocol == 'sftp' and pysftp:
+                with pysftp.Connection(hostname, port=int(port), username=user, password=password) as sftp:
+                    files = sftp.listdir(path)
+                    print('FILES:', files)
+            elif protocol == 'ftp' and ftplib:
+                ftp = ftplib.FTP()
+                ftp.connect(hostname, int(port), 5)
+                ftp.login(user, password)
+                ftp.cwd(path)
+                files = ftp.nlst()
+                # copy files
+
+                # read and process data in zip files
+                for f in (i for i in files if i.endswith('.zip')):
+                    temp = tempfile.NamedTemporaryFile(suffix=".zip")
+                    ftp.retrbinary('RETR %s' % f, temp.write)
+                    print ('FTP:', f, temp)
+                    with zipfile.ZipFile(temp, "r") as zip_ref:
+                        with tempfile.TemporaryDirectory() as tmpdirname:
+                            print('Created temporary directory:', tmpdirname)
+                            zip_ref.extractall(tmpdirname)
+                            datafiles = os.listdir(tmpdirname)
+                            for datafile in datafiles:
+                                data = open(os.path.join(tmpdirname, datafile), 'r').read()
+                                print('>>>', datafile)
+                                w_obj = self.env['telephony_isp.import.cdr.ws']
+                                d = {
+                                    'cdr_type': 'misc',
+                                    'cdr_data': wizard.base64.b64encode(data.encode('utf-8'))
+                                }
+                                w = w_obj.create(d)
+                                w.import_cdr_ws()
+                    temp.close()
+
+
+                
+                #print('>>>', w)

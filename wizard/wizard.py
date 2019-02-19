@@ -53,7 +53,7 @@ class WizardImportCDR(models.TransientModel):
         def get_rate(number):
             """get rate searching in prefixes"""
             last = None
-            for i in xrange(len(number) + 1, 0, -1):
+            for i in range(len(number) + 1, 0, -1):
                 if number[:i] in rates:
                     last = rates[number[:i]]
                     break
@@ -68,7 +68,7 @@ class WizardImportCDR(models.TransientModel):
             last = None
             if len(number) == 9 and number[0] in ['9','8','6']:
                 #do stuff
-                for i in xrange(len(number) + 1, 0, -1):
+                for i in range(len(number) + 1, 0, -1):
                     if number[:i] in rates_spain:
                         last = rates_spain[number[:i]]
                         break
@@ -274,7 +274,7 @@ class WizardImportCDR(models.TransientModel):
     cdr_type = fields.Selection([('aire', 'Aire Networks'),('telcia', 'Telcia'),('misc', 'Misc')], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
 
-class WizardImportCDRWithousSupplier(models.TransientModel):
+class WizardImportCDRWithoutSupplier(models.TransientModel):
     _name = 'telephony_isp.import.cdr.ws'
     _description = 'CDR file impport with supplier'
 
@@ -297,7 +297,7 @@ class WizardImportCDRWithousSupplier(models.TransientModel):
         def get_rate(number, supplier_id):
             """get rate searching in prefixes"""
             last = None
-            for i in xrange(len(number) + 1, 0, -1):
+            for i in range(len(number) + 1, 0, -1):
                 if number[:i] in rates_by_supplier[supplier_id]:
                     last = rates_by_supplier[supplier_id][number[:i]]
                     break
@@ -312,7 +312,7 @@ class WizardImportCDRWithousSupplier(models.TransientModel):
             last = None
             if len(number) == 9 and number[0] in ['9','8','6']:
                 #do stuff
-                for i in xrange(len(number) + 1, 0, -1):
+                for i in range(len(number) + 1, 0, -1):
                     if number[:i] in rates_spain_by_supplier[supplier_id]:
                         last = rates_spain_by_supplier[supplier_id][number[:i]]
                         break
@@ -462,7 +462,7 @@ class WizardCreateInvoices(models.TransientModel):
                 status = 'free'
             elif d > call.duration:
                 amount = call.amount / call.duration * abs(d)
-                stauts = 'special'
+                status = 'special'
             else:
                 amount = call.amount
                 status = 'invoiced'
@@ -598,7 +598,7 @@ class WizardCreateInvoices(models.TransientModel):
                 amount += i['origins'][j]['total']
 
                 # link calls with its invoice and set new status
-                for k in xrange(len(i['origins'][j]['calls'])):
+                for k in range(len(i['origins'][j]['calls'])):
                     call = i['origins'][j]['calls'][k]
                     status = i['origins'][j]['status'][k]
                     data = {
