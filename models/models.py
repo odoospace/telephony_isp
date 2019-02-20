@@ -343,6 +343,7 @@ class task(models.Model):
                                 }
                                 w = w_obj.create(d)
                                 w.import_cdr_ws()
+                                self._cr.commit() 
                     # rename file to avoid process it again
                     ftp.rename(f, f + '.done')
                     temp.close()
