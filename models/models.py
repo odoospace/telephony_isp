@@ -294,6 +294,10 @@ class task(models.Model):
         suppliers = self.env['telephony_isp.supplier'].search([])
         print ('>>>', suppliers)
         for s in suppliers:
+            # check if there is ftp info
+            if not s.ftp_hostname or not s.ftp_user or not s.ftp_password:
+                continue
+            # check protocol
             if s.ftp_hostname.startswith('ftp://'):
                 protocol = 'ftp'
                 hostname, port = s.ftp_hostname[6:].split(':')
@@ -307,8 +311,6 @@ class task(models.Model):
             user = s.ftp_user
             password = s.ftp_password
 
-
-            print(protocol, hostname, port, user, password, path)
             if protocol == 'sftp' and pysftp:
                 with pysftp.Connection(hostname, port=int(port), username=user, password=password) as sftp:
                     files = sftp.listdir(path)
