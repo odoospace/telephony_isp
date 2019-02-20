@@ -371,23 +371,25 @@ class WizardImportCDRWithoutSupplier(models.TransientModel):
                         data['status'] = 'error'
                         print ('ERRRORRRRRRR')
 
-
-                    if destiny.startswith('00'):
-                        rate = get_rate_without_cc(destiny[2:], supplier_id)
-                    else:
-                        rate = get_rate_without_cc(destiny, supplier_id)
-                    # apply rates or default
-                    if rate:
-                        if rate.special:
-                            #not implemented
-                            continue
-                            # data['amount'] = data['cost'] + data['cost'] * rate.ratio / 100.
+                    if supplier_id:
+                        if destiny.startswith('00'):
+                            rate = get_rate_without_cc(destiny[2:], supplier_id)
                         else:
-                            data['amount'] = rate.price * duration
-                            data['cost'] = data['amount']
-                            data['rate_id'] = rate.id
-                            if data['amount'] == 0:
-                                data['status'] = 'free'
+                            rate = get_rate_without_cc(destiny, supplier_id)
+                        # apply rates or default
+                        if rate:
+                            if rate.special:
+                                #not implemented
+                                continue
+                                # data['amount'] = data['cost'] + data['cost'] * rate.ratio / 100.
+                            else:
+                                data['amount'] = rate.price * duration
+                                data['cost'] = data['amount']
+                                data['rate_id'] = rate.id
+                                if data['amount'] == 0:
+                                    data['status'] = 'free'
+                        else:
+                            data['status'] = 'error'
                     else:
                         data['status'] = 'error'
                         # data['amount'] = data['cost'] + data['cost'] * self.supplier_id.ratio / 100.
