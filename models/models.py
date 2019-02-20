@@ -323,6 +323,9 @@ class task(models.Model):
                 files = ftp.nlst()
                 # copy files
 
+                # for f in (i for i in files if i.endswith('.done')):
+                #     ftp.rename(f, f.split('.')[0] + '.zip')
+                # continue
                 # read and process data in zip files
                 for f in (i for i in files if i.endswith('.zip')):
                     temp = tempfile.NamedTemporaryFile(suffix=".zip")
@@ -343,7 +346,6 @@ class task(models.Model):
                                 }
                                 w = w_obj.create(d)
                                 w.import_cdr_ws()
-                                self._cr.commit() 
                     # rename file to avoid process it again
                     ftp.rename(f, f + '.done')
                     temp.close()
