@@ -64,6 +64,7 @@
                   <field name="date_start"/>
                   <field name="date_end"/>
                   <field name="rate_ids"/>
+                  <field name="data_type"/>
               </tree>
           </field>
         </record>
