@@ -8,6 +8,7 @@ class account_invoice(models.Model):
     is_telephony = fields.Boolean() # internal field in invoice
     telephony_ids = fields.One2many('telephony_isp.call_detail', 'invoice_id') # use related field
     telephony_period_id = fields.Many2one('telephony_isp.period')
+    data_type = fields.Selection([('multiple', 'Calls|Data|SMS|Other'), ('calls', 'Calls')])
 
 
 class account_analytic_account_number(models.Model):
@@ -198,6 +199,8 @@ class call_detail(models.Model):
         default='raw')
     to_invoice = fields.Boolean(default=True) # False -> free
     hidden = fields.Boolean(default=False) # hide this entry to some users - experimental
+    data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')], default='calls')
+
 
 
 # TODO: use price lists instead ?
@@ -212,6 +215,8 @@ class supplier(models.Model):
     date_start = fields.Date()
     date_end = fields.Date()
     rate_ids = fields.One2many('telephony_isp.rate', 'supplier_id')
+    data_type = fields.Selection([('multiple', 'Calls|Data|SMS|Other'), ('calls', 'Calls')])
+
 
 
 class rate(models.Model):

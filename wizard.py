@@ -35,6 +35,15 @@ m = {
         'duration': 6,
         'cost': None
     },
+    'lemonvil': {
+        'id': 0,
+        'date': 12,
+        'origin': 6,
+        'destiny': 10,
+        'network': 23,
+        'duration': 15,
+        'cost': 17
+    },
 }
 
 class WizardImportCDR(models.TransientModel):
@@ -266,11 +275,54 @@ class WizardImportCDR(models.TransientModel):
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
+            elif self.cdr_type == 'lemonvil':
+                if not self.data_type:
+                    raise ValidationError('Error! This supplier requires a data type')
+
+                f = StringIO.StringIO(base64.decodestring(self.cdr_data))
+                reader = csv.reader(f, delimiter=';')
+                next(reader, None)  # skip header
+
+                for row in reader:
+                    origin = row[m[self.cdr_type]['origin']]
+                    destiny = row[m[self.cdr_type]['destiny']]
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    data = {
+                        'supplier_id': self.supplier_id.id,
+                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%Y-%m-%d %H:%M:%S'),
+                        'origin': origin, # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                        'cost': float(row[m[self.cdr_type]['cost']]),
+                        'data_type': self.data_type,
+                    }
+                    if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                        data['contract_line_id'] = contracts[data['origin']]
+                        data['status'] = 'draft'
+                    elif not contracts.has_key(data['origin']):
+                        contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
+                        if len(contract_line) == 1 :
+                            contracts[data['origin']] = contract_line[0].id
+                            data['contract_line_id'] = contract_line[0].id
+                            data['status'] = 'draft'
+                        else:
+                            contracts[data['origin']] = None
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+
+                    data['amount'] = data['cost']
+                    data['status'] = 'draft'
+
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
+
         return {'type': 'ir.actions.act_window_close'}
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
-    cdr_type = fields.Selection([('aire', 'Aire Networks'),('telcia', 'Telcia'),('carrier-enabler', 'Carrier Enabler')], string='CDR type', default='aire', required=True)
+    cdr_type = fields.Selection([('aire', 'Aire Networks'),('telcia', 'Telcia'),('carrier-enabler', 'Carrier Enabler'),('lemonvil', 'Lemonvil')], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
+    data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')])
 
 class WizardImportRate(models.TransientModel):
     _name = 'telephony_isp.import.rate'
@@ -389,6 +441,13 @@ class WizardCreateInvoices(models.TransientModel):
             # contracts
             if not self.contracts.has_key(i.contract.id):
                 # first origin
+
+                #get data type to show in the invoice report:
+                if i.supplier_id.data_type:
+                    data_type = i.supplier_id.data_type
+                else:
+                    data_type = 'calls'
+
                 self.contracts[i.contract.id] = {
                     'contract': i.contract,
                     'origins': {
@@ -397,9 +456,10 @@ class WizardCreateInvoices(models.TransientModel):
                             'calls': [],
                             'status': [],
                             'total': 0,
-                            'minutes': self.get_minutes_free(i.origin, i.contract_line_id.product_id.id)
+                            'minutes': self.get_minutes_free(i.origin, i.contract_line_id.product_id.id),
+                            'data_type': data_type
                         }
-                    }
+                    },
                 }
 
                 self.get_amount_status(i)
@@ -447,7 +507,8 @@ class WizardCreateInvoices(models.TransientModel):
                     'journal_id': self.journal_id.id,
                     'telephony_period_id': period.id,
                     'account_id': i['contract'].partner_id.property_account_receivable.id,
-                    'invoice_line': lines
+                    'invoice_line': lines,
+                    'data_type': i['origins'][j]['data_type']
                 }
                 if hasattr(i['contract'], 'payment_mode'):
                     data['payment_mode'] = i['contract'].payment_mode.id,
