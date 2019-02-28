@@ -270,11 +270,10 @@
 
         <record id="action_fix_errors" model="ir.actions.server">
             <field name="name">Fix errors</field>
-            <field name="condition">True</field>
-            <field name="type">ir.actions.server</field>
             <field name="model_id" ref="model_telephony_isp_call_detail" />
+            <field name="binding_model_id" ref="model_telephony_isp_call_detail"/>
             <field name="state">code</field>
-            <field name="code">self.fix_errors(cr, uid, context.get('active_ids', []), context=context)</field>
+            <field name="code">model.fix_errors()</field>
         </record>
 
         <!-- BEGIN menus -->

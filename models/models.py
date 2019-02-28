@@ -177,15 +177,17 @@ class call_detail(models.Model):
         data_with_errors = self.search([('contract_line_id', '=', False)]) #([('status', '=', 'error')])
         print ('errors:', len(data_with_errors))
         for i in data_with_errors:
-            contract_line = self.env['account.analytic.invoice.line'].search([('name', '=', i.origin)])
-            if len(contract_line) == 1:
-                data = {
-                    'contract_line_id': contract_line[0].id,
-                }
-                if i.status == 'error':
-                    data['status'] = 'draft'
-                i.write(data)
-                print ('Fixed!', i.origin, i)
+            number = self.env['telephony_isp.pool.number'].search([('name', '=', i.origin)])
+            if len(number) == 1:
+                contract_line = self.env['account.analytic.account.number'].search([('number_id', '=', number[0].id)])
+                if len(contract_line) == 1:
+                    data = {
+                        'contract_line_id': contract_line[0].contract_line_id.id,
+                    }
+                    if i.status == 'error':
+                        data['status'] = 'draft'
+                    i.write(data)
+                    print ('Fixed!', i.origin, i)
         return {
             'type': 'ir.actions.client',
             'tag': 'reload'
