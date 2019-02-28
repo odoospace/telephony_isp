@@ -11,6 +11,7 @@
 
       <!-- calls -->
       <table t-if="o.is_telephony" class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
+        <caption><strong>Calls</strong></caption>
          <thead>
              <tr>
                  <th style="font-weight:normal">Date - Hour</th>
@@ -43,6 +44,7 @@
       <!-- data -->
       <div t-if="o.data_type == 'multiple'">
           <table t-if="o.is_telephony" class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
+            <caption><strong>Data</strong></caption>
              <thead>
                  <tr>
                      <th style="font-weight:normal">Date - Hour</th>
@@ -75,6 +77,7 @@
           <!-- sms -->
 
           <table t-if="o.is_telephony" class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
+            <caption><strong>SMS</strong></caption>
              <thead>
                  <tr>
                      <th style="font-weight:normal">Date - Hour</th>
@@ -107,6 +110,7 @@
           <!-- other -->
 
           <table t-if="o.is_telephony" class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
+            <caption><strong>Other</strong></caption>
              <thead>
                  <tr>
                      <th style="font-weight:normal">Date - Hour</th>

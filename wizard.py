@@ -312,7 +312,6 @@ class WizardImportCDR(models.TransientModel):
                         data['status'] = 'error'
 
                     data['amount'] = data['cost']
-                    data['status'] = 'draft'
 
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)

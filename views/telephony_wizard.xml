@@ -10,6 +10,7 @@
                       <field name="supplier_id"/>
                       <field name="cdr_type"/>
                       <field name="cdr_data"/>
+                      <field name="data_type"/>
                   </group>
                   <footer>
                       <button name="import_cdr" type="object"
