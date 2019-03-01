@@ -174,7 +174,42 @@ class call_detail(models.Model):
 
     @api.multi
     def fix_errors(self):
-        data_with_errors = self.search([('contract_line_id', '=', False)]) #([('status', '=', 'error')])
+        suppliers = self.env['telephony_isp.supplier'].search([])
+        rates_by_supplier = {}
+        rates_spain_by_supplier = {}
+        for i in suppliers:
+            rates_by_supplier[i.id] = dict((i.prefix, i) for i in self.env['telephony_isp.rate'].search([['supplier_id', '=', i.id]]))
+            rates_spain_by_supplier[i.id] = dict((i.prefix, i) for i in self.env['telephony_isp.rate'].search([['supplier_id', '=', i.id],['name', 'ilike', 'spain']])) 
+
+        def get_rate(number, supplier_id):
+            """get rate searching in prefixes"""
+            last = None
+            for i in range(len(number) + 1, 0, -1):
+                if number[:i] in rates_by_supplier[supplier_id]:
+                    last = rates_by_supplier[supplier_id][number[:i]]
+                    break
+
+            if not last:
+                print ('ERROR:', number)
+            #    last = 0
+            return last
+
+        def get_rate_without_cc(number, supplier_id):
+            """get rate searching in prefixes without Country Code"""
+            last = None
+            if len(number) == 9 and number[0] in ['9','8','6']:
+                #do stuff
+                for i in range(len(number) + 1, 0, -1):
+                    if number[:i] in rates_spain_by_supplier[supplier_id]:
+                        last = rates_spain_by_supplier[supplier_id][number[:i]]
+                        break
+                if not last:
+                    print ('ERROR:', number)
+                return last
+            else:
+                return get_rate(number, supplier_id)
+
+        data_with_errors = self.search(['|',('contract_line_id', '=', False), ('status', '=', 'error')]) #([('status', '=', 'error')])
         print ('errors:', len(data_with_errors))
         for i in data_with_errors:
             number = self.env['telephony_isp.pool.number'].search([('name', '=', i.origin)])
@@ -184,10 +219,22 @@ class call_detail(models.Model):
                     data = {
                         'contract_line_id': contract_line[0].contract_line_id.id,
                     }
-                    if i.status == 'error':
-                        data['status'] = 'draft'
                     i.write(data)
                     print ('Fixed!', i.origin, i)
+                    supplier_id = contract_line[0].pool_id.supplier_id.id
+                    if supplier_id:
+                        if i.destiny.startswith('00'):
+                            rate = get_rate_without_cc(i.destiny[2:], supplier_id)
+                        else:
+                            rate = get_rate_without_cc(i.destiny, supplier_id)
+                        # apply rates or default
+                        if rate:
+                            i.status = 'draft'
+                            i.amount = rate.price * i.duration
+                            i.cost = i.amount
+                            i.rate_id = rate.id
+                            if i.amount == 0:
+                                i.status = 'free'
         return {
             'type': 'ir.actions.client',
             'tag': 'reload'
