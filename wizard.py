@@ -258,16 +258,16 @@ class WizardImportCDR(models.TransientModel):
             elif self.cdr_type == 'zargotel':
                 #no rates, direct cost
                 f = StringIO.StringIO(base64.decodestring(self.cdr_data))
-                reader = csv.reader(f, delimiter=',')
+                reader = csv.reader(f, delimiter=';')
                 next(reader, None)  # skip header
                 for row in reader:
                     origin = row[m[self.cdr_type]['origin']]
                     destiny = str(row[m[self.cdr_type]['destiny']])
                     duration = float(row[m[self.cdr_type]['duration']])
-                    cost = float(row[m[self.cdr_type]['cost']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
-                        'time': datetime.strptime('%s %s' % (row[m[self.cdr_type]['date']], row[m[self.cdr_type]['time']]), '%d-%m-%Y %H:%M:%S'),
+                        'time': datetime.strptime('%s %s' % (row[m[self.cdr_type]['date']], row[m[self.cdr_type]['time']]), '%d/%m/%Y %H:%M:%S'),
                         'origin': origin, # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
