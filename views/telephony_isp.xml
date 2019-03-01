@@ -19,6 +19,7 @@
                   <field name="amount" sum="Total Amount"/>
                   <field name="status"/>
                   <field name="invoice_id"/>
+                  <field name="data_type"/>
               </tree>
           </field>
         </record>
@@ -44,6 +45,8 @@
                         <filter string="Contract" domain="[]" context="{'group_by':'contract_code'}"/>
                         <filter string="Destiny" domain="[]" context="{'group_by':'destiny'}"/>
                         <filter string="Rate" domain="[]" context="{'group_by':'rate_id'}"/>
+                        <filter string="Data Type" domain="[]" context="{'group_by':'data_type'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
                     </group>
                 </search>
             </field>
@@ -63,6 +66,7 @@
                   <field name="date_start"/>
                   <field name="date_end"/>
                   <field name="rate_ids"/>
+                  <field name="data_type"/>
               </tree>
           </field>
         </record>
@@ -81,6 +85,7 @@
                       <field name="ratio"/>
                       <field name="date_start"/>
                       <field name="date_end"/>
+                      <field name="data_type"/>
                   </group>
                   <group>
                       <field name="rate_ids">

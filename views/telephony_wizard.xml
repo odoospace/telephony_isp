@@ -11,6 +11,7 @@
                       <field name="cdr_type"/>
                       <field name="cdr_data"/>
                       <field name="company_id"/>
+                      <field name="data_type"/>
                   </group>
                   <footer>
                       <button name="import_cdr" type="object"
@@ -72,6 +73,7 @@
                       <field name="date_invoice"/>
                       <field name="date_start"/>
                       <field name="date_end"/>
+                      <field name="existing_invoice"/>
                   </group>
                   <footer>
                       <button name="create_invoice" type="object"

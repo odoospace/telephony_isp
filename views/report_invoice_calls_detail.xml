@@ -9,7 +9,9 @@
         <p><strong>Period:</strong> <span t-field="o.telephony_period_id.date_start"/> - <span t-field="o.telephony_period_id.date_end"/></p>
       </div>
 
+      <!-- calls -->
       <table t-if="o.is_telephony" class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
+        <caption><strong>Calls</strong></caption>
          <thead>
              <tr>
                  <th style="font-weight:normal">Date - Hour</th>
@@ -21,22 +23,123 @@
          </thead>
          <tbody class="invoice_tbody">
              <tr t-foreach="o.telephony_ids" t-as="c">
-                 <td>
+
+                 <td t-if="c.data_type == 'calls'">
                      <span t-field="c.time"/>
                  </td>
-                 <td>
+                 <td t-if="c.data_type == 'calls'">
                      <span t-field="c.origin"/>
                  </td>
-                 <td><span t-field="c.destiny"/></td>
-                 <td class="text-right">
+                 <td t-if="c.data_type == 'calls'"><span t-field="c.destiny"/></td>
+                 <td t-if="c.data_type == 'calls'" class="text-right">
                      <span t-field="c.duration" />
                  </td>
-                 <td class="text-right">
+                 <td t-if="c.data_type == 'calls'" class="text-right">
                      <span t-field="c.amount"/>
                  </td>
              </tr>
          </tbody>
       </table>
+
+      <!-- data -->
+      <div t-if="o.data_type == 'multiple'">
+          <table t-if="o.is_telephony" class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
+            <caption><strong>Data</strong></caption>
+             <thead>
+                 <tr>
+                     <th style="font-weight:normal">Date - Hour</th>
+                     <th style="font-weight:normal">Origin</th>
+                     <th style="font-weight:normal">Destiny</th>
+                     <th style="font-weight:normal" class="text-right">Duration</th>
+                     <th style="font-weight:normal" class="text-right">Amount</th>
+                 </tr>
+             </thead>
+             <tbody class="invoice_tbody">
+                 <tr t-foreach="o.telephony_ids" t-as="c">
+
+                     <td t-if="c.data_type == 'data'">
+                         <span t-field="c.time"/>
+                     </td>
+                     <td t-if="c.data_type == 'data'">
+                         <span t-field="c.origin"/>
+                     </td>
+                     <td t-if="c.data_type == 'data'"><span t-field="c.destiny"/></td>
+                     <td t-if="c.data_type == 'data'" class="text-right">
+                         <span t-field="c.duration" />
+                     </td>
+                     <td t-if="c.data_type == 'data'" class="text-right">
+                         <span t-field="c.amount"/>
+                     </td>
+                 </tr>
+             </tbody>
+          </table>
+
+          <!-- sms -->
+
+          <table t-if="o.is_telephony" class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
+            <caption><strong>SMS</strong></caption>
+             <thead>
+                 <tr>
+                     <th style="font-weight:normal">Date - Hour</th>
+                     <th style="font-weight:normal">Origin</th>
+                     <th style="font-weight:normal">Destiny</th>
+                     <th style="font-weight:normal" class="text-right">Duration</th>
+                     <th style="font-weight:normal" class="text-right">Amount</th>
+                 </tr>
+             </thead>
+             <tbody class="invoice_tbody">
+                 <tr t-foreach="o.telephony_ids" t-as="c">
+
+                     <td t-if="c.data_type == 'sms'">
+                         <span t-field="c.time"/>
+                     </td>
+                     <td t-if="c.data_type == 'sms'">
+                         <span t-field="c.origin"/>
+                     </td>
+                     <td t-if="c.data_type == 'sms'"><span t-field="c.destiny"/></td>
+                     <td t-if="c.data_type == 'sms'" class="text-right">
+                         <span t-field="c.duration" />
+                     </td>
+                     <td t-if="c.data_type == 'sms'" class="text-right">
+                         <span t-field="c.amount"/>
+                     </td>
+                 </tr>
+             </tbody>
+          </table>
+
+          <!-- other -->
+
+          <table t-if="o.is_telephony" class="table table-condensed"  style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
+            <caption><strong>Other</strong></caption>
+             <thead>
+                 <tr>
+                     <th style="font-weight:normal">Date - Hour</th>
+                     <th style="font-weight:normal">Origin</th>
+                     <th style="font-weight:normal">Destiny</th>
+                     <th style="font-weight:normal" class="text-right">Duration</th>
+                     <th style="font-weight:normal" class="text-right">Amount</th>
+                 </tr>
+             </thead>
+             <tbody class="invoice_tbody">
+                 <tr t-foreach="o.telephony_ids" t-as="c">
+
+                     <td t-if="c.data_type == 'other'">
+                         <span t-field="c.time"/>
+                     </td>
+                     <td t-if="c.data_type == 'other'">
+                         <span t-field="c.origin"/>
+                     </td>
+                     <td t-if="c.data_type == 'other'"><span t-field="c.destiny"/></td>
+                     <td t-if="c.data_type == 'other'" class="text-right">
+                         <span t-field="c.duration" />
+                     </td>
+                     <td t-if="c.data_type == 'other'" class="text-right">
+                         <span t-field="c.amount"/>
+                     </td>
+                 </tr>
+             </tbody>
+          </table>
+      </div>
     </xpath>
 </template>
 </data>
