@@ -35,6 +35,25 @@ m = {
         'duration': 6,
         'cost': None
     },
+    'miscellaneous': {
+        'id': 2,
+        'date': 0,
+        'origin': 1,
+        'destiny': 3,
+        'network': None,
+        'duration': 4,
+        'cost': 5
+    },
+    'zargotel': {
+        'id': None,
+        'date': 0,
+        'time': 1,
+        'origin': 2,
+        'destiny': 3,
+        'network': None,
+        'duration': 5,
+        'cost': 6
+    },
     'lemonvil': {
         'id': 0,
         'date': 12,
@@ -105,6 +124,7 @@ class WizardImportCDR(models.TransientModel):
                         'destiny': destiny,
                         'duration': duration,
                         'cost': float(row[m[self.cdr_type]['cost']]),
+                        'company_id': self.company_id.id,
                     }
 
                     # don't repeat searches with contracts
@@ -165,6 +185,7 @@ class WizardImportCDR(models.TransientModel):
                         'destiny': destiny,
                         'duration': duration,
                         'cost': float(row[m[self.cdr_type]['cost']]),
+                        'company_id': self.company_id.id,
                     }
 
                     # don't repeat searches with contracts
@@ -173,12 +194,6 @@ class WizardImportCDR(models.TransientModel):
                         data['status'] = 'draft'
                     elif not contracts.has_key(data['origin']):
                         # search numbers related to pool_number
-                        #contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
-                        # contract_number = self.env['account.analytic.account.number'].search([['name', '=', data['origin']]])
-                        # if len(contract_number) == 1 :
-                        #     contracts[data['origin']] = contract_number[0].contract_line_id.analytic_account_id.id
-                        #     data['contract_line_id'] = contract_number[0].contract_line_id.analytic_account_id.id
-                        #     data['status'] = 'draft'
                         contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
                         if len(contract_line) == 1 :
                             contracts[data['origin']] = contract_line[0].id
@@ -208,6 +223,7 @@ class WizardImportCDR(models.TransientModel):
 
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
+
             elif self.cdr_type == 'carrier-enabler':
                 f = StringIO.StringIO(base64.decodestring(self.cdr_data))
                 reader = csv.reader(f, delimiter=';')
@@ -225,6 +241,7 @@ class WizardImportCDR(models.TransientModel):
                         'origin': origin, # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
+                        'company_id': self.company_id.id,
                     }
 
                     # don't repeat searches with contracts
@@ -275,6 +292,94 @@ class WizardImportCDR(models.TransientModel):
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
+            elif self.cdr_type == 'miscellaneous':
+                #no rates, direct cost
+                f = StringIO.StringIO(base64.decodestring(self.cdr_data))
+                reader = csv.reader(f, delimiter=',')
+                next(reader, None)  # skip header
+                for row in reader:
+                    origin = row[m[self.cdr_type]['origin']]
+                    destiny = str(row[m[self.cdr_type]['destiny']])
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    cost = float(row[m[self.cdr_type]['cost']])
+                    data = {
+                        'supplier_id': self.supplier_id.id,
+                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%Y-%m-%d %H:%M:%S'),
+                        'origin': origin, # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                        'company_id': self.company_id.id,
+                        'cost': cost,
+                        'amount': cost
+                    }
+
+                    # don't repeat searches with contracts
+                    if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                        data['contract_line_id'] = contracts[data['origin']]
+                        data['status'] = 'draft'
+                    elif not contracts.has_key(data['origin']):
+                        # search numbers related to pool_number
+                        number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
+                        if number:
+                            contract_number = self.env['account.analytic.account.number'].search([['number_id', '=', number[0].id]])
+                            if len(contract_number) == 1 :
+                                contracts[data['origin']] = contract_number[0].contract_line_id.id
+                                data['contract_line_id'] = contract_number[0].contract_line_id.id
+                                data['status'] = 'draft'
+                        else:
+                            contracts[data['origin']] = None
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+
+                    # print data
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
+
+            elif self.cdr_type == 'zargotel':
+                #no rates, direct cost
+                f = StringIO.StringIO(base64.decodestring(self.cdr_data))
+                reader = csv.reader(f, delimiter=';')
+                next(reader, None)  # skip header
+                for row in reader:
+                    origin = row[m[self.cdr_type]['origin']]
+                    destiny = str(row[m[self.cdr_type]['destiny']])
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
+                    data = {
+                        'supplier_id': self.supplier_id.id,
+                        'time': datetime.strptime('%s %s' % (row[m[self.cdr_type]['date']], row[m[self.cdr_type]['time']]), '%d/%m/%Y %H:%M:%S'),
+                        'origin': origin, # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                        'company_id': self.company_id.id,
+                        'cost': cost,
+                        'amount': cost
+                    }
+
+                    # don't repeat searches with contracts
+                    if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                        data['contract_line_id'] = contracts[data['origin']]
+                        data['status'] = 'draft'
+                    elif not contracts.has_key(data['origin']):
+                        # search numbers related to pool_number
+                        number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
+                        if number:
+                            contract_number = self.env['account.analytic.account.number'].search([['number_id', '=', number[0].id]])
+                            if len(contract_number) == 1 :
+                                contracts[data['origin']] = contract_number[0].contract_line_id.id
+                                data['contract_line_id'] = contract_number[0].contract_line_id.id
+                                data['status'] = 'draft'
+                        else:
+                            contracts[data['origin']] = None
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+
+                    # print data
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
+
             elif self.cdr_type == 'lemonvil':
                 if not self.data_type:
                     raise ValidationError('Error! This supplier requires a data type')
@@ -295,6 +400,7 @@ class WizardImportCDR(models.TransientModel):
                         'duration': duration,
                         'cost': float(row[m[self.cdr_type]['cost']]),
                         'data_type': self.data_type,
+                        'company_id': self.company_id.id,
                     }
                     if contracts.has_key(data['origin']) and contracts[data['origin']]:
                         data['contract_line_id'] = contracts[data['origin']]
@@ -321,13 +427,13 @@ class WizardImportCDR(models.TransientModel):
     supplier_id = fields.Many2one('telephony_isp.supplier')
     cdr_type = fields.Selection([('aire', 'Aire Networks'),('telcia', 'Telcia'),('carrier-enabler', 'Carrier Enabler'),('lemonvil', 'Lemonvil')], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
+    company_id = fields.Many2one('res.company', required=True)
     data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')])
 
 class WizardImportRate(models.TransientModel):
     _name = 'telephony_isp.import.rate'
     _description = 'Rate file impport'
 
-    #@api.onchange('rate_data')
     @api.multi
     def import_rate(self):
         if self.rate_data and self.supplier_id:
@@ -348,10 +454,6 @@ class WizardImportRate(models.TransientModel):
                     }
                     rate.create(data)
 
-            #return {
-            #    'type': 'ir.actions.client',
-            #    'tag': 'reload',
-            #}
             return {
                 'type': 'ir.actions.act_window',
                 'res_model': 'telephony_isp.supplier',
@@ -408,6 +510,7 @@ class WizardCreateInvoices(models.TransientModel):
         # TODO: get a better way to recalc invoices
         if self.partner_id and self.recalc:
             call_details = self.env['telephony_isp.call_detail'].search([
+                ('company_id', '=', self.company_id.id),
                 ('partner.id', '=', self.partner_id.id),
                 ('status', '!=', 'error'),
                 ('time', '>=',  self.date_start),
@@ -415,6 +518,7 @@ class WizardCreateInvoices(models.TransientModel):
             ], order='time')
         elif self.partner_id:
             call_details = self.env['telephony_isp.call_detail'].search([
+                ('company_id', '=', self.company_id.id),
                 ('partner.id', '=', self.partner_id.id),
                 ('status', '=', 'draft'),
                 ('time', '>=',  self.date_start),
@@ -422,6 +526,7 @@ class WizardCreateInvoices(models.TransientModel):
             ], order='time')
         else:
             call_details = self.env['telephony_isp.call_detail'].search([
+                ('company_id', '=', self.company_id.id),
                 ('status', '=', 'draft'),
                 ('time', '>=',  self.date_start),
                 ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
@@ -430,6 +535,8 @@ class WizardCreateInvoices(models.TransientModel):
         data = {
             'date_start': self.date_start,
             'date_end': self.date_end,
+            'company_id': self.company_id.id,
+
         }
 
         period = self.env['telephony_isp.period'].create(data)
@@ -440,7 +547,6 @@ class WizardCreateInvoices(models.TransientModel):
             # contracts
             if not self.contracts.has_key(i.contract.id):
                 # first origin
-
                 #get data type to show in the invoice report:
                 if i.supplier_id.data_type:
                     data_type = i.supplier_id.data_type
@@ -507,6 +613,7 @@ class WizardCreateInvoices(models.TransientModel):
                     'telephony_period_id': period.id,
                     'account_id': i['contract'].partner_id.property_account_receivable.id,
                     'invoice_line': lines,
+                    'company_id': self.company_id.id,
                     'data_type': i['origins'][j]['data_type']
                 }
                 if hasattr(i['contract'], 'payment_mode'):
@@ -566,5 +673,5 @@ class WizardCreateInvoices(models.TransientModel):
     date_start= fields.Date('From', required=True)
     date_end = fields.Date('To', required=True)
     recalc = fields.Boolean(help='Override previus calcs in calls') # override invoiced status
-    existing_invoice = fields.Boolean('Add to existing invoices') 
-
+    existing_invoice = fields.Boolean('Add to existing invoices')
+    company_id = fields.Many2one('res.company', required=True)

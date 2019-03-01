@@ -6,6 +6,7 @@
             <field name="model">telephony_isp.call_detail</field>
             <field name="arch" type="xml">
               <tree string="Call Detail Record" colors="red:status=='error'">
+                  <field name="company_id"/>
                   <field name="partner"/>
                   <field name="contract_code"/>
                   <field name="product"/>
@@ -45,6 +46,7 @@
                         <filter string="Destiny" domain="[]" context="{'group_by':'destiny'}"/>
                         <filter string="Rate" domain="[]" context="{'group_by':'rate_id'}"/>
                         <filter string="Data Type" domain="[]" context="{'group_by':'data_type'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
                     </group>
                 </search>
             </field>
@@ -150,6 +152,7 @@
             <field name="model">telephony_isp.period</field>
             <field name="arch" type="xml">
               <tree string="Suppliers">
+                <field name="company_id"/>
                   <field name="date_start"/>
                   <field name="date_end"/>
                   <field name="invoice_ids"/>

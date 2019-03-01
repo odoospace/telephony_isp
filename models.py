@@ -200,6 +200,7 @@ class call_detail(models.Model):
     to_invoice = fields.Boolean(default=True) # False -> free
     hidden = fields.Boolean(default=False) # hide this entry to some users - experimental
     data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')], default='calls')
+    company_id = fields.Many2one('res.company')
 
 
 
@@ -250,3 +251,4 @@ class period(models.Model):
     date_start = fields.Date('Start')
     date_end = fields.Date('End')
     amount = fields.Float() # total
+    company_id = fields.Many2one('res.company')
