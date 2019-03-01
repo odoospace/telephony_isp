@@ -397,6 +397,8 @@ class WizardImportCDR(models.TransientModel):
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
+                    if self.data_type == 'data':
+                        data['duration'] = 0
                     if contracts.has_key(data['origin']) and contracts[data['origin']]:
                         data['contract_line_id'] = contracts[data['origin']]
                         data['status'] = 'draft'
