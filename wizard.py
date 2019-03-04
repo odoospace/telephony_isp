@@ -61,7 +61,8 @@ m = {
         'destiny': 10,
         'network': 23,
         'duration': 15,
-        'cost': 17
+        'cost': 17,
+        'datadestiny': 20,
     },
 }
 
@@ -404,6 +405,8 @@ class WizardImportCDR(models.TransientModel):
                     }
                     if self.data_type == 'data':
                         data['duration'] = 0
+                        if 'datadestiny' in row[m[self.cdr_type]]:
+                            data['destiny'] = row[m[self.cdr_type]['datadestiny']]
                     if contracts.has_key(data['origin']) and contracts[data['origin']]:
                         data['contract_line_id'] = contracts[data['origin']]
                         data['status'] = 'draft'
@@ -510,36 +513,57 @@ class WizardCreateInvoices(models.TransientModel):
     def create_invoice(self):
         # search records
         # TODO: get a better way to recalc invoices
-        if self.partner_id and self.recalc:
-            call_details = self.env['telephony_isp.call_detail'].search([
-                ('company_id', '=', self.company_id.id),
-                ('partner.id', '=', self.partner_id.id),
-                ('status', '!=', 'error'),
-                ('time', '>=',  self.date_start),
-                ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
-            ], order='time')
-        elif self.partner_id:
-            call_details = self.env['telephony_isp.call_detail'].search([
-                ('company_id', '=', self.company_id.id),
-                ('partner.id', '=', self.partner_id.id),
-                ('status', '=', 'draft'),
-                ('time', '>=',  self.date_start),
-                ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
-            ], order='time')
+        filters = []
+        filters.append(('time', '>=',  self.date_start))
+        filters.append(('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)))
+        if self.company_id:
+            filters.append(('company_id', '=', self.company_id.id))
+
+        if self.partner_id:
+            filters.append(('partner.id', '=', self.partner_id.id))
+        if self.recalc:
+            filters.append(('status', '!=', 'error'))
         else:
-            call_details = self.env['telephony_isp.call_detail'].search([
-                ('company_id', '=', self.company_id.id),
-                ('status', '=', 'draft'),
-                ('time', '>=',  self.date_start),
-                ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
-            ], order='time')
+            filters.append(('status', '=', 'draft'))
+        if self.supplier_id:
+            filters.append(('supplier_id', '=', self.supplier_id.id))
+
+        call_details = self.env['telephony_isp.call_detail'].search(filters, order='time')
+
+        # if self.partner_id and recalc
+        #     call_details = self.env['telephony_isp.call_detail'].search([
+        #         ('supplier_id', '=', self.supplier_id.id),
+        #         ('company_id', '=', self.company_id.id),
+        #         ('partner.id', '=', self.partner_id.id),
+        #         ('status', '!=', 'error'),
+        #         ('time', '>=',  self.date_start),
+        #         ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
+        #     ], order='time')
+        # elif self.partner_id:
+        #     call_details = self.env['telephony_isp.call_detail'].search([
+        #         ('supplier_id', '=', self.supplier_id.id),
+        #         ('company_id', '=', self.company_id.id),
+        #         ('partner.id', '=', self.partner_id.id),
+        #         ('status', '=', 'draft'),
+        #         ('time', '>=',  self.date_start),
+        #         ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
+        #     ], order='time')
+        # else:
+        #     call_details = self.env['telephony_isp.call_detail'].search([
+        #         ('supplier_id', '=', self.supplier_id.id),
+        #         ('company_id', '=', self.company_id.id),
+        #         ('status', '=', 'draft'),
+        #         ('time', '>=',  self.date_start),
+        #         ('time', '<', (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT))
+        #     ], order='time')
         # create period
         data = {
             'date_start': self.date_start,
             'date_end': self.date_end,
             'company_id': self.company_id.id,
-
         }
+        if self.supplier_id:
+            data['supplier_id'] = self.supplier_id.id
 
         period = self.env['telephony_isp.period'].create(data)
 
@@ -677,3 +701,4 @@ class WizardCreateInvoices(models.TransientModel):
     recalc = fields.Boolean(help='Override previus calcs in calls') # override invoiced status
     existing_invoice = fields.Boolean('Add to existing invoices')
     company_id = fields.Many2one('res.company', required=True)
+    supplier_id = fields.Many2one('telephony_isp.supplier')

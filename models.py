@@ -252,3 +252,4 @@ class period(models.Model):
     date_end = fields.Date('End')
     amount = fields.Float() # total
     company_id = fields.Many2one('res.company')
+    supplier_id = fields.Many2one('telephony_isp.supplier')

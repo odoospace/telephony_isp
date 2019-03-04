@@ -158,6 +158,7 @@
                   <field name="invoice_ids"/>
                   <field name="call_details_ids"/>
                   <field name="amount"/>
+                  <field name="supplier_id"/>
               </tree>
           </field>
         </record>

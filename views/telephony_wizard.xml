@@ -68,6 +68,7 @@
                   <group>
                       <field name="company_id"/>
                       <field name="journal_id"/>
+                      <field name="supplier_id"/>
                       <field name="partner_id"/>
                       <field name="recalc" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                       <field name="date_invoice"/>
