@@ -62,7 +62,7 @@ m = {
         'network': 23,
         'duration': 15,
         'cost': 17,
-        'datadestiny': 20,
+        'otherdestiny': 20,
     },
 }
 
@@ -405,8 +405,9 @@ class WizardImportCDR(models.TransientModel):
                     }
                     if self.data_type == 'data':
                         data['duration'] = 0
-                        if 'datadestiny' in row[m[self.cdr_type]]:
-                            data['destiny'] = row[m[self.cdr_type]['datadestiny']]
+                    if self.data_type == 'other':
+                        if 'otherdestiny' in row[m[self.cdr_type]]:
+                            data['destiny'] = row[m[self.cdr_type]['otherdestiny']]
                     if contracts.has_key(data['origin']) and contracts[data['origin']]:
                         data['contract_line_id'] = contracts[data['origin']]
                         data['status'] = 'draft'
