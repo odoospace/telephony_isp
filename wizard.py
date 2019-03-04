@@ -406,8 +406,8 @@ class WizardImportCDR(models.TransientModel):
                     if self.data_type == 'data':
                         data['duration'] = 0
                     if self.data_type == 'other':
-                        if 'otherdestiny' in row[m[self.cdr_type]]:
-                            data['destiny'] = row[m[self.cdr_type]['otherdestiny']]
+                        # if 'otherdestiny' in row[m[self.cdr_type]]:
+                        data['destiny'] = row[m[self.cdr_type]['otherdestiny']]
                     if contracts.has_key(data['origin']) and contracts[data['origin']]:
                         data['contract_line_id'] = contracts[data['origin']]
                         data['status'] = 'draft'
