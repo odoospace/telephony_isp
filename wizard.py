@@ -529,6 +529,8 @@ class WizardCreateInvoices(models.TransientModel):
         if self.supplier_id:
             filters.append(('supplier_id', '=', self.supplier_id.id))
 
+        print filters
+
         call_details = self.env['telephony_isp.call_detail'].search(filters, order='time')
 
         # if self.partner_id and recalc
@@ -602,12 +604,18 @@ class WizardCreateInvoices(models.TransientModel):
             else:
                 # TODO: KISS (refactor this!)
                 # new origin
+                if i.supplier_id.data_type:
+                    data_type = i.supplier_id.data_type
+                else:
+                    data_type = 'calls'
+
                 self.contracts[i.contract.id]['origins'][i.origin] = {
                     'product': i.product,
                     'calls': [],
                     'status': [],
                     'total': 0,
-                    'minutes': self.get_minutes_free(i.origin, i.contract_line_id.product_id.id)
+                    'minutes': self.get_minutes_free(i.origin, i.contract_line_id.product_id.id),
+                    'data_type': data_type
                 }
 
                 self.get_amount_status(i)
