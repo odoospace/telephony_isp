@@ -229,7 +229,7 @@ class call_detail(models.Model):
                         # apply rates or default
                         if rate:
                             if i.status != 'draft':
-                                data['status'] = 'draft',
+                                data['status'] = 'draft'
                             data['amount'] = rate.price * i.duration
                             data['cost'] = i.amount
                             data['rate_id'] = rate.id
