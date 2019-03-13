@@ -46,7 +46,7 @@ class account_analytic_account_number(models.Model):
 #        domain=_get_lines)
         # domain="[('analytic_account_id', '=', contract_id)]"
     )
-    pool = fields.Many2one(related='number_id.pool_ida')
+    pool_id = fields.Many2one(related='number_id.pool_id')
     login = fields.Char()
     password = fields.Char()
     product_id = fields.Many2one('product.product')
@@ -219,7 +219,6 @@ class call_detail(models.Model):
                     data = {
                         'contract_line_id': contract_line[0].contract_line_id.id,
                     }
-                    i.write(data)
                     print ('Fixed!', i.origin, i)
                     supplier_id = contract_line[0].pool_id.supplier_id.id
                     if supplier_id:
@@ -229,12 +228,14 @@ class call_detail(models.Model):
                             rate = get_rate_without_cc(i.destiny, supplier_id)
                         # apply rates or default
                         if rate:
-                            i.status = 'draft'
-                            i.amount = rate.price * i.duration
-                            i.cost = i.amount
-                            i.rate_id = rate.id
+                            if i.status != 'draft':
+                                data['status'] = 'draft',
+                            data['amount'] = rate.price * i.duration
+                            data['cost'] = i.amount
+                            data['rate_id'] = rate.id
                             if i.amount == 0:
-                                i.status = 'free'
+                                data['status'] = 'free'
+                    i.write(data)
         return {
             'type': 'ir.actions.client',
             'tag': 'reload'
