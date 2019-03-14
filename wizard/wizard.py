@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from datetime import datetime, timedelta
 from odoo.tools import pycompat, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.exceptions import ValidationError
@@ -8,6 +8,7 @@ import base64
 import csv
 import sys
 
+# TODO: explain this
 m = {
     'aire': {
         'id': 0,
@@ -136,7 +137,6 @@ class WizardImportCDR(models.TransientModel):
                         data['status'] = 'default'
 
                     # don't repeat searchs with rates
-
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
@@ -507,6 +507,7 @@ class WizardCreateInvoices(models.TransientModel):
             'date_end': self.date_end,
         }
 
+        # create new period to group invoices
         period = self.env['telephony_isp.period'].create(data)
 
         # group by contract
@@ -531,7 +532,6 @@ class WizardCreateInvoices(models.TransientModel):
                 self.get_amount_status(i)
 
             elif i.origin in self.contracts[i.contract.id]['origins']:
-
                 self.get_amount_status(i)
             else:
                 # TODO: KISS (refactor this!)
@@ -558,62 +558,67 @@ class WizardCreateInvoices(models.TransientModel):
                 product = i['origins'][j]['product']
                 lines.append((0,0, {
                     'product_id': product.id,
-                    'name': 'Consumo de %s' % j,
+                    'name': _('Consum of %s') % j,
                     'account_id': product.property_account_income_id.id or product.categ_id.property_account_income_categ_id.id,
                     'account_analytic_id': i['contract'].id,
                     'invoice_line_tax_ids': [(6,0, [k.id for k in product.taxes_id])],
                     'price_unit': i['origins'][j]['total']
                 }))
 
-                # invoice
-                data =  {
-                    'is_telephony': True,
-                    'origin': i['contract'].code,
-                    'date_invoice': self.date_invoice,
-                    'partner_id': i['contract'].partner_id.id,
-                    'journal_id': self.journal_id.id,
-                    'telephony_period_id': period.id,
-                    'account_id': i['contract'].partner_id.property_account_receivable_id.id,
-                    'invoice_line_ids': lines
-                }
-                if hasattr(i['contract'], 'payment_mode'):
-                    data['payment_mode'] = i['contract'].payment_mode.id,
+            # data for invoice
+            data =  {
+                'is_telephony': True,
+                'origin': i['contract'].code,
+                'date_invoice': self.date_invoice,
+                'partner_id': i['contract'].partner_id.id,
+                'journal_id': self.journal_id.id,
+                'telephony_period_id': period.id,
+                'account_id': i['contract'].partner_id.property_account_receivable_id.id,
+                'invoice_line_ids': lines
+            }
+            if hasattr(i['contract'], 'payment_mode'):
+                data['payment_mode'] = i['contract'].payment_mode.id,
 
-                # recover or create invoice to add lines
-                if data['partner_id']:
-                    # first of all, search for draft invoices for this partner and contract
-                    invoice_obj = self.env['account.invoice'].search([('state', '=', 'draft'), ('partner_id', '=', data['partner_id']),('origin', '=', data['origin'])])
-                    if len(invoice_obj) == 1 and self.existing_invoice:
-                        invoice = invoice_obj[0]
-                        invoice.write({
-                            'is_telephony': True,
-                            'telephony_period_id': period.id,
-                            'invoice_line_ids': lines
-                            })
-                    elif len(invoice_obj) == 0 or not self.existing_invoice:
-                        invoice = self.env['account.invoice'].create(data)
-                    else:
-                        raise ValidationError('Error processing contract for %s. Many draft invoices.' % ', '.join(i['origins'].keys()))
-                else:
-                    raise ValidationError('Error processing contract for %s' % ', '.join(i['origins'].keys()))
-
-                amount += i['origins'][j]['total']
-
-                # link calls with its invoice and set new status
-                for k in range(len(i['origins'][j]['calls'])):
-                    call = i['origins'][j]['calls'][k]
-                    status = i['origins'][j]['status'][k]
+            # recover or create invoice to add lines
+            if data['partner_id']:
+                # first of all, search for draft invoices for this partner and contract
+                invoice_obj = self.env['account.invoice'].search([
+                    ('state', '=', 'draft'),
+                    ('partner_id', '=', data['partner_id']),
+                    ('origin', '=', data['origin'])
+                ])
+                if len(invoice_obj) == 1 and self.existing_invoice:
+                    invoice = invoice_obj[0]
                     data = {
-                        'invoice_id': invoice.id,
-                        'status': status
+                        'is_telephony': True,
+                        'telephony_period_id': period.id,
+                        'invoice_line_ids': lines
                     }
-                    # check free calls
-                    if 'free' in status:
-                        data['amount'] = 0
-                    call.write(data)
-                print(lines)
-                print(invoice)
-                print(invoice.invoice_line_ids)
+                    invoice.write(data)
+                elif len(invoice_obj) == 0 or not self.existing_invoice:
+                    invoice = self.env['account.invoice'].create(data)
+                else:
+                    raise ValidationError('Error processing contract for %s. Many draft invoices.' % ', '.join(i['origins'].keys()))
+            else:
+                raise ValidationError('Error processing contract for %s' % ', '.join(i['origins'].keys()))
+
+            amount += i['origins'][j]['total']
+
+            # link calls with its invoice and set new status
+            for k in range(len(i['origins'][j]['calls'])):
+                call = i['origins'][j]['calls'][k]
+                status = i['origins'][j]['status'][k]
+                data = {
+                    'invoice_id': invoice.id,
+                    'status': status
+                }
+                # check free calls
+                if 'free' in status:
+                    data['amount'] = 0
+                call.write(data)
+                #print(lines)
+                #print(invoice)
+                #print(invoice.invoice_line_ids)
 
                 # recalc taxes
                 # invoice.button_reset_taxes()
