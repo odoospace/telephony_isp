@@ -605,26 +605,27 @@ class WizardCreateInvoices(models.TransientModel):
             amount += i['origins'][j]['total']
 
             # link calls with its invoice and set new status
-            for k in range(len(i['origins'][j]['calls'])):
-                call = i['origins'][j]['calls'][k]
-                status = i['origins'][j]['status'][k]
-                data = {
-                    'invoice_id': invoice.id,
-                    'status': status
-                }
-                # check free calls
-                if 'free' in status:
-                    data['amount'] = 0
-                call.write(data)
-                #print(lines)
-                #print(invoice)
-                #print(invoice.invoice_line_ids)
+            for j in i['origins']:
+                for k in range(len(i['origins'][j]['calls'])):
+                    call = i['origins'][j]['calls'][k]
+                    status = i['origins'][j]['status'][k]
+                    data = {
+                        'invoice_id': invoice.id,
+                        'status': status
+                    }
+                    # check free calls
+                    if 'free' in status:
+                        data['amount'] = 0
+                    call.write(data)
+                    #print(lines)
+                    #print(invoice)
+                    #print(invoice.invoice_line_ids)
 
-                # recalc taxes
-                # invoice.button_reset_taxes()
+                    # recalc taxes
+                    # invoice.button_reset_taxes()
 
-                # append invoice to period
-                invoices.append(invoice)
+                    # append invoice to period
+                    invoices.append(invoice)
 
         # update period data
         data = {
