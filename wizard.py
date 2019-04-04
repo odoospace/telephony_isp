@@ -484,7 +484,15 @@ class WizardImportCDR(models.TransientModel):
         return {'type': 'ir.actions.act_window_close'}
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
-    cdr_type = fields.Selection([('aire', 'Aire Networks'),('telcia', 'Telcia'),('carrier-enabler', 'Carrier Enabler'),('lemonvil', 'Lemonvil')], string='CDR type', default='aire', required=True)
+    cdr_type = fields.Selection([
+        ('aire', 'Aire Networks'),
+        ('telcia', 'Telcia'),
+        ('carrier-enabler', 'Carrier Enabler'),
+        ('miscellaneous', 'Miscellaneous'),
+        ('zargotel', 'Zargotel'),
+        ('lemonvil', 'Lemonvil'),
+        ('todefine1', 'Todefine1'),
+        ], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)
     data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')])
