@@ -64,6 +64,15 @@ m = {
         'cost': 17,
         'otherdestiny': 20,
     },
+    'todefine1': {
+        'id': 0,
+        'date': 1,
+        'origin': 2,
+        'destiny': 3,
+        'network': 4,
+        'duration': 5,
+        'cost': 6
+    },
 }
 
 class WizardImportCDR(models.TransientModel):
@@ -427,6 +436,50 @@ class WizardImportCDR(models.TransientModel):
 
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
+
+            elif self.cdr_type == 'todefine1':
+                if not self.data_type:
+                    raise ValidationError('Error! This supplier requires a data type')
+                f = StringIO.StringIO(base64.decodestring(self.cdr_data))
+                reader = csv.reader(f, delimiter=';')
+                next(reader, None)  # skip header
+
+                for row in reader:
+                    origin = row[m[self.cdr_type]['origin']]
+                    destiny = row[m[self.cdr_type]['destiny']]
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    data = {
+                        'supplier_id': self.supplier_id.id,
+                        'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d-%m-%y %H:%M:%S'),
+                        'origin': origin, # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                        'cost': float(row[m[self.cdr_type]['cost']]),
+                        'data_type': self.data_type,
+                        'company_id': self.company_id.id,
+                    }
+                    if self.data_type == 'data':
+                        data['duration'] = 0
+                    if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                        data['contract_line_id'] = contracts[data['origin']]
+                        data['status'] = 'draft'
+                    elif not contracts.has_key(data['origin']):
+                        contract_line = self.env['account.analytic.invoice.line'].search([['name', '=', data['origin']]])
+                        if len(contract_line) == 1 :
+                            contracts[data['origin']] = contract_line[0].id
+                            data['contract_line_id'] = contract_line[0].id
+                            data['status'] = 'draft'
+                        else:
+                            contracts[data['origin']] = None
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+
+                    data['amount'] = data['cost']
+
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
+
 
         return {'type': 'ir.actions.act_window_close'}
 
