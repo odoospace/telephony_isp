@@ -510,7 +510,7 @@ class WizardImportCDR(models.TransientModel):
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
-            elif self.cdr_type == 'todefine2':
+            elif self.cdr_type == 'masmovil':
                 #this type mixes voice,data and sms at the same cdr
                 # if not self.data_type:
                 #     raise ValidationError('Error! This supplier requires a data type')
@@ -523,11 +523,11 @@ class WizardImportCDR(models.TransientModel):
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
                     if row[m[self.cdr_type]['type']] == 'DAT':
-                        data_type = 'data'
+                        self.data_type = 'data'
                     if row[m[self.cdr_type]['type']] == 'VOZ':
-                        data_type = 'calls'
+                        self.data_type = 'calls'
                     if row[m[self.cdr_type]['type']] == 'SMS':
-                        data_type = 'sms'
+                        self.data_type = 'sms'
 
                     data = {
                         'supplier_id': self.supplier_id.id,
@@ -567,24 +567,27 @@ class WizardImportCDR(models.TransientModel):
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
-            elif self.cdr_type == 'todefine3':
-                #this type mixes voice,data and sms at the same cdr
-                # if not self.data_type:
-                #     raise ValidationError('Error! This supplier requires a data type')
+            elif self.cdr_type == 'ptv':
+                #this type mixes voice,data and sms at the same cdr from landline and mobileline
                 f = StringIO.StringIO(base64.decodestring(self.cdr_data))
-                reader = csv.reader(f, delimiter=',')
+                reader = csv.reader(f, delimiter=';')
                 next(reader, None)  # skip header
 
                 for row in reader:
+
                     origin = row[m[self.cdr_type]['origin']]
+                    if origin[0] == '9':
+                        line_type = 'landline'
+                    else:
+                        line_type = 'mobileline'
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
                     if row[m[self.cdr_type]['type']] == 'bytes':
-                        data_type = 'data'
+                        self.data_type = 'data'
                     if row[m[self.cdr_type]['type']] == 'segundos':
-                        data_type = 'calls'
+                        self.data_type = 'calls'
                     if row[m[self.cdr_type]['type']] == 'sms':
-                        data_type = 'sms'
+                        self.data_type = 'sms'
 
                     data = {
                         'supplier_id': self.supplier_id.id,
@@ -592,7 +595,7 @@ class WizardImportCDR(models.TransientModel):
                         'origin': origin, # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']]),
+                        'cost': float(row[m[self.cdr_type]['cost']].replace(',','.')),
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -619,10 +622,26 @@ class WizardImportCDR(models.TransientModel):
                     else:
                         data['status'] = 'error'
 
-                    data['amount'] = data['cost']
 
-                    call_detail = self.env['telephony_isp.call_detail']
-                    call_detail.create(data)
+                    if line_type == 'mobileline':
+                        #apply default cost
+                        data['amount'] = data['cost']
+                    else:
+                        rate = get_rate_without_cc(destiny)
+                        # apply rates or default
+                        if rate:
+                            data['amount'] = rate.price / 60. * duration # seconds -> minute
+                            data['rate_id'] = rate.id
+                            if data['amount'] == 0:
+                                data['status'] = 'free'
+                        else:
+                            data['amount'] = data['cost'] + data['cost'] * self.supplier_id.ratio / 100.
+                            data['status'] = 'default'
+
+                        data['amount'] = data['cost']
+
+                        call_detail = self.env['telephony_isp.call_detail']
+                        call_detail.create(data)
 
         return {'type': 'ir.actions.act_window_close'}
 
@@ -635,8 +654,8 @@ class WizardImportCDR(models.TransientModel):
         ('zargotel', 'Zargotel'),
         ('lemonvil', 'Lemonvil'),
         ('ion', 'ION'),
-        ('todefine2', 'Todefine2'),
-        ('todefine3', 'Todefine3')
+        ('masmovil', 'Masmovil'),
+        ('ptv', 'PTV')
         ], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)
