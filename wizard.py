@@ -73,7 +73,7 @@ m = {
         'duration': 5,
         'cost': 6
     },
-    'todefine2': {
+    'masmovil': {
         'id': 1,
         'date': 5,
         'date2':6,
@@ -85,7 +85,7 @@ m = {
         'type': 0
 
     },
-    'todefine3': {
+    'ptv': {
         'id': 0,
         'date': 3,
         'date2':4,
@@ -623,25 +623,31 @@ class WizardImportCDR(models.TransientModel):
                         data['status'] = 'error'
 
 
-                    if line_type == 'mobileline':
-                        #apply default cost
-                        data['amount'] = data['cost']
-                    else:
-                        rate = get_rate_without_cc(destiny)
-                        # apply rates or default
-                        if rate:
-                            data['amount'] = rate.price / 60. * duration # seconds -> minute
-                            data['rate_id'] = rate.id
-                            if data['amount'] == 0:
-                                data['status'] = 'free'
-                        else:
-                            data['amount'] = data['cost'] + data['cost'] * self.supplier_id.ratio / 100.
-                            data['status'] = 'default'
+                    # if line_type == 'mobileline':
+                    #     #apply default cost
+                    #     data['amount'] = data['cost']
+                    # else:
+                    #     rate = get_rate(destiny)
+                    #     # apply rates or default
+                    #     if rate:
+                    #         if rate.special:
+                    #             data['amount'] = data['cost'] + data['cost'] * rate.ratio / 100.
+                                
+                    #             data['rate_id'] = rate.id
+                    #         else:
+                    #             data['amount'] = rate.price / 60. * duration # seconds -> minute
+                    #             data['rate_id'] = rate.id
+                            
+                    #         if data['amount'] == 0:
+                    #             data['status'] = 'free'
+                    #     else:
+                    #         data['amount'] = data['cost'] + data['cost'] * self.supplier_id.ratio / 100.
+                    #         data['status'] = 'default'
 
-                        data['amount'] = data['cost']
+                    data['amount'] = data['cost']
 
-                        call_detail = self.env['telephony_isp.call_detail']
-                        call_detail.create(data)
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
 
         return {'type': 'ir.actions.act_window_close'}
 
