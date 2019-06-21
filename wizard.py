@@ -128,7 +128,7 @@ class WizardImportCDR(models.TransientModel):
         def get_rate_without_cc(number):
             """get rate searching in prefixes without Country Code"""
             last = None
-            if len(number) == 9 and number[0] in ['9','6']:
+            if len(number) == 9 and number[0] in ['9','6', '8']:
                 #do stuff
                 for i in xrange(len(number) + 1, 0, -1):
                     if rates_spain.has_key(number[:i]):

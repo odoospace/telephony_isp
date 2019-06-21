@@ -47,6 +47,7 @@
                         <filter string="Rate" domain="[]" context="{'group_by':'rate_id'}"/>
                         <filter string="Data Type" domain="[]" context="{'group_by':'data_type'}"/>
                         <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                        <filter string="Supplier" domain="[]" context="{'group_by':'supplier_id'}"/>
                     </group>
                 </search>
             </field>
