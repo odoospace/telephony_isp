@@ -10,7 +10,6 @@ class account_invoice(models.Model):
     telephony_period_id = fields.Many2one('telephony_isp.period')
     data_type = fields.Selection([('multiple', 'Calls|Data|SMS|Other'), ('calls', 'Calls')])
 
-
 class account_analytic_account_number(models.Model):
     _name = 'account.analytic.account.number'
 
@@ -130,6 +129,7 @@ class pool_number(models.Model):
     )
     #contract_ids = fields.One2many('account.analytic.account')
     last_contract_id = fields.Many2one('account.analytic.account')# current active contract for this number
+    migrated = fields.Boolean()
 
     @api.multi
     @api.depends('name', 'pool_id')
@@ -259,3 +259,5 @@ class period(models.Model):
     date_end = fields.Date('End')
     amount = fields.Float() # total
     company_id = fields.Many2one('res.company')
+    supplier_id = fields.Many2one('telephony_isp.supplier')
+

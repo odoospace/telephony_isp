@@ -13,7 +13,7 @@
                 <xpath expr="//page[@name='contract_page']" position="after">
                     <page string="Telephony Info" attrs="{'invisible':[('use_telephony','=',False)]}">
                         <field name="telephony_number_ids" widget="one2many_list" nolabel="1" context="{'contract_id': id}">
-                            <tree string="Numbers info" default_order='number_id' editable="bottom">
+                            <tree string="Numbers info" default_order='time' editable="bottom">
                               <field name="number_id"/>
                               <field name="contract_line_id" domain="[('analytic_account_id', '=', contract_id)]"/>
                               <field name="login"/>
