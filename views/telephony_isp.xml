@@ -6,6 +6,7 @@
             <field name="model">telephony_isp.call_detail</field>
             <field name="arch" type="xml">
               <tree string="Call Detail Record" colors="red:status=='error'">
+                  <field name="company_id"/>
                   <field name="partner"/>
                   <field name="contract_code"/>
                   <field name="product"/>
@@ -18,6 +19,7 @@
                   <field name="amount" sum="Total Amount"/>
                   <field name="status"/>
                   <field name="invoice_id"/>
+                  <field name="data_type"/>
               </tree>
           </field>
         </record>
@@ -43,6 +45,9 @@
                         <filter string="Contract" domain="[]" context="{'group_by':'contract_code'}"/>
                         <filter string="Destiny" domain="[]" context="{'group_by':'destiny'}"/>
                         <filter string="Rate" domain="[]" context="{'group_by':'rate_id'}"/>
+                        <filter string="Data Type" domain="[]" context="{'group_by':'data_type'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                        <filter string="Supplier" domain="[]" context="{'group_by':'supplier_id'}"/>
                     </group>
                 </search>
             </field>
@@ -61,7 +66,8 @@
                   <field name="ratio"/>
                   <field name="date_start"/>
                   <field name="date_end"/>
-                  <!--<field name="rate_ids"/>-->
+                  <field name="rate_ids"/>
+                  <field name="data_type"/>
               </tree>
           </field>
         </record>
@@ -80,6 +86,7 @@
                       <field name="ratio"/>
                       <field name="date_start"/>
                       <field name="date_end"/>
+                      <field name="data_type"/>
                   </group>
                   <group>
                       <field name="cdr_type"/>
@@ -153,11 +160,13 @@
             <field name="model">telephony_isp.period</field>
             <field name="arch" type="xml">
               <tree string="Suppliers">
+                  <field name="company_id"/>
                   <field name="date_start"/>
                   <field name="date_end"/>
                   <field name="invoice_ids"/>
                   <field name="call_details_ids"/>
                   <field name="amount"/>
+                  <field name="supplier_id"/>
               </tree>
           </field>
         </record>

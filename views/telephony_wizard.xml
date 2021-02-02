@@ -10,6 +10,8 @@
                       <field name="supplier_id"/>
                       <field name="cdr_type"/>
                       <field name="cdr_data"/>
+                      <field name="company_id"/>
+                      <field name="data_type"/>
                   </group>
                   <footer>
                       <button name="import_cdr" type="object"
@@ -29,6 +31,8 @@
                   <group>
                       <field name="cdr_type"/>
                       <field name="cdr_data"/>
+                      <field name="company_id"/>
+                      <field name="data_type"/>
                   </group>
                   <footer>
                       <button name="import_cdr_ws" type="object"
@@ -91,6 +95,7 @@
           <field name="arch" type="xml">
               <form string="Create invoices">
                   <group>
+                      <field name="company_id"/>
                       <field name="journal_id"/>
                       <field name="partner_id"/>
                       <field name="recalc" attrs="{'invisible':[('partner_id', '=', False)]}"/>
