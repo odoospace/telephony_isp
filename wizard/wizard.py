@@ -720,7 +720,7 @@ class WizardImportCDR(models.TransientModel):
         ], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)
-    cdr_data = fields.Binary('File')
+    data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')])
 
 class WizardImportCDRWithoutSupplier(models.TransientModel):
     _name = 'telephony_isp.import.cdr.ws'
@@ -851,6 +851,8 @@ class WizardImportCDRWithoutSupplier(models.TransientModel):
 
     cdr_type = fields.Selection([('misc', 'Misc')], string='CDR type', default='misc', required=True)
     cdr_data = fields.Binary('File')
+    company_id = fields.Many2one('res.company', required=True)
+    data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')])
 
 class WizardImportRate(models.TransientModel):
     _name = 'telephony_isp.import.rate'
