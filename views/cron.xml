@@ -1,0 +1,17 @@
+<openerp>
+    <data noupdate="1">
+        <record id="ir_cron_telephony_ftp_action" forcecreate='True' model="ir.cron">
+            <field name="model_id" ref="model_telephony_isp_task"/>
+            <field name="name">Telephony FTP download</field>
+            <field eval="False" name="active"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="code">model.download_ftp()</field>
+            <field name="state">code</field>
+            <field name="function">True</field>
+        </record>
+   </data>
+</openerp>
+

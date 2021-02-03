@@ -23,21 +23,22 @@
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
     # for the full list
     'category': 'Accounting & Finance',
-    'version': '0.2',
+    'version': '11.2.1.3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account', 'analytic', 'account_analytic_analysis', 'product'],
+    'depends': ['base', 'account', 'analytic', 'contract', 'product'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'templates.xml',
+        'views/templates.xml',
         'views/telephony_isp.xml',
         'views/telephony_wizard.xml',
         'views/product.xml',
         'views/invoice.xml',
         'views/contract.xml',
-        'views/report_invoice_calls_detail.xml'
+        'views/report_invoice_calls_detail.xml',
+        'views/cron.xml'
     ],
     # only loaded in demonstration mode
     #'demo': [
