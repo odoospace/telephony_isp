@@ -15,7 +15,7 @@
                         <label for="telephony_ok"/>
                     </div>
                 </div>
-                <xpath expr="//page[@name='notes']" position="after">
+                <xpath expr="//page[last()]" position="after">
                     <page string="Telephony" attrs="{'invisible':[('telephony_ok','=',False)]}">
                         <group string="Telephony Data">
                             <field name="telephony_ids" widget="one2many_list" nolabel="1">

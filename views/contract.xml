@@ -5,12 +5,14 @@
         <!-- BEGIN view contract form -->
         <record id="account_contract_form_telephony" model="ir.ui.view">
             <field name="name">account.contract.form.telephony</field>
-            <field name="model">account.analytic.account</field>
-            <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+            <field name="model">contract.contract</field>
+            <field name="inherit_id" ref="contract.contract_contract_form_view"/>
             <field name="arch" type="xml">
-                <xpath expr='//div[@name="project"]' position='inside'>
-                    <field name="use_telephony" class="oe_inline"/>
-                    <label for="use_telephony"/>
+                <xpath expr='//div[@class="oe_title"]' position='after'>
+                    <div name="project_contract">
+                        <field name="use_telephony" class="oe_inline"/>
+                        <label for="use_telephony"/>
+                    </div>
                 </xpath>
                 <xpath expr="//div[@class='oe_chatter']" position="before">
                     <group string="Telephony Info" attrs="{'invisible':[('use_telephony','=',False)]}">

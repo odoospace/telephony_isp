@@ -7,8 +7,6 @@ from odoo.exceptions import ValidationError
 
 import io
 import base64
-import csv
-import sys
 
 # TODO: explain this
 m = {
@@ -87,6 +85,7 @@ m = {
         'duration': 7,
         'cost': 11,
         'type': 0
+
     },
     'ptv': {
         'id': 0,
@@ -98,6 +97,7 @@ m = {
         'duration': 9,
         'cost': 14,
         'type': 10
+
     },
 }
 
@@ -171,8 +171,7 @@ class WizardImportCDR(models.TransientModel):
                         data['contract_line_id'] = contracts[data['origin']]
                         data['status'] = 'draft'
                     elif not data['origin'] in contracts:
-                        # search numbers related to pool_number
-                        contract_line = self.env['account.analytic.invoice.line'].search(
+                        contract_line = self.env['contract.line'].search(
                             [['name', '=', data['origin']]])
                         if len(contract_line) == 1:
                             contracts[data['origin']] = contract_line[0].id
@@ -227,7 +226,7 @@ class WizardImportCDR(models.TransientModel):
                         data['status'] = 'draft'
                     elif not data['origin'] in contracts:
                         # search numbers related to pool_number
-                        contract_line = self.env['account.analytic.invoice.line'].search(
+                        contract_line = self.env['contract.line'].search(
                             [['name', '=', data['origin']]])
                         if len(contract_line) == 1:
                             contracts[data['origin']] = contract_line[0].id
@@ -318,7 +317,6 @@ class WizardImportCDR(models.TransientModel):
                     call_detail.create(data)
 
             elif self.cdr_type == 'misc':
-                # print (self.cdr_data)
                 f = io.BytesIO(base64.decodestring(self.cdr_data))
                 reader = pycompat.csv_reader(f, delimiter='\x09')
                 next(reader, None)  # skip header
@@ -375,7 +373,6 @@ class WizardImportCDR(models.TransientModel):
                     else:
                         data['status'] = 'error'
 
-                    # print data
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
@@ -498,7 +495,6 @@ class WizardImportCDR(models.TransientModel):
                     if self.data_type == 'data':
                         data['duration'] = 0
                     if self.data_type == 'other':
-                        # if 'otherdestiny' in row[m[self.cdr_type]]:
                         data['destiny'] = row[m[self.cdr_type]['otherdestiny']]
                     # don't repeat searches with contracts
                     if data['origin'] in contracts and contracts[data['origin']]:
@@ -506,7 +502,7 @@ class WizardImportCDR(models.TransientModel):
                         data['status'] = 'draft'
                     elif not data['origin'] in contracts:
                         # search numbers related to pool_number
-                        contract_line = self.env['account.analytic.invoice.line'].search(
+                        contract_line = self.env['contract.line'].search(
                             [['name', '=', data['origin']]])
                         if len(contract_line) == 1:
                             contracts[data['origin']] = contract_line[0].id
@@ -706,7 +702,7 @@ class WizardImportCDR(models.TransientModel):
     ], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)
-    cdr_data = fields.Binary('File')
+    data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')])
 
 
 class WizardImportCDRWithoutSupplier(models.TransientModel):
@@ -828,13 +824,14 @@ class WizardImportCDRWithoutSupplier(models.TransientModel):
 
     cdr_type = fields.Selection([('misc', 'Misc')], string='CDR type', default='misc', required=True)
     cdr_data = fields.Binary('File')
+    company_id = fields.Many2one('res.company', required=True)
+    data_type = fields.Selection([('data', 'Data'), ('calls', 'Calls'), ('sms', 'SMS'), ('other', 'Other')])
 
 
 class WizardImportRate(models.TransientModel):
     _name = 'telephony_isp.import.rate'
     _description = 'Rate file impport'
 
-    # @api.onchange('rate_data')
     @api.multi
     def import_rate(self):
         if self.rate_data and self.supplier_id:
@@ -851,6 +848,7 @@ class WizardImportRate(models.TransientModel):
                         'supplier_id': self.supplier_id.id
                     }
                     rate.create(data)
+
             return
 
     supplier_id = fields.Many2one('telephony_isp.supplier', required=True)
@@ -888,7 +886,7 @@ class WizardCreateInvoices(models.TransientModel):
                         status = 'free'
                     elif d > call.duration:
                         amount = call.amount / call.duration * abs(d)
-                        stauts = 'special'
+                        status = 'special'
                     else:
                         amount = call.amount
                         status = 'invoiced'
@@ -902,7 +900,7 @@ class WizardCreateInvoices(models.TransientModel):
                         status = 'free'
                     elif d > call.duration:
                         amount = call.amount / call.duration * abs(d)
-                        stauts = 'special'
+                        status = 'special'
                     else:
                         amount = call.amount
                         status = 'invoiced'
@@ -921,7 +919,7 @@ class WizardCreateInvoices(models.TransientModel):
                         status = 'free'
                     elif d > call.duration:
                         amount = call.amount / call.duration * abs(d)
-                        stauts = 'special'
+                        status = 'special'
                     else:
                         amount = call.amount
                         status = 'invoiced'
@@ -978,7 +976,7 @@ class WizardCreateInvoices(models.TransientModel):
         for i in call_details:
             # contracts
             if not i.contract.id in self.contracts:
-                # first 
+                # first
                 # get data type to show in the invoice report:
                 if i.supplier_id.data_type:
                     data_type = i.supplier_id.data_type
@@ -1103,7 +1101,6 @@ class WizardCreateInvoices(models.TransientModel):
             'call_details_ids': [(6, 0, [k.id for k in call_details])],
             'amount': amount
         }
-        # stop()
         period.write(data)
 
     journal_id = fields.Many2one('account.journal', 'Journal', required=True)

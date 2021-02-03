@@ -42,8 +42,8 @@ class account_analytic_account_number(models.Model):
         return res
 
     number_id = fields.Many2one('telephony_isp.pool.number', required=True, domain="[('status', '=', 'not_assigned')]")
-    contract_id = fields.Many2one('account.analytic.account')
-    contract_line_id = fields.Many2one('account.analytic.invoice.line')
+    contract_id = fields.Many2one('contract.contract')
+    contract_line_id = fields.Many2one('contract.line')
     pool_id = fields.Many2one(related='number_id.pool_id')
     login = fields.Char()
     password = fields.Char()
@@ -78,8 +78,8 @@ class account_analytic_account_number(models.Model):
         return res
 
 
-class account_analytic_account(models.Model):
-    _inherit = 'account.analytic.account'
+class ContractContract(models.Model):
+    _inherit = 'contract.contract'
 
     use_telephony = fields.Boolean()  # internal field in invoice
     telephony_number_ids = fields.One2many('account.analytic.account.number', 'contract_id')
@@ -145,7 +145,7 @@ class pool_number(models.Model):
         ('assigned', 'Asigned'),
         ('no_active', 'No active')], default='not_assigned'
     )
-    last_contract_id = fields.Many2one('account.analytic.account')  # current active contract for this number
+    last_contract_id = fields.Many2one('contract.contract')  # current active contract for this number
     migrated = fields.Boolean()
 
     @api.multi
@@ -241,7 +241,7 @@ class call_detail(models.Model):
     cdr_id = fields.Char()
     supplier_id = fields.Many2one('telephony_isp.supplier')  # supplier
     period_id = fields.Many2one('telephony_isp.period')  # period
-    contract_line_id = fields.Many2one('account.analytic.invoice.line')  # contract line
+    contract_line_id = fields.Many2one('contract.line')  # contract line
     contract = fields.Many2one(related='contract_line_id.analytic_account_id')  # contract
     invoice_id = fields.Many2one('account.invoice')
     partner = fields.Many2one(related='contract_line_id.analytic_account_id.partner_id', store=True)

@@ -39,17 +39,17 @@
                     <field name="time"/>
                     <field name="origin"/>
                     <field name="destiny"/>
-                    <filter string="To Invoice" domain="[('status','=','draft')]" help="Call to be invoiced"/>
-                    <filter string="With errors" domain="[('status','=','error')]" help="Call with an error"/>
+                    <filter name="to_invoice" string="To Invoice" domain="[('status','=','draft')]" help="Call to be invoiced"/>
+                    <filter name="with_errors" string="With errors" domain="[('status','=','error')]" help="Call with an error"/>
                     <group expand="0" string="Group By">
-                        <filter string="Origin" domain="[]" context="{'group_by':'origin'}"/>
-                        <filter string="Partner" domain="[]" context="{'group_by':'partner'}"/>
-                        <filter string="Contract" domain="[]" context="{'group_by':'contract_code'}"/>
-                        <filter string="Destiny" domain="[]" context="{'group_by':'destiny'}"/>
-                        <filter string="Rate" domain="[]" context="{'group_by':'rate_id'}"/>
-                        <filter string="Data Type" domain="[]" context="{'group_by':'data_type'}"/>
-                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
-                        <filter string="Supplier" domain="[]" context="{'group_by':'supplier_id'}"/>
+                        <filter name="origin" string="Origin" domain="[]" context="{'group_by':'origin'}"/>
+                        <filter name="partner" string="Partner" domain="[]" context="{'group_by':'partner'}"/>
+                        <filter name="contract" string="Contract" domain="[]" context="{'group_by':'contract_code'}"/>
+                        <filter name="destiny" string="Destiny" domain="[]" context="{'group_by':'destiny'}"/>
+                        <filter name="rate" string="Rate" domain="[]" context="{'group_by':'rate_id'}"/>
+                        <filter name="data_type" string="Data Type" domain="[]" context="{'group_by':'data_type'}"/>
+                        <filter name="company" string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                        <filter name="supplier" string="Supplier" domain="[]" context="{'group_by':'supplier_id'}"/>
                     </group>
                 </search>
             </field>

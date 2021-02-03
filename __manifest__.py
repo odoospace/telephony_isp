@@ -26,7 +26,7 @@
     'version': '11.2.1.3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account', 'analytic', 'contract', 'product'],
+    'depends': ['base', 'account', 'contract', 'product'],
 
     # always loaded
     'data': [
