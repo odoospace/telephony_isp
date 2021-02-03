@@ -1,27 +1,29 @@
-<openerp>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
     <data>
+
         <!-- BEGIN view call details tree -->
         <record model="ir.ui.view" id="view_telephony_isp_call_detail_tree">
             <field name="name">telephony_isp.call_detail.tree</field>
             <field name="model">telephony_isp.call_detail</field>
             <field name="arch" type="xml">
-              <tree string="Call Detail Record" colors="red:status=='error'">
-                  <field name="company_id"/>
-                  <field name="partner"/>
-                  <field name="contract_code"/>
-                  <field name="product"/>
-                  <field name="time"/>
-                  <field name="origin"/>
-                  <field name="destiny"/>
-                  <field name="rate_id"/>
-                  <field name="duration"/>
-                  <field name="cost"/>
-                  <field name="amount" sum="Total Amount"/>
-                  <field name="status"/>
-                  <field name="invoice_id"/>
-                  <field name="data_type"/>
-              </tree>
-          </field>
+                <tree string="Call Detail Record" colors="red:status=='error'">
+                    <field name="company_id"/>
+                    <field name="partner"/>
+                    <field name="contract_code"/>
+                    <field name="product"/>
+                    <field name="time"/>
+                    <field name="origin"/>
+                    <field name="destiny"/>
+                    <field name="rate_id"/>
+                    <field name="duration"/>
+                    <field name="cost"/>
+                    <field name="amount" sum="Total Amount"/>
+                    <field name="status"/>
+                    <field name="invoice_id"/>
+                    <field name="data_type"/>
+                </tree>
+            </field>
         </record>
         <!-- END view call details tree -->
 
@@ -54,22 +56,21 @@
         </record>
         <!-- END view call details search -->
 
-
         <!-- BEGIN view supplier tree -->
         <record model="ir.ui.view" id="view_telephony_isp_supplier_tree">
             <field name="name">telephony_isp.supplier.tree</field>
             <field name="model">telephony_isp.supplier</field>
             <field name="arch" type="xml">
-              <tree string="Suppliers">
-                  <field name="name"/>
-                  <field name="partner_id"/>
-                  <field name="ratio"/>
-                  <field name="date_start"/>
-                  <field name="date_end"/>
-                  <field name="rate_ids"/>
-                  <field name="data_type"/>
-              </tree>
-          </field>
+                <tree string="Suppliers">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="ratio"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="rate_ids"/>
+                    <field name="data_type"/>
+                </tree>
+            </field>
         </record>
         <!-- END view supplier tree -->
 
@@ -79,36 +80,36 @@
             <field name="model">telephony_isp.supplier</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-              <form string="Telephony supplier">
-                  <group>
-                      <field name="name"/>
-                      <field name="partner_id"/>
-                      <field name="ratio"/>
-                      <field name="date_start"/>
-                      <field name="date_end"/>
-                      <field name="data_type"/>
-                  </group>
-                  <group>
-                      <field name="cdr_type"/>
-                      <field name="ftp_hostname"/>
-                      <field name="ftp_path"/>
-                      <field name="ftp_user"/>
-                      <field name="ftp_password" password="True"/>
-                  </group>
-                  <group>
-                      <field name="rate_ids">
-                          <tree default_order='prefix'>
-                              <field name="special"/>
-                              <field name="prefix"/>
-                              <field name="name"/>
-                              <field name="connection"/>
-                              <field name="price"/>
-                              <field name="ratio"/>
-                          </tree>
-                      </field>
-                  </group>
-              </form>
-          </field>
+                <form string="Telephony supplier">
+                    <group>
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                        <field name="ratio"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="data_type"/>
+                    </group>
+                    <group>
+                        <field name="cdr_type"/>
+                        <field name="ftp_hostname"/>
+                        <field name="ftp_path"/>
+                        <field name="ftp_user"/>
+                        <field name="ftp_password" password="True"/>
+                    </group>
+                    <group>
+                        <field name="rate_ids">
+                            <tree default_order='prefix'>
+                                <field name="special"/>
+                                <field name="prefix"/>
+                                <field name="name"/>
+                                <field name="connection"/>
+                                <field name="price"/>
+                                <field name="ratio"/>
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
         </record>
         <!-- END view supplier form -->
 
@@ -117,18 +118,18 @@
             <field name="name">telephony_isp.rate.tree</field>
             <field name="model">telephony_isp.rate</field>
             <field name="arch" type="xml">
-              <tree string="Suppliers">
-                  <field name="supplier_id"/>
-                  <field name="name"/>
-                  <field name="prefix"/>
-                  <field name="special"/>
-                  <field name="segment"/>
-                  <field name="connection"/>
-                  <field name="cost"/>
-                  <field name="price"/>
-                  <field name="ratio"/>
-              </tree>
-          </field>
+                <tree string="Suppliers">
+                    <field name="supplier_id"/>
+                    <field name="name"/>
+                    <field name="prefix"/>
+                    <field name="special"/>
+                    <field name="segment"/>
+                    <field name="connection"/>
+                    <field name="cost"/>
+                    <field name="price"/>
+                    <field name="ratio"/>
+                </tree>
+            </field>
         </record>
         <!-- END view rate tree -->
 
@@ -138,19 +139,19 @@
             <field name="model">telephony_isp.rate</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-              <form string="Rate">
-                  <group>
-                      <field name="supplier_id"/>
-                      <field name="special"/>
-                      <field name="prefix"/>
-                      <field name="segment"/>
-                      <field name="name"/>
-                      <field name="connection"/>
-                      <field name="price" attrs="{'invisible':[('special', '=', True)]}"/>
-                      <field name="ratio" attrs="{'invisible':[('special', '=', False)]}" />
-                  </group>
-              </form>
-          </field>
+                <form string="Rate">
+                    <group>
+                        <field name="supplier_id"/>
+                        <field name="special"/>
+                        <field name="prefix"/>
+                        <field name="segment"/>
+                        <field name="name"/>
+                        <field name="connection"/>
+                        <field name="price" attrs="{'invisible':[('special', '=', True)]}"/>
+                        <field name="ratio" attrs="{'invisible':[('special', '=', False)]}"/>
+                    </group>
+                </form>
+            </field>
         </record>
         <!-- END view rate form -->
 
@@ -159,16 +160,16 @@
             <field name="name">telephony_isp.period.tree</field>
             <field name="model">telephony_isp.period</field>
             <field name="arch" type="xml">
-              <tree string="Suppliers">
-                  <field name="company_id"/>
-                  <field name="date_start"/>
-                  <field name="date_end"/>
-                  <field name="invoice_ids"/>
-                  <field name="call_details_ids"/>
-                  <field name="amount"/>
-                  <field name="supplier_id"/>
-              </tree>
-          </field>
+                <tree string="Suppliers">
+                    <field name="company_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="invoice_ids"/>
+                    <field name="call_details_ids"/>
+                    <field name="amount"/>
+                    <field name="supplier_id"/>
+                </tree>
+            </field>
         </record>
         <!-- END view period tree -->
 
@@ -177,11 +178,11 @@
             <field name="name">telephony_isp.pool.tree</field>
             <field name="model">telephony_isp.pool</field>
             <field name="arch" type="xml">
-              <tree string="Pools">
-                  <field name="name"/>
-                  <field name="pool_type"/>
-              </tree>
-          </field>
+                <tree string="Pools">
+                    <field name="name"/>
+                    <field name="pool_type"/>
+                </tree>
+            </field>
         </record>
         <!-- END view period tree -->
 
@@ -191,14 +192,14 @@
             <field name="model">telephony_isp.pool</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-              <form string="Pool">
-                  <group>
-                      <field name="name"/>
-                      <field name="supplier_id"/>
-                      <field name="pool_type"/>
-                  </group>
-              </form>
-          </field>
+                <form string="Pool">
+                    <group>
+                        <field name="name"/>
+                        <field name="supplier_id"/>
+                        <field name="pool_type"/>
+                    </group>
+                </form>
+            </field>
         </record>
         <!-- END view pool form -->
 
@@ -207,15 +208,15 @@
             <field name="name">telephony_isp.pool.number.tree</field>
             <field name="model">telephony_isp.pool.number</field>
             <field name="arch" type="xml">
-              <tree string="Numbers">
-                  <field name="pool_id"/>
-                  <field name="name"/>
-                  <field name="number_type"/>
-                  <field name="status"/>
-                  <field name="last_contract_id"/>
-                  <field name="migrated"/>
-              </tree>
-          </field>
+                <tree string="Numbers">
+                    <field name="pool_id"/>
+                    <field name="name"/>
+                    <field name="number_type"/>
+                    <field name="status"/>
+                    <field name="last_contract_id"/>
+                    <field name="migrated"/>
+                </tree>
+            </field>
         </record>
         <!-- END view period tree -->
 
@@ -225,19 +226,18 @@
             <field name="model">telephony_isp.pool.number</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-              <form string="Pool">
-                  <group>
-                      <field name="pool_id"/>
-                      <field name="name"/>
-                      <field name="number_type"/>
-                      <field name="status"/>
-                      <field name="migrated"/>
-                  </group>
-              </form>
-          </field>
+                <form string="Pool">
+                    <group>
+                        <field name="pool_id"/>
+                        <field name="name"/>
+                        <field name="number_type"/>
+                        <field name="status"/>
+                        <field name="migrated"/>
+                    </group>
+                </form>
+            </field>
         </record>
         <!-- END view pool number form -->
-
 
         <!-- BEGIN actions -->
         <record model="ir.actions.act_window" id="action_list_call_details">
@@ -279,7 +279,7 @@
 
         <record id="action_fix_errors" model="ir.actions.server">
             <field name="name">Fix errors</field>
-            <field name="model_id" ref="model_telephony_isp_call_detail" />
+            <field name="model_id" ref="model_telephony_isp_call_detail"/>
             <field name="binding_model_id" ref="model_telephony_isp_call_detail"/>
             <field name="state">code</field>
             <field name="code">model.fix_errors()</field>
@@ -306,5 +306,6 @@
         <menuitem id="telephony_numbers_menu" parent="telephony_settings_menu" name="Numbers" sequence="60"
                   action="action_list_numbers"/>
         <!-- END menus -->
+
     </data>
-</openerp>
+</odoo>

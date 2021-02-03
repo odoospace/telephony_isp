@@ -1,136 +1,140 @@
-<openerp>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
     <data>
-      <!-- BEGIN import CDR wizard -->
-      <record model="ir.ui.view" id="wizard_import_cdr_form_view">
-          <field name="name">telephony_isp.import.cdr.form</field>
-          <field name="model">telephony_isp.import.cdr</field>
-          <field name="arch" type="xml">
-              <form string="Import CDR file">
-                  <group>
-                      <field name="supplier_id"/>
-                      <field name="cdr_type"/>
-                      <field name="cdr_data"/>
-                      <field name="company_id"/>
-                      <field name="data_type"/>
-                  </group>
-                  <footer>
-                      <button name="import_cdr" type="object"
-                              string="Import" class="oe_highlight"/>
-                      or
-                      <button special="cancel" string="Cancel"/>
-                  </footer>
-              </form>
-          </field>
-      </record>
 
-      <record model="ir.ui.view" id="wizard_import_cdr_ws_form_view">
-          <field name="name">telephony_isp.import.cdr.ws.form</field>
-          <field name="model">telephony_isp.import.cdr.ws</field>
-          <field name="arch" type="xml">
-              <form string="Import CDR file Without Supplier">
-                  <group>
-                      <field name="cdr_type"/>
-                      <field name="cdr_data"/>
-                      <field name="company_id"/>
-                      <field name="data_type"/>
-                  </group>
-                  <footer>
-                      <button name="import_cdr_ws" type="object"
-                              string="Import" class="oe_highlight"/>
-                      or
-                      <button special="cancel" string="Cancel"/>
-                  </footer>
-              </form>
-          </field>
-      </record>
+        <!-- BEGIN import CDR wizard -->
+        <record model="ir.ui.view" id="wizard_import_cdr_form_view">
+            <field name="name">telephony_isp.import.cdr.form</field>
+            <field name="model">telephony_isp.import.cdr</field>
+            <field name="arch" type="xml">
+                <form string="Import CDR file">
+                    <group>
+                        <field name="supplier_id"/>
+                        <field name="cdr_type"/>
+                        <field name="cdr_data"/>
+                        <field name="company_id"/>
+                        <field name="data_type"/>
+                    </group>
+                    <footer>
+                        <button name="import_cdr" type="object"
+                                string="Import" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
-      <act_window id="launch_import_cdr_wizard"
-                  name="Import CDR file"
-                  src_model="telephony_isp.call_detail"
-                  res_model="telephony_isp.import.cdr"
-                  view_mode="form"
-                  target="new"
-                  key2="client_action_multi"/>
+        <record model="ir.ui.view" id="wizard_import_cdr_ws_form_view">
+            <field name="name">telephony_isp.import.cdr.ws.form</field>
+            <field name="model">telephony_isp.import.cdr.ws</field>
+            <field name="arch" type="xml">
+                <form string="Import CDR file Without Supplier">
+                    <group>
+                        <field name="cdr_type"/>
+                        <field name="cdr_data"/>
+                        <field name="company_id"/>
+                        <field name="data_type"/>
+                    </group>
+                    <footer>
+                        <button name="import_cdr_ws" type="object"
+                                string="Import" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
-      <act_window id="launch_import_cdr_ws_wizard"
-                  name="Import CDR file Without Supplier"
-                  src_model="telephony_isp.call_detail"
-                  res_model="telephony_isp.import.cdr.ws"
-                  view_mode="form"
-                  target="new"
-                  key2="client_action_multi"/>
-      <!-- END import CDR wizard -->
+        <act_window id="launch_import_cdr_wizard"
+                    name="Import CDR file"
+                    src_model="telephony_isp.call_detail"
+                    res_model="telephony_isp.import.cdr"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"/>
 
-      <!-- BEGIN import Rate wizard -->
-      <record model="ir.ui.view" id="wizard_import_rate_form_view">
-          <field name="name">telephony_isp.import.rate.form</field>
-          <field name="model">telephony_isp.import.rate</field>
-          <field name="arch" type="xml">
-              <form string="Import Rate file">
-                  <group>
-                      <field name="supplier_id"/>
-                      <field name="rate_data"/>
-                  </group>
-                  <footer>
-                      <button name="import_rate" type="object"
-                              string="Create" class="oe_highlight"/>
-                      or
-                      <button special="cancel" string="Cancel"/>
-                  </footer>
-              </form>
-          </field>
-      </record>
+        <act_window id="launch_import_cdr_ws_wizard"
+                    name="Import CDR file Without Supplier"
+                    src_model="telephony_isp.call_detail"
+                    res_model="telephony_isp.import.cdr.ws"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"/>
+        <!-- END import CDR wizard -->
 
-      <act_window id="launch_import_rate_wizard"
-                  name="Import Rate file"
-                  src_model="telephony_isp.rate"
-                  res_model="telephony_isp.import.rate"
-                  view_mode="form"
-                  target="new"/>
-      <!-- END import Rate wizard -->
+        <!-- BEGIN import Rate wizard -->
+        <record model="ir.ui.view" id="wizard_import_rate_form_view">
+            <field name="name">telephony_isp.import.rate.form</field>
+            <field name="model">telephony_isp.import.rate</field>
+            <field name="arch" type="xml">
+                <form string="Import Rate file">
+                    <group>
+                        <field name="supplier_id"/>
+                        <field name="rate_data"/>
+                    </group>
+                    <footer>
+                        <button name="import_rate" type="object"
+                                string="Create" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
-      <record model="ir.ui.view" id="wizard_create_invoices_form_view">
-          <field name="name">telephony_isp.create.invoice.form</field>
-          <field name="model">telephony_isp.create.invoice</field>
-          <field name="arch" type="xml">
-              <form string="Create invoices">
-                  <group>
-                      <field name="company_id"/>
-                      <field name="journal_id"/>
-                      <field name="partner_id"/>
-                      <field name="recalc" attrs="{'invisible':[('partner_id', '=', False)]}"/>
-                      <field name="date_invoice"/>
-                      <field name="date_start"/>
-                      <field name="date_end"/>
-                      <field name="existing_invoice"/>
-                  </group>
-                  <footer>
-                      <button name="create_invoice" type="object"
-                              string="Create" class="oe_highlight"/>
-                      or
-                      <button special="cancel" string="Cancel"/>
-                  </footer>
-              </form>
-          </field>
-      </record>
+        <act_window id="launch_import_rate_wizard"
+                    name="Import Rate file"
+                    src_model="telephony_isp.rate"
+                    res_model="telephony_isp.import.rate"
+                    view_mode="form"
+                    target="new"/>
+        <!-- END import Rate wizard -->
 
-      <act_window id="launch_create_invoices_wizard"
-                  name="Create Invoices"
-                  src_model="account.invoice"
-                  res_model="telephony_isp.create.invoice"
-                  view_mode="form"
-                  target="new"
-                  key2="client_action_multi"/>
+        <record model="ir.ui.view" id="wizard_create_invoices_form_view">
+            <field name="name">telephony_isp.create.invoice.form</field>
+            <field name="model">telephony_isp.create.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create invoices">
+                    <group>
+                        <field name="company_id"/>
+                        <field name="journal_id"/>
+                        <field name="partner_id"/>
+                        <field name="recalc" attrs="{'invisible':[('partner_id', '=', False)]}"/>
+                        <field name="date_invoice"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="existing_invoice"/>
+                    </group>
+                    <footer>
+                        <button name="create_invoice" type="object"
+                                string="Create" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
-      <!-- begin MENUS -->
-      <menuitem id="telephony_import_cdr_menu" parent="telephony_data_menu" name="Import CDR file" sequence="20"
-                action="launch_import_cdr_wizard"/>
-      <menuitem id="telephony_import_cdr_ws_menu" parent="telephony_data_menu" name="Import CDR file without supplier" sequence="21"
-                action="launch_import_cdr_ws_wizard"/>
-      <menuitem id="telephony_import_rate_menu" parent="telephony_settings_menu" name="Import Rate file" sequence="40"
-                action="launch_import_rate_wizard"/>
-      <menuitem id="telephony_create_invoinces_menu" parent="telephony_data_menu" name="Create Invoices" sequence="25"
-                action="launch_create_invoices_wizard"/>
-      <!-- end MENUS -->
+        <act_window id="launch_create_invoices_wizard"
+                    name="Create Invoices"
+                    src_model="account.invoice"
+                    res_model="telephony_isp.create.invoice"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"/>
+
+        <!-- begin MENUS -->
+        <menuitem id="telephony_import_cdr_menu" parent="telephony_data_menu" name="Import CDR file" sequence="20"
+                  action="launch_import_cdr_wizard"/>
+        <menuitem id="telephony_import_cdr_ws_menu" parent="telephony_data_menu" name="Import CDR file without supplier"
+                  sequence="21"
+                  action="launch_import_cdr_ws_wizard"/>
+        <menuitem id="telephony_import_rate_menu" parent="telephony_settings_menu" name="Import Rate file" sequence="40"
+                  action="launch_import_rate_wizard"/>
+        <menuitem id="telephony_create_invoinces_menu" parent="telephony_data_menu" name="Create Invoices" sequence="25"
+                  action="launch_create_invoices_wizard"/>
+        <!-- end MENUS -->
+
     </data>
-</openerp>
+</odoo>

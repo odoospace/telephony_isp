@@ -31,7 +31,6 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/templates.xml',
         'views/telephony_isp.xml',
         'views/telephony_wizard.xml',
         'views/product.xml',
@@ -40,10 +39,5 @@
         'views/report_invoice_calls_detail.xml',
         'views/cron.xml'
     ],
-    # only loaded in demonstration mode
-    #'demo': [
-    #    'demo.xml',
-    #],
     'installable': True,
-    #'auto_install': False,
 }
