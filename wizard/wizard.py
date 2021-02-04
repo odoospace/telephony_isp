@@ -99,6 +99,18 @@ m = {
         'type': 10
 
     },
+    'finetwork': {
+        'id': 1,
+        'date': 5,
+        'date2':6,
+        'origin': 2,
+        'destiny': 4,
+        'network': 10,
+        'duration': 7,
+        'cost': 11,
+        'type': 0
+
+    },
 }
 
 
@@ -530,14 +542,14 @@ class WizardImportCDR(models.TransientModel):
                     origin = row[m[self.cdr_type]['origin']]
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
-                    cost = float(row[m[self.cdr_type]['cost']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',','.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
                         'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%y %H:%M:%S'),
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']]),
+                        'cost': float(row[m[self.cdr_type]['cost']].replace(',','.')),
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -686,6 +698,62 @@ class WizardImportCDR(models.TransientModel):
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
+            elif self.cdr_type == 'finetwork':
+                f = io.BytesIO(base64.decodestring(self.cdr_data))
+                reader = pycompat.csv_reader(f, delimiter=';')
+                # next(reader, None)  # skip header
+                for row in reader:
+                    origin = row[m[self.cdr_type]['origin']]
+                    destiny = row[m[self.cdr_type]['destiny']]
+                    duration = float(row[m[self.cdr_type]['duration']])
+                    if row[m[self.cdr_type]['type']] == 'DAT':
+                        self.data_type = 'data'
+                    if row[m[self.cdr_type]['type']] == 'VOZ':
+                        self.data_type = 'calls'
+                    if row[m[self.cdr_type]['type']] == 'SMS':
+                        self.data_type = 'sms'
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',','.'))
+                    data = {
+                        'supplier_id': self.supplier_id.id,
+                        'time': datetime.strptime(
+                            (row[m[self.cdr_type]['date']] + ' ' + row[m[self.cdr_type]['date2']]),
+                            '%d-%m-%Y %H:%M:%S'),
+                        'origin': origin,  # TODO: check ->
+                        'destiny': destiny,
+                        'duration': duration,
+                        'cost': float(row[m[self.cdr_type]['cost']].replace(',','.')),
+                        'data_type': self.data_type,
+                        'company_id': self.company_id.id,
+                    }
+                    if self.data_type == 'data':
+                        data['duration'] = 0
+                    # don't repeat searches with contracts
+                    if data['origin'] in contracts and contracts[data['origin']]:
+                        data['contract_line_id'] = contracts[data['origin']]
+                        data['status'] = 'draft'
+                    elif not data['origin'] in contracts:
+                        # search numbers related to pool_number
+                        number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
+                        if number:
+                            contract_number = self.env['account.analytic.account.number'].search(
+                                [['number_id', '=', number[0].id]])
+                            if len(contract_number) == 1:
+                                contracts[data['origin']] = contract_number[0].contract_line_id.id
+                                data['contract_line_id'] = contract_number[0].contract_line_id.id
+                                data['status'] = 'draft'
+                            else:
+                                data['status'] = 'error'
+                        else:
+                            contracts[data['origin']] = None
+                            data['status'] = 'error'
+                    else:
+                        data['status'] = 'error'
+
+                    data['amount'] = data['cost']
+
+                    call_detail = self.env['telephony_isp.call_detail']
+                    call_detail.create(data)
+
         return {'type': 'ir.actions.act_window_close'}
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
@@ -698,7 +766,8 @@ class WizardImportCDR(models.TransientModel):
         ('lemonvil', 'Lemonvil'),
         ('ion', 'ION'),
         ('masmovil', 'Masmovil'),
-        ('ptv', 'PTV')
+        ('ptv', 'PTV'),
+        ('finetwork', 'Finetwork'),
     ], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)

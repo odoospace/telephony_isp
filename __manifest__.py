@@ -23,7 +23,7 @@
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
     # for the full list
     'category': 'Accounting & Finance',
-    'version': '11.2.1.3',
+    'version': '11.2.1.4',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'account', 'contract', 'product'],
