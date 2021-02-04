@@ -139,7 +139,6 @@ class WizardImportCDR(models.TransientModel):
 
             if not last:
                 print('ERROR:', number)
-            #    last = 0
             return last
 
         def get_rate_without_cc(number):
@@ -163,7 +162,6 @@ class WizardImportCDR(models.TransientModel):
                 f = io.BytesIO(base64.decodestring(self.cdr_data))
                 reader = pycompat.csv_reader(f, delimiter=';')
                 next(reader, None)  # skip header
-                # c = 0
                 for row in reader:
                     origin = row[m[self.cdr_type]['origin']].replace('->', '')
                     destiny = row[m[self.cdr_type]['destiny']]
@@ -217,7 +215,6 @@ class WizardImportCDR(models.TransientModel):
                 f = io.BytesIO(base64.decodestring(self.cdr_data))
                 reader = pycompat.csv_reader(f, delimiter=';')
                 next(reader, None)  # skip header
-                # c = 0
                 for row in reader:
                     origin = row[m[self.cdr_type]['origin']].replace('->', '')
                     destiny = row[m[self.cdr_type]['destiny']]
