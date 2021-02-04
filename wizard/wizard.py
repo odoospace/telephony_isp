@@ -102,7 +102,7 @@ m = {
     'finetwork': {
         'id': 1,
         'date': 5,
-        'date2':6,
+        'date2': 6,
         'origin': 2,
         'destiny': 4,
         'network': 10,
@@ -116,7 +116,7 @@ m = {
 
 class WizardImportCDR(models.TransientModel):
     _name = 'telephony_isp.import.cdr'
-    _description = 'CDR file impport'
+    _description = 'CDR file import'
 
     @api.multi
     def import_cdr(self):
@@ -539,14 +539,14 @@ class WizardImportCDR(models.TransientModel):
                     origin = row[m[self.cdr_type]['origin']]
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
-                    cost = float(row[m[self.cdr_type]['cost']].replace(',','.'))
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
                         'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%y %H:%M:%S'),
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']].replace(',','.')),
+                        'cost': float(row[m[self.cdr_type]['cost']].replace(',', '.')),
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -709,7 +709,7 @@ class WizardImportCDR(models.TransientModel):
                         self.data_type = 'calls'
                     if row[m[self.cdr_type]['type']] == 'SMS':
                         self.data_type = 'sms'
-                    cost = float(row[m[self.cdr_type]['cost']].replace(',','.'))
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
                         'time': datetime.strptime(
@@ -718,7 +718,7 @@ class WizardImportCDR(models.TransientModel):
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']].replace(',','.')),
+                        'cost': float(row[m[self.cdr_type]['cost']].replace(',', '.')),
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -773,7 +773,7 @@ class WizardImportCDR(models.TransientModel):
 
 class WizardImportCDRWithoutSupplier(models.TransientModel):
     _name = 'telephony_isp.import.cdr.ws'
-    _description = 'CDR file impport with supplier'
+    _description = 'CDR file import with supplier'
 
     @api.multi
     def import_cdr_ws(self):
@@ -1007,7 +1007,7 @@ class WizardCreateInvoices(models.TransientModel):
         filters = []
         filters.append(('time', '>=', self.date_start))
         filters.append(('time', '<',
-                        (datetime.strptime(self.date_end, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=1)).strftime(
+                        (self.date_end + timedelta(days=1)).strftime(
                             DEFAULT_SERVER_DATE_FORMAT)))
         if self.company_id:
             filters.append(('company_id', '=', self.company_id.id))
