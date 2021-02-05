@@ -166,13 +166,14 @@ class WizardImportCDR(models.TransientModel):
                     origin = row[m[self.cdr_type]['origin']].replace('->', '')
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
                         'time': datetime.strptime(row[m[self.cdr_type]['date']], '%d/%m/%y %H:%M:%S'),
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']]),
+                        'cost': cost,
                         'company_id': self.company_id.id,
                     }
 
@@ -219,13 +220,14 @@ class WizardImportCDR(models.TransientModel):
                     origin = row[m[self.cdr_type]['origin']].replace('->', '')
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
                         'time': datetime.strptime(row[m[self.cdr_type]['date']], '%Y-%m-%d %H:%M:%S'),
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']]),
+                        'cost': cost,
                         'company_id': self.company_id.id,
                     }
 
@@ -394,7 +396,7 @@ class WizardImportCDR(models.TransientModel):
                     origin = row[m[self.cdr_type]['origin']]
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
-                    cost = float(row[m[self.cdr_type]['cost']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
                         'time': datetime.strptime(row[m[self.cdr_type]['date']], '%Y-%m-%d %H:%M:%S'),
@@ -491,13 +493,14 @@ class WizardImportCDR(models.TransientModel):
                     origin = row[m[self.cdr_type]['origin']]
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
                         'time': datetime.strptime(row[m[self.cdr_type]['date']], '%Y-%m-%d %H:%M:%S'),
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']]),
+                        'cost': cost,
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -546,7 +549,7 @@ class WizardImportCDR(models.TransientModel):
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']].replace(',', '.')),
+                        'cost': cost,
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -593,7 +596,7 @@ class WizardImportCDR(models.TransientModel):
                         self.data_type = 'calls'
                     if row[m[self.cdr_type]['type']] == 'SMS':
                         self.data_type = 'sms'
-                    cost = float(row[m[self.cdr_type]['cost']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     data = {
                         'supplier_id': self.supplier_id.id,
                         'time': datetime.strptime(
@@ -602,7 +605,7 @@ class WizardImportCDR(models.TransientModel):
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']]),
+                        'cost': cost,
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -647,7 +650,7 @@ class WizardImportCDR(models.TransientModel):
                         line_type = 'mobileline'
                     destiny = row[m[self.cdr_type]['destiny']]
                     duration = float(row[m[self.cdr_type]['duration']])
-                    cost = float(row[m[self.cdr_type]['cost']])
+                    cost = float(row[m[self.cdr_type]['cost']].replace(',', '.'))
                     if row[m[self.cdr_type]['type']] == 'bytes':
                         self.data_type = 'data'
                     if row[m[self.cdr_type]['type']] == 'segundos':
@@ -662,7 +665,7 @@ class WizardImportCDR(models.TransientModel):
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']].replace(',', '.')),
+                        'cost': cost,
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -718,7 +721,7 @@ class WizardImportCDR(models.TransientModel):
                         'origin': origin,  # TODO: check ->
                         'destiny': destiny,
                         'duration': duration,
-                        'cost': float(row[m[self.cdr_type]['cost']].replace(',', '.')),
+                        'cost': cost,
                         'data_type': self.data_type,
                         'company_id': self.company_id.id,
                     }
@@ -970,7 +973,6 @@ class WizardCreateInvoices(models.TransientModel):
                     else:
                         amount = call.amount
                         status = 'invoiced'
-
                 else:
                     amount = call.amount
                     status = 'invoiced'
