@@ -21,7 +21,8 @@
                             <tree string="Numbers info" default_order='number_id' editable="bottom">
                                 <field name="contract_id" invisible="1"/>
                                 <field name="number_id"/>
-                                <field name="contract_line_id" domain="[('analytic_account_id', '=', contract_id)]"/>
+                                <!-- <field name="contract_line_id" domain="[('analytic_account_id', '=', contract_id)]"/> -->
+                                <field name="contract_line_id"/>
                                 <field name="login"/>
                                 <field name="password"/>
                                 <field name="product_id"/>

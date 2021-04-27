@@ -102,7 +102,7 @@ class product_template(models.Model):
 class product_telephony(models.Model):
     _name = 'product.telephony'
 
-    product_id = fields.Many2one('product.template')
+    product_id = fields.Many2one('product.product')
     segment = fields.Selection([
         ('domestic_number', 'Domestic Number'),
         ('domestic_mobile', 'Domestic Mobile'),
