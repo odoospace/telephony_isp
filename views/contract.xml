@@ -14,8 +14,9 @@
                         <label for="use_telephony"/>
                     </div>
                 </xpath>
-                <xpath expr="//div[@class='oe_chatter']" position="before">
-                    <group string="Telephony Info" attrs="{'invisible':[('use_telephony','=',False)]}">
+                <xpath expr="//page[@name='recurring_invoice_line']" position="after">
+                    <page name="telephony" string="Telephony Info">
+                    <group attrs="{'invisible':[('use_telephony','=',False)]}">
                         <field name="telephony_number_ids" widget="one2many_list" nolabel="1"
                                context="{'contract_id': id}">
                             <tree string="Numbers info" default_order='number_id' editable="bottom">
@@ -30,6 +31,7 @@
                             </tree>
                         </field>
                     </group>
+                    </page>
                 </xpath>
             </field>
         </record>
