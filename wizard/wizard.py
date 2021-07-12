@@ -2,11 +2,12 @@
 
 from odoo import models, fields, api, _
 from datetime import datetime, timedelta
-from odoo.tools import pycompat, DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.exceptions import ValidationError
 
 import io
 import base64
+import csv
 
 # TODO: explain this
 m = {
@@ -159,10 +160,13 @@ class WizardImportCDR(models.TransientModel):
         contracts = {}
         if self.cdr_data:
             if self.cdr_type == 'aire':
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                # next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader:
                     if row:
                         origin = row[m[self.cdr_type]['origin']].replace('->', '')
                         destiny = row[m[self.cdr_type]['destiny']]
@@ -214,10 +218,13 @@ class WizardImportCDR(models.TransientModel):
                         call_detail.create(data)
 
             elif self.cdr_type == 'telcia':
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']].replace('->', '')
                         destiny = row[m[self.cdr_type]['destiny']]
@@ -271,10 +278,13 @@ class WizardImportCDR(models.TransientModel):
                         call_detail.create(data)
 
             elif self.cdr_type == 'carrier-enabler':
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = str(row[m[self.cdr_type]['destiny']])
@@ -331,10 +341,13 @@ class WizardImportCDR(models.TransientModel):
                         call_detail.create(data)
 
             elif self.cdr_type == 'misc':
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter='\x09')
-                next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter='\x09')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = str(row[m[self.cdr_type]['destiny']])
@@ -393,10 +406,13 @@ class WizardImportCDR(models.TransientModel):
 
             elif self.cdr_type == 'miscellaneous':
                 # no rates, direct cost
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=',')
-                next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=',')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = row[m[self.cdr_type]['destiny']]
@@ -440,10 +456,13 @@ class WizardImportCDR(models.TransientModel):
 
             elif self.cdr_type == 'zargotel':
                 # no rates, direct cost
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = str(row[m[self.cdr_type]['destiny']])
@@ -491,11 +510,13 @@ class WizardImportCDR(models.TransientModel):
                 if not self.data_type:
                     raise ValidationError('Error! This supplier requires a data type')
 
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                next(reader, None)  # skip header
-
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = row[m[self.cdr_type]['destiny']]
@@ -541,11 +562,13 @@ class WizardImportCDR(models.TransientModel):
             elif self.cdr_type == 'ion':
                 if not self.data_type:
                     raise ValidationError('Error! This supplier requires a data type')
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                next(reader, None)  # skip header
-
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = row[m[self.cdr_type]['destiny']]
@@ -591,10 +614,13 @@ class WizardImportCDR(models.TransientModel):
                         call_detail.create(data)
 
             elif self.cdr_type == 'masmovil':
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = row[m[self.cdr_type]['destiny']]
@@ -648,10 +674,13 @@ class WizardImportCDR(models.TransientModel):
                         call_detail.create(data)
 
             elif self.cdr_type == 'ptv':
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         if origin[0] == '9':
@@ -710,10 +739,13 @@ class WizardImportCDR(models.TransientModel):
                         call_detail.create(data)
 
             elif self.cdr_type == 'finetwork':
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter=';')
-                # next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter=';')
+                file_reader.extend(csv_reader)
+                for row in file_reader:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = row[m[self.cdr_type]['destiny']]
@@ -835,10 +867,13 @@ class WizardImportCDRWithoutSupplier(models.TransientModel):
         contracts = {}
         if self.cdr_data:
             if self.cdr_type == 'misc':
-                f = io.BytesIO(base64.decodestring(self.cdr_data))
-                reader = pycompat.csv_reader(f, delimiter='\x09')
-                next(reader, None)  # skip header
-                for row in reader:
+                csv_data = base64.b64decode(self.cdr_data)
+                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file.seek(0)
+                file_reader = []
+                csv_reader = csv.reader(data_file, delimiter='\x09')
+                file_reader.extend(csv_reader)
+                for row in file_reader[1:]:
                     if row:
                         origin = row[m[self.cdr_type]['origin']]
                         destiny = str(row[m[self.cdr_type]['destiny']])
@@ -917,9 +952,13 @@ class WizardImportRate(models.TransientModel):
     @api.multi
     def import_rate(self):
         if self.rate_data and self.supplier_id:
-            f = io.BytesIO(base64.decodestring(self.rate_data))
-            reader = pycompat.csv_reader(f, delimiter=',')
-            for row in reader:
+            csv_data = base64.b64decode(self.cdr_data)
+            data_file = io.StringIO(csv_data.decode("utf-8"))
+            data_file.seek(0)
+            file_reader = []
+            csv_reader = csv.reader(data_file, delimiter=',')
+            file_reader.extend(csv_reader)
+            for row in file_reader:
                 if row:
                     rate = self.env['telephony_isp.rate']
                     if not rate.search((['prefix', '=', row[0]], ['supplier_id', '=', self.supplier_id.id])):
