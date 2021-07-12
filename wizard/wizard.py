@@ -161,7 +161,7 @@ class WizardImportCDR(models.TransientModel):
             if self.cdr_type == 'aire':
                 f = io.BytesIO(base64.decodestring(self.cdr_data))
                 reader = pycompat.csv_reader(f, delimiter=';')
-                next(reader, None)  # skip header
+                # next(reader, None)  # skip header
                 for row in reader:
                     if row:
                         origin = row[m[self.cdr_type]['origin']].replace('->', '')
@@ -671,7 +671,8 @@ class WizardImportCDR(models.TransientModel):
                         data = {
                             'supplier_id': self.supplier_id.id,
                             'time': datetime.strptime(
-                                (row[m[self.cdr_type]['date']] + ' ' + row[m[self.cdr_type]['date2']]), '%Y%m%d %H%M%S'),
+                                (row[m[self.cdr_type]['date']] + ' ' + row[m[self.cdr_type]['date2']]),
+                                '%Y%m%d %H%M%S'),
                             'origin': origin,  # TODO: check ->
                             'destiny': destiny,
                             'duration': duration,
