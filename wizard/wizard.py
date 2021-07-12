@@ -161,7 +161,7 @@ class WizardImportCDR(models.TransientModel):
         if self.cdr_data:
             if self.cdr_type == 'aire':
                 csv_data = base64.b64decode(self.cdr_data)
-                data_file = io.StringIO(csv_data.decode("utf-8"))
+                data_file = io.StringIO(csv_data.decode("latin-1"))
                 data_file.seek(0)
                 file_reader = []
                 csv_reader = csv.reader(data_file, delimiter=';')
