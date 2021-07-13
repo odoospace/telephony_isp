@@ -216,7 +216,7 @@ class call_detail(models.Model):
                     }
                     print('Fixed!', i.origin, i)
                     supplier_id = contract_line[0].pool_id.supplier_id.id
-                    if supplier_id:
+                    if supplier_id and supplier_id.rate_ids:
                         if i.destiny.startswith('00'):
                             rate = get_rate_without_cc(i.destiny[2:], supplier_id)
                         else:
@@ -230,6 +230,9 @@ class call_detail(models.Model):
                             data['rate_id'] = rate.id
                             if i.amount == 0:
                                 data['status'] = 'free'
+                    else:
+                        if i.status == 'error':
+                            data['status'] = 'draft'
                     i.write(data)
         return {
             'type': 'ir.actions.client',
