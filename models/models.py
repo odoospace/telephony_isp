@@ -204,7 +204,7 @@ class call_detail(models.Model):
                 return get_rate(number, supplier_id)
 
         data_with_errors = self.search(
-            ['|', ('contract_line_id', '=', False), ('status', '=', 'error')])  # ([('status', '=', 'error')])
+            ['&','|', ('time', '>=', '2021-04-01' ),('contract_line_id', '=', False), ('status', '=', 'error')])  # ([('status', '=', 'error')])
         print('errors:', len(data_with_errors))
         for i in data_with_errors:
             number = self.env['telephony_isp.pool.number'].search([('name', '=', i.origin)])
@@ -215,12 +215,12 @@ class call_detail(models.Model):
                         'contract_line_id': contract_line[0].contract_line_id.id,
                     }
                     print('Fixed!', i.origin, i)
-                    supplier_id = contract_line[0].pool_id.supplier_id.id
+                    supplier_id = contract_line[0].pool_id.supplier_id
                     if supplier_id and supplier_id.rate_ids:
                         if i.destiny.startswith('00'):
-                            rate = get_rate_without_cc(i.destiny[2:], supplier_id)
+                            rate = get_rate_without_cc(i.destiny[2:], supplier_id.id)
                         else:
-                            rate = get_rate_without_cc(i.destiny, supplier_id)
+                            rate = get_rate_without_cc(i.destiny, supplier_id.id)
                         # apply rates or default
                         if rate:
                             if i.status != 'draft':
