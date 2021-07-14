@@ -228,8 +228,8 @@ class call_detail(models.Model):
                             data['amount'] = rate.price * i.duration
                             data['cost'] = i.amount
                             data['rate_id'] = rate.id
-                            if i.amount == 0:
-                                data['status'] = 'free'
+                            # if i.amount == 0:
+                            #     data['status'] = 'free'
                     else:
                         if i.status == 'error':
                             data['status'] = 'draft'
