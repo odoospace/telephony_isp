@@ -17,7 +17,7 @@
 
                 <table t-if="o.is_telephony" class="table table-condensed"
                        style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
-                    <caption>
+                    <caption style="caption-side:top">
                         <strong>Calls</strong>
                     </caption>
                     <thead>
@@ -55,7 +55,7 @@
                 <div t-if="o.data_type == 'multiple'">
                     <table t-if="o.is_telephony" class="table table-condensed"
                            style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
-                        <caption>
+                        <caption style="caption-side:top">
                             <strong>Data</strong>
                         </caption>
                         <thead>
@@ -93,7 +93,7 @@
 
                     <table t-if="o.is_telephony" class="table table-condensed"
                            style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
-                        <caption>
+                        <caption style="caption-side:top">
                             <strong>SMS</strong>
                         </caption>
                         <thead>
@@ -131,7 +131,7 @@
 
                     <table t-if="o.is_telephony" class="table table-condensed"
                            style="position:relative;top:65px;right:-45px;font-size:13px;width:685px">
-                        <caption>
+                        <caption style="caption-side:top">
                             <strong>Other</strong>
                         </caption>
                         <thead>
