@@ -997,8 +997,9 @@ class WizardCreateInvoices(models.TransientModel):
 
         # add logic to domestic(landline and mobileline) calls
         if call.rate_id:
-            if call.rate_id.segment and self.contracts[call.contract.id]['origins'][call.origin]['minutes'].has_key(
-                    'domestic'):
+            # if call.rate_id.segment and self.contracts[call.contract.id]['origins'][call.origin]['minutes'].has_key(
+            #         'domestic'):
+            if call.rate_id.segment and 'domestic' in self.contracts[call.contract.id]['origins'][call.origin]['minutes']:
                 if call.rate_id.segment in ['domestic_number', 'domestic_mobile']:
                     self.contracts[call.contract.id]['origins'][call.origin]['minutes'][
                         'domestic'] -= call.duration / 60.
@@ -1013,7 +1014,8 @@ class WizardCreateInvoices(models.TransientModel):
                         amount = call.amount
                         status = 'invoiced'
 
-                elif call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
+                # elif call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
+                elif call.rate_id.segment and call.rate_id.segment in call_origin['minutes']:
                     self.contracts[call.contract.id]['origins'][call.origin]['minutes'][
                         call.rate_id.segment] -= call.duration / 60.
                     d = call_origin['minutes'][call.rate_id.segment]
@@ -1031,7 +1033,8 @@ class WizardCreateInvoices(models.TransientModel):
                     status = 'invoiced'
 
             else:
-                if call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
+                # if call.rate_id.segment and call_origin['minutes'].has_key(call.rate_id.segment):
+                if call.rate_id.segment and call.rate_id.segment in call_origin['minutes']:
                     self.contracts[call.contract.id]['origins'][call.origin]['minutes'][
                         call.rate_id.segment] -= call.duration / 60.
                     d = call_origin['minutes'][call.rate_id.segment]
