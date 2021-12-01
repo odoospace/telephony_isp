@@ -4,6 +4,9 @@ import tempfile
 import os
 from ..wizard import wizard
 from odoo import models, fields, api
+import datetime
+from dateutil.relativedelta import relativedelta
+
 
 # check pysftp capability
 try:
@@ -203,8 +206,9 @@ class call_detail(models.Model):
             else:
                 return get_rate(number, supplier_id)
 
-        data_with_errors = self.search(
-            ['&','|', ('time', '>=', '2021-04-01' ),('contract_line_id', '=', False), ('status', '=', 'error')])  # ([('status', '=', 'error')])
+        date_to_check = datetime.datetime.strftime((datetime.datetime.today().date() - relativedelta(months=3)), '%Y-%m-%d')
+        data_with_errors = self.search([('time', '>=', date_to_check ),('status', '=', 'error')])
+        data_with_errors += self.search([('time', '>=', date_to_check ),('status', '=', 'draft'),('partner', '=', False)])
         print('errors:', len(data_with_errors))
         for i in data_with_errors:
             number = self.env['telephony_isp.pool.number'].search([('name', '=', i.origin)])
