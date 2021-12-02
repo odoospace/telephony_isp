@@ -235,7 +235,7 @@ class call_detail(models.Model):
                             # if i.amount == 0:
                             #     data['status'] = 'free'
                     else:
-                        if i.status == 'error':
+                        if i.status == 'error' and contract_line[0].contract_line_id:
                             data['status'] = 'draft'
                     i.write(data)
         return {
