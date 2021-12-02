@@ -219,7 +219,7 @@ class call_detail(models.Model):
                         'contract_line_id': contract_line[0].contract_line_id.id,
                     }
                     print('Fixed!', i.origin, i)
-                    supplier_id = contract_line[0].pool_id.supplier_id
+                    supplier_id = contract_line[0].supplier_id
                     if supplier_id and supplier_id.rate_ids:
                         if i.destiny.startswith('00'):
                             rate = get_rate_without_cc(i.destiny[2:], supplier_id.id)
@@ -249,10 +249,10 @@ class call_detail(models.Model):
     supplier_id = fields.Many2one('telephony_isp.supplier')  # supplier
     period_id = fields.Many2one('telephony_isp.period')  # period
     contract_line_id = fields.Many2one('contract.line')  # contract line
-    contract = fields.Many2one(related='contract_line_id.analytic_account_id')  # contract
+    contract = fields.Many2one(related='contract_line_id.contract_id')  # contract
     invoice_id = fields.Many2one('account.invoice')
-    partner = fields.Many2one(related='contract_line_id.analytic_account_id.partner_id', store=True)
-    contract_code = fields.Char(related='contract_line_id.analytic_account_id.code', store=True)
+    partner = fields.Many2one(related='contract_line_id.contract_id.partner_id', store=True)
+    contract_code = fields.Char(related='contract_line_id.contract_id.code', store=True)
     product = fields.Many2one(related='contract_line_id.product_id', store=True)
     time = fields.Datetime()
     origin = fields.Char()
