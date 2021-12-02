@@ -208,7 +208,7 @@ class call_detail(models.Model):
 
         date_to_check = datetime.datetime.strftime((datetime.datetime.today().date() - relativedelta(months=3)), '%Y-%m-%d')
         data_with_errors = self.search([('time', '>=', date_to_check ),('status', '=', 'error')])
-        data_with_errors += self.search([('time', '>=', date_to_check ),('status', '=', 'draft'),('partner', '=', False)])
+        data_with_errors += self.search([('time', '>=', date_to_check ),('status', '=', 'draft'),('contract_line_id', '=', False)])
         print('errors:', len(data_with_errors))
         for i in data_with_errors:
             number = self.env['telephony_isp.pool.number'].search([('name', '=', i.origin)])
@@ -219,7 +219,7 @@ class call_detail(models.Model):
                         'contract_line_id': contract_line[0].contract_line_id.id,
                     }
                     print('Fixed!', i.origin, i)
-                    supplier_id = contract_line[0].supplier_id
+                    supplier_id = i.supplier_id
                     if supplier_id and supplier_id.rate_ids:
                         if i.destiny.startswith('00'):
                             rate = get_rate_without_cc(i.destiny[2:], supplier_id.id)
