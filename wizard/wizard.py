@@ -1115,7 +1115,8 @@ class WizardCreateInvoices(models.TransientModel):
                             'status': [],
                             'total': 0,
                             'minutes': self.get_minutes_free(i.origin, i.contract_line_id.product_id.id),
-                            'data_type': data_type
+                            'data_type': data_type,
+                            'contract_line_id': i.contract_line_id.id
                         }
                     }
                 }
@@ -1155,7 +1156,7 @@ class WizardCreateInvoices(models.TransientModel):
                     'product_id': product.id,
                     'name': _('Consum of %s') % j,
                     'account_id': product.property_account_income_id.id or product.categ_id.property_account_income_categ_id.id,
-                    'account_analytic_id': i['contract'].id,
+                    'contract_line_id': i['origins'][j]['contract_line_id'],
                     'invoice_line_tax_ids': [(6, 0, [k.id for k in product.taxes_id])],
                     'price_unit': i['origins'][j]['total']
                 }))
