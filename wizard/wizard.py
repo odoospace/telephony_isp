@@ -1172,7 +1172,8 @@ class WizardCreateInvoices(models.TransientModel):
                 'account_id': i['contract'].partner_id.property_account_receivable_id.id,
                 'invoice_line_ids': lines,
                 'company_id': self.company_id.id,
-                'data_type': i['origins'][j]['data_type']
+                'data_type': i['origins'][j]['data_type'],
+                'type': 'out_invoice'
             }
             if hasattr(i['contract'], 'payment_mode'):
                 data['payment_mode'] = i['contract'].payment_mode.id,
