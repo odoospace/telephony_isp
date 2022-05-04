@@ -685,6 +685,75 @@ class WizardImportCDR(models.TransientModel):
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
+            elif self.cdr_type == 'vadevo' and self.data_type:
+                # this type mixes voice,data and sms at the same cdr
+                # if not self.data_type:
+                #     raise ValidationError('Error! This supplier requires a data type')
+                f = StringIO.StringIO(base64.decodestring(self.cdr_data))
+                reader = csv.reader(f, delimiter=';')
+                next(reader, None)  # skip header
+
+                for row in reader:
+                    ignore_line = False
+                    if self.data_type == 'data':
+                        origin = row[1]
+                        destiny = ''
+                        duration = float(1)
+                        cost = float(row[4])
+                        ignore_line = True if not cost or cost and cost == 0 else False
+                    elif self.data_type == 'sms':
+                        origin = row[1]
+                        destiny = row[2]
+                        duration = float(1)
+                        cost = float(row[4])
+                    else:
+                        # calls, other
+                        origin = row[1]
+                        destiny = row[2]
+                        duration = float(row[4])
+                        cost = float(row[5])
+
+                    if not ignore_line:
+                        data = {
+                            'supplier_id': self.supplier_id.id,
+                            'time': datetime.strptime((row[0]), '%Y-%m-%d %H:%M:%S'),
+                            'origin': origin,  # TODO: check ->
+                            'destiny': destiny,
+                            'duration': duration,
+                            'cost': cost,
+                            'data_type': self.data_type,
+                            'company_id': self.company_id.id,
+                        }
+
+                        # if self.data_type == 'data':
+                        #     data['duration'] = int(int(row[8]) / 1000)
+                        if contracts.has_key(data['origin']) and contracts[data['origin']]:
+                            data['contract_line_id'] = contracts[data['origin']]
+                            data['status'] = 'draft'
+                        elif not contracts.has_key(data['origin']):
+                            number = self.env['telephony_isp.pool.number'].search([['name', '=', data['origin']]])
+                            if number:
+                                contract_number = self.env['account.analytic.account.number'].search(
+                                    [['number_id', '=', number[0].id]])
+                                if len(contract_number) == 1:
+                                    contracts[data['origin']] = contract_number[0].contract_line_id.id
+                                    data['contract_line_id'] = contract_number[0].contract_line_id.id
+                                    data['status'] = 'draft'
+                                else:
+                                    contracts[data['origin']] = None
+                                    data['status'] = 'error'
+
+                            else:
+                                contracts[data['origin']] = None
+                                data['status'] = 'error'
+                        else:
+                            data['status'] = 'error'
+
+                        data['amount'] = data['cost']
+
+                        call_detail = self.env['telephony_isp.call_detail']
+                        call_detail.create(data)
+
         return {'type': 'ir.actions.act_window_close'}
 
     supplier_id = fields.Many2one('telephony_isp.supplier')
@@ -697,7 +766,8 @@ class WizardImportCDR(models.TransientModel):
         ('lemonvil', 'Lemonvil'),
         ('ion', 'ION'),
         ('masmovil', 'Masmovil'),
-        ('ptv', 'PTV')
+        ('ptv', 'PTV'),
+        ('vadevo', 'Vadevo')
     ], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)
