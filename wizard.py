@@ -695,20 +695,18 @@ class WizardImportCDR(models.TransientModel):
 
                 for row in reader:
                     ignore_line = False
+                    origin = row[1]
                     if self.data_type == 'data':
-                        origin = row[1]
                         destiny = ''
                         duration = float(1)
                         cost = float(row[4])
                         ignore_line = True if not cost or cost and cost == 0 else False
                     elif self.data_type == 'sms':
-                        origin = row[1]
                         destiny = row[2]
                         duration = float(1)
                         cost = float(row[4])
                     else:
                         # calls, other
-                        origin = row[1]
                         destiny = row[2]
                         duration = float(row[4])
                         cost = float(row[5])
