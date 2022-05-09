@@ -685,7 +685,7 @@ class WizardImportCDR(models.TransientModel):
                     call_detail = self.env['telephony_isp.call_detail']
                     call_detail.create(data)
 
-            elif self.cdr_type == 'vadevo' and self.data_type:
+            elif self.cdr_type == 'vadavo' and self.data_type:
                 # this type mixes voice,data and sms at the same cdr
                 # if not self.data_type:
                 #     raise ValidationError('Error! This supplier requires a data type')
@@ -765,7 +765,7 @@ class WizardImportCDR(models.TransientModel):
         ('ion', 'ION'),
         ('masmovil', 'Masmovil'),
         ('ptv', 'PTV'),
-        ('vadevo', 'Vadevo')
+        ('vadavo', 'Vadavo')
     ], string='CDR type', default='aire', required=True)
     cdr_data = fields.Binary('File')
     company_id = fields.Many2one('res.company', required=True)
