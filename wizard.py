@@ -1020,12 +1020,12 @@ class WizardCreateInvoices(models.TransientModel):
                         'price_unit': i['origins'][j]['total']
                     }))
                     lines_name.append('Consumo de %s' % j)
-                # if not product.property_account_income:
-                #     if product:
-                #         product_err = 'Missing account for product:'+product.name + str(product.id) + 'numero:' + j
-                #     else:
-                #         product_err = 'Missing product for line'+j
-                #         raise ValidationError(product_err)
+                if not product.property_account_income:
+                    if product:
+                        product_err = 'Missing account for product:'+product.name + str(product.id) + 'numero:' + j
+                    else:
+                        product_err = 'Missing product for line'+j
+                        raise ValidationError(product_err)
 
                 # invoice
                 data = {
@@ -1040,9 +1040,9 @@ class WizardCreateInvoices(models.TransientModel):
                     'company_id': self.company_id.id,
                     'data_type': i['origins'][j]['data_type']
                 }
-                # if not i['contract'].partner_id.property_account_receivable:
-                #     partner_err = 'Missing account for partner:'+i['contract'].partner_id.name+str(i['contract'].partner_id.id)
-                #     raise ValidationError(partner_err)
+                if not i['contract'].partner_id.property_account_receivable:
+                    partner_err = 'Missing account for partner:'+i['contract'].partner_id.name+str(i['contract'].partner_id.id)
+                    raise ValidationError(partner_err)
                 if hasattr(i['contract'], 'payment_mode'):
                     data['payment_mode'] = i['contract'].payment_mode.id,
 
